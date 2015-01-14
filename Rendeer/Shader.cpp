@@ -12,13 +12,6 @@ Shader::Shader(const std::string& vertexShaderFilePath,
 	glAttachShader(shaderProgram, vertexShader);
 	glAttachShader(shaderProgram, fragmentShader);
 
-
-
-	// TODO: Use later GLSL version where this is redundant.
-	glBindAttribLocation(shaderProgram, 0, "a_position");
-
-
-
 	glLinkProgram(shaderProgram);
 	CheckShaderErrors(shaderProgram, true, GL_LINK_STATUS, "Error linking program: ");
 	
