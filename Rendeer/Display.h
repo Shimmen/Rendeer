@@ -9,9 +9,10 @@
 class Display
 {
 public:
-	Display::Display(const std::string title, int width, int height);
+	Display::Display(const std::string& title, int width, int height);
 	~Display();
 
+	void Clear(float r, float g, float b, float a);
 	void SwapBuffers();
 
 private:

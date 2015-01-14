@@ -1,6 +1,6 @@
 #include "Display.h"
 
-Display::Display(const std::string title = "Default title",
+Display::Display(const std::string& title = "Default title",
 	int width = 1280, int height = 720)
 {
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
@@ -14,6 +14,9 @@ Display::Display(const std::string title = "Default title",
 	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
 	SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
 	SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE, 32);
+
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
+
 
 	window = SDL_CreateWindow(title.c_str(),
 		SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
@@ -30,14 +33,20 @@ Display::Display(const std::string title = "Default title",
 	}
 }
 
-void Display::SwapBuffers()
-{
-	SDL_GL_SwapWindow(window);
-}
-
 Display::~Display()
 {
 	SDL_GL_DeleteContext(glContext);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
+}
+
+void Display::Clear(float r, float g, float b, float a)
+{
+	glClearColor(r, g, b, a);
+	glClear(GL_COLOR_BUFFER_BIT);
+}
+
+void Display::SwapBuffers()
+{
+	SDL_GL_SwapWindow(window);
 }
