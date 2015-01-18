@@ -27,6 +27,9 @@
     <ClCompile Include="Mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Display.h">
@@ -38,12 +41,15 @@
     <ClInclude Include="Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\ambient.fsh">
+    <None Include="Resources\shaders\ambient.fsh">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="Resources\ambient.vsh">
+    <None Include="Resources\shaders\ambient.vsh">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

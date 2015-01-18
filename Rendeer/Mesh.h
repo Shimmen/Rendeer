@@ -1,19 +1,25 @@
 #pragma once
 
 #include <string>
+#include <vector>
+
 #include <glm/glm.hpp>
 #include <GL/glew.h>
 
 class Vertex
 {
 public:
-	Vertex(const glm::vec3& position) :
-		position(position) {}
+	Vertex(const glm::vec3& position,
+		   const glm::vec2& texCoord) :
+		position(position),
+		texCoord(texCoord) {}
 
 	inline glm::vec3* GetPosition() { return &position;	}
+	inline glm::vec2* GetTexCoord() { return &texCoord; }
 
 private:
 	glm::vec3 position;
+	glm::vec2 texCoord;
 };
 
 
@@ -21,9 +27,7 @@ private:
 enum MeshBuffers
 {
 	POSITION_BUFFER,
-	// more buffers
-	// like texture coords
-	// and normals and tangents
+	TEXCOORD_BUFFER,
 
 	INDEX_BUFFER
 };
@@ -31,7 +35,7 @@ enum MeshBuffers
 class Mesh
 {
 public:
-	Mesh(Vertex *vertices, int *indices, unsigned int numIndices);
+	Mesh(Vertex *vertices, unsigned int vertexCount, int *indices, unsigned int indexCount);
 	Mesh(const std::string& fileName);
 		
 	void Render();
@@ -44,6 +48,7 @@ private:
 
 	unsigned int indexCount;
 
-	GLuint CreateMesh(Vertex *vertices, int *indices, unsigned int numIndices);
+	GLuint CreateMesh(Vertex *vertices, unsigned int vertexCount,
+		int *indices, unsigned int numIndices);
 };
 

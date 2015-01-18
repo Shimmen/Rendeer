@@ -15,6 +15,8 @@ public:
 
 	void Bind();
 
+	inline GLuint GetHandle() { return shaderProgram; }
+
 private:
 	GLuint shaderProgram;
 

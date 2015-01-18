@@ -53,7 +53,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)\ExternalDependencies\glm;$(ProjectDir)\ExternalDependencies\SDL2-2.0.3\include;$(ProjectDir)\ExternalDependencies\glew-1.11.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\ExternalDependencies\glm;$(ProjectDir)\ExternalDependencies\SDL2-2.0.3\include;$(ProjectDir)\ExternalDependencies\glew-1.11.0\include;$(ProjectDir)\ExternalDependencies\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -73,7 +73,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)\ExternalDependencies\glm;$(ProjectDir)\ExternalDependencies\SDL2-2.0.3\include;$(ProjectDir)\ExternalDependencies\glew-1.11.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\ExternalDependencies\glm;$(ProjectDir)\ExternalDependencies\SDL2-2.0.3\include;$(ProjectDir)\ExternalDependencies\glew-1.11.0\include;$(ProjectDir)\ExternalDependencies\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -89,15 +89,17 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Display.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="Texture.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\ambient.fsh" />
-    <None Include="Resources\ambient.vsh" />
+    <None Include="Resources\shaders\ambient.fsh" />
+    <None Include="Resources\shaders\ambient.vsh" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

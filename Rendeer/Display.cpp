@@ -17,7 +17,6 @@ Display::Display(const std::string& title = "Default title",
 
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
 
-
 	window = SDL_CreateWindow(title.c_str(),
 		SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
 		width, height,
@@ -26,6 +25,7 @@ Display::Display(const std::string& title = "Default title",
 	glContext = SDL_GL_CreateContext(window);
 
 	// Must be done after gl context is aquired
+	glewExperimental = GL_TRUE;
 	if (glewInit() != GLEW_OK)
 	{
 		std::cerr << "GLEW Error!" << std::endl;
