@@ -3,14 +3,16 @@
 #include <fstream>
 #include <string>
 
+#define GLM_FORCE_RADIANS
+#include <glm/glm.hpp>
 #include <SDL.h>
 #include <GL/glew.h>
-#include <glm/glm.hpp>
 
 #include "Display.h"
 #include "Shader.h"
 #include "Mesh.h"
 #include "Texture.h"
+#include "BasicRenderer.h"
 
 #define WINDOW_WIDTH 640
 #define WINDOW_HEIGHT 480
@@ -28,9 +30,9 @@ extern "C" int main(int argc, char *argv[])
 	int indices[3] = { 0, 1, 2 };
 
 	Mesh triangle(vertices, 3, indices, 3);
-
 	Texture dogTexture("textures/dog.png");
-	Texture manTexture("textures/photo.jpg");
+
+	//BasicRenderer renderer(&display);
 
 	//////////
 	// LOOP //
@@ -48,6 +50,9 @@ extern "C" int main(int argc, char *argv[])
 			}
 		}
 
+		// TODO: Get this working.
+		//renderer.Render(&triangle, 1);
+		
 		dogTexture.Bind(0);
 		GLuint uniformLocation = glGetUniformLocation(ambientShader.GetHandle(), "u_diffuse");
 		glUniform1i(uniformLocation, 0);
