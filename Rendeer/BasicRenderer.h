@@ -7,19 +7,20 @@
 #include "Display.h"
 #include "Shader.h"
 #include "Mesh.h"
+#include "RenderObject.h"
 
 class BasicRenderer
 {
 public:
-	BasicRenderer(Display& mainDisplay);
-	~BasicRenderer();
+	BasicRenderer(Display& display);
+	
+	// Isn't needed since display is unowned by this class
+	//~BasicRenderer();
 
-	// TODO: Wrap Mesh in some object that holds things like a material and a transform!
-	//void Render(const PerspectiveCamera& camera,
-	//	RenderableObject *objects, int objectCount) const;
+	void Render(/*const PerspectiveCamera& camera,*/RenderObject *objects, int objectCount);
 
 private:
-	Display* mainDisplay;
+	Display* display;
 
 	Shader shader;
 };

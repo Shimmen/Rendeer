@@ -13,9 +13,10 @@
 #include "Mesh.h"
 #include "Texture.h"
 #include "BasicRenderer.h"
+#include "RenderObject.h"
 
-#define WINDOW_WIDTH 640
-#define WINDOW_HEIGHT 480
+#define WINDOW_WIDTH 1280
+#define WINDOW_HEIGHT 720
 
 extern "C" int main(int argc, char *argv[])
 {
@@ -28,11 +29,12 @@ extern "C" int main(int argc, char *argv[])
 		Vertex(glm::vec3(0.5f, -0.5f, 0.0f),  glm::vec2(1.0, 0.0))
 	};
 	int indices[3] = { 0, 1, 2 };
+	Mesh triangleMesh(vertices, 3, indices, 3);
+	RenderObject triangleObject(triangleMesh);
 
-	Mesh triangle(vertices, 3, indices, 3);
 	Texture dogTexture("textures/dog.png");
 
-	//BasicRenderer renderer(&display);
+	BasicRenderer renderer(display);
 
 	//////////
 	// LOOP //
@@ -50,15 +52,15 @@ extern "C" int main(int argc, char *argv[])
 			}
 		}
 
-		// TODO: Get this working.
-		//renderer.Render(&triangle, 1);
+		// TODO: Get this working. (It requires a RenderObject with a material so that it can encapsulate its own texture etc.)
+		//renderer.Render(&triangleObject, 1);
 		
 		dogTexture.Bind(0);
 		GLuint uniformLocation = glGetUniformLocation(ambientShader.GetHandle(), "u_diffuse");
 		glUniform1i(uniformLocation, 0);
 
 		ambientShader.Bind();
-		triangle.Render();
+		triangleObject.Render(ambientShader);
 
 		display.SwapBuffers();
 		display.Clear(0, 0, 0, 1);
