@@ -11,18 +11,16 @@
 class BasicRenderer
 {
 public:
-	BasicRenderer(Display* mainDisplay);
+	BasicRenderer(Display& mainDisplay);
 	~BasicRenderer();
 
 	// TODO: Wrap Mesh in some object that holds things like a material and a transform!
-	//void Render(Mesh *meshes, int meshCount) const;
-
-	inline PerspectiveCamera *GetCamera() const { return camera; }
+	//void Render(const PerspectiveCamera& camera,
+	//	RenderableObject *objects, int objectCount) const;
 
 private:
-	PerspectiveCamera *camera;
-	Shader *shader;
+	Display* mainDisplay;
 
-	Display *mainDisplay;
+	Shader shader;
 };
 

@@ -14,11 +14,6 @@ PerspectiveCamera::PerspectiveCamera(const glm::vec3& position, const glm::vec3&
 {
 }
 
-
-PerspectiveCamera::~PerspectiveCamera()
-{
-}
-
 glm::mat4 PerspectiveCamera::GetViewMatrix() const
 {
 	glm::mat4 view;

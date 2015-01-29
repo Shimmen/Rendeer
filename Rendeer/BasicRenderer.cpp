@@ -1,20 +1,18 @@
 #include "BasicRenderer.h"
 
 
-BasicRenderer::BasicRenderer(Display* mainDisplay)
+BasicRenderer::BasicRenderer(Display& mainDisplay)
+	: shader("shaders/ambient.vsh", "shaders/ambient.fsh")
 {
-	this->mainDisplay = mainDisplay;
-
-	this->shader = new Shader("shaders/ambient.vsh", "shaders/ambient.fsh");
+	this->mainDisplay = &mainDisplay;
 }
 
 BasicRenderer::~BasicRenderer()
 {
-	delete shader;
 }
 
 /*
-void BasicRenderer::Render(RenderableObject *objects, int objectCount) const
+void BasicRenderer::Render(const PerspectiveCamera& camera, RenderableObject *objects, int objectCount)
 {
 	shader->Bind();
 

@@ -23,7 +23,7 @@ private:
 };
 
 
-#define MESH_BUFFER_COUNT 2
+#define MESH_BUFFER_COUNT 3
 enum MeshBuffers
 {
 	POSITION_BUFFER,
