@@ -10,8 +10,18 @@ RenderObject::RenderObject(const Mesh& mesh)
 
 void RenderObject::Render(const Shader& shader)
 {
-	// TODO: Make material!
-	//material.UpdateUniforms(shader);
+	// TODO: Think about this!
+	/*
+	Two possible solutions:
 	
+	Solution 1:
+	transform.UpdateUniforms(shader);
+	material.UpdateUniforms(shader);
+
+	Solution 2:
+	shader.UpdateUniforms(transform, material);
+
+	*/
+
 	mesh.Render();
 }

@@ -3,6 +3,7 @@
 #include <string>
 
 #include "Transform.h"
+#include "Material.h"
 #include "Mesh.h"
 
 class Shader;
@@ -20,6 +21,5 @@ public:
 private:
 	Transform transform;
 	Mesh mesh;
-
-	//Material material;
+	Material material;
 };
