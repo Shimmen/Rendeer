@@ -9,15 +9,23 @@
 class Display
 {
 public:
-	Display(const std::string& title, int width, int height);
+	Display(const std::string& title = "Default title",
+		int width = 1280, int height = 720, bool fullscreen = false);
 	~Display();
 
 	// Don't implement these, default behaviour is desireable
 	// Display(const Display& source);
 	// Display& operator=(const Display& source);
 
-	void Clear(float r, float g, float b, float a);
-	void SwapBuffers();
+
+	void SetClearColor(float r, float g, float b, float a) const;
+	void SetClearDepth(double depth) const;
+	void Clear(GLenum buffersToClearMask) const;
+
+	inline void SwapBuffers() const
+	{
+		SDL_GL_SwapWindow(window);
+	}
 
 private:
 	SDL_Window *window;

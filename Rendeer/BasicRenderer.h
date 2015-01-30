@@ -1,23 +1,22 @@
 #pragma once
 
-#include <GL/glew.h>
-#include <SDL.h>
-
-#include "PerspectiveCamera.h"
-#include "Display.h"
 #include "Shader.h"
-#include "Mesh.h"
-#include "RenderObject.h"
+
+class PerspectiveCamera;
+class Display;
+class Entity;
+class Shader;
+class Mesh;
 
 class BasicRenderer
 {
 public:
 	BasicRenderer(Display& display);
 	
-	// Isn't needed since display is unowned by this class
+	// Isn't needed since display is not owned by this class
 	//~BasicRenderer();
 
-	void Render(/*const PerspectiveCamera& camera,*/RenderObject *objects, int objectCount);
+	void Render(/*const PerspectiveCamera& camera,*/Entity *entities, int entityCount);
 
 private:
 	Display* display;

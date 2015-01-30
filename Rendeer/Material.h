@@ -3,14 +3,10 @@
 class Shader;
 class Texture;
 
-class Material
+struct Material
 {
-public:
-	Material();
-	~Material();
-
-	void UpdateUniforms(const Shader& shader);
-
+	// Not needed since Material doesn't own its pointer members
+	// ~Material();
 
 	// No real need to restrict access to these:
 	Texture *diffuseTexture;

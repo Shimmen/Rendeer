@@ -7,7 +7,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
-Texture::Texture(const std::string& filename)
+Texture::Texture(const std::string& filename, GLint magFilter, GLint wrapMode)
 {
 	glGenTextures(1, &textureHandle);
 	glBindTexture(GL_TEXTURE_2D, textureHandle);
@@ -21,11 +21,10 @@ Texture::Texture(const std::string& filename)
 	{
 		internalFormat = (componentCount == 3) ? GL_RGB : GL_RGBA;
 
-		// Inject these depencencies!
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapMode);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapMode);
 
 		glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0,
 			internalFormat, GL_UNSIGNED_BYTE, pixels);
@@ -42,6 +41,24 @@ Texture::Texture(const std::string& filename)
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
+Texture::Texture(int width, int height, GLenum format,
+	GLint wrapMode, GLint magFilter, unsigned char* pixels)
+{
+	glGenTextures(1, &textureHandle);
+	glBindTexture(GL_TEXTURE_2D, textureHandle);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapMode);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapMode);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0,
+		format, GL_UNSIGNED_BYTE, (void *)pixels);
+
+	glGenerateMipmap(GL_TEXTURE_2D);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+}
 
 Texture::~Texture()
 {
@@ -56,7 +73,7 @@ void Texture::Bind()
 
 void Texture::Bind(int textureTarget)
 {
-	// 32 is the default maximum active textures
+	// 32 is the maximum active textures possible/allowed
 	assert(textureTarget >= 0 && textureTarget < 32);
 
 	glActiveTexture(GL_TEXTURE0 + textureTarget);

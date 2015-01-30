@@ -10,11 +10,6 @@ Transform::Transform(
 {
 }
 
-void Transform::UpdateUniforms(const Shader& shader)
-{
-	// TODO: Set uniform for ModelMatrix!
-}
-
 glm::mat4 Transform::GetModelMatrix() const
 {
 	glm::mat4 scaleMatrix = glm::scale(glm::mat4(1.0), scale);

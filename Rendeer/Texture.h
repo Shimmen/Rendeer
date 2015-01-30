@@ -8,13 +8,14 @@
 class Texture
 {
 public:
-	Texture(const std::string& filename);
+	Texture(const std::string& filename, GLint magFilter = GL_LINEAR, GLint wrapMode = GL_REPEAT);
+	Texture(int width, int height, GLenum format, GLint wrapMode, GLint magFilter, unsigned char* pixels);
 	~Texture();
 
 	void Bind();
 	void Bind(int textureTarget);
 
-	inline GLuint GetHandle() { return textureHandle; }
+	inline GLuint GetHandle() const { return textureHandle; }
 
 private:
 	GLuint textureHandle;

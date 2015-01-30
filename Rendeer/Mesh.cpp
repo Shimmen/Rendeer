@@ -73,5 +73,4 @@ void Mesh::Render()
 {
 	glBindVertexArray(vertexArray);
 	glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
 }

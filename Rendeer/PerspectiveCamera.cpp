@@ -1,7 +1,6 @@
 #include "PerspectiveCamera.h"
 
 #include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 
 PerspectiveCamera::PerspectiveCamera(const glm::vec3& position, const glm::vec3& rotation,
 	float aspectRatio, float fov = 45.0, float near = 1.0, float far = 1000.0) :
@@ -16,7 +15,7 @@ PerspectiveCamera::PerspectiveCamera(const glm::vec3& position, const glm::vec3&
 
 glm::mat4 PerspectiveCamera::GetViewMatrix() const
 {
-	glm::mat4 view;
+	glm::mat4 view(1.0);
 
 	view = glm::translate(view, -position);
 

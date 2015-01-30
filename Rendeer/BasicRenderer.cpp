@@ -1,27 +1,33 @@
 #include "BasicRenderer.h"
 
+#include <GL/glew.h>
+
+#include "Display.h"
+#include "Entity.h"
+#include "Texture.h"
 
 BasicRenderer::BasicRenderer(Display& display)
-	: shader("shaders/ambient.vsh", "shaders/ambient.fsh")
+	: shader("shaders/no_light.vsh", "shaders/no_light.fsh")
 {
 	this->display = &display;
+
+	display.SetClearColor(0, 0, 0, 1);
 }
 
-void BasicRenderer::Render(/*const PerspectiveCamera& camera,*/RenderObject *objects, int objectCount)
+void BasicRenderer::Render(/*const PerspectiveCamera& camera,*/Entity *entities, int entityCount)
 {
-	display->Clear(0, 0, 0, 1);
+	display->Clear(GL_COLOR_BUFFER_BIT);
 
 	shader.Bind();
 
-	for (int i = 0; i < objectCount; ++i)
+	for (int i = 0; i < entityCount; ++i)
 	{
-		RenderObject object = objects[i];
+		Entity entity = entities[i];
 
-		// The object has its own:
-		// - Transform (to convert it to world space)
-		// - Material (things like textures etc.)
-		// - Mesh (the actual vertex array to render)
-		object.Render(shader);
+		entity.GetMaterial()->diffuseTexture->Bind(0);
+		shader.SetUniform("u_diffuse", 0);
+
+		entity.GetMesh()->Render();
 	}
 
 	display->SwapBuffers();

@@ -14,8 +14,6 @@ public:
 		glm::vec3 scale    = glm::vec3(1.0, 1.0, 1.0)
 	);
 
-	void UpdateUniforms(const Shader& shader);
-
 	glm::mat4 GetModelMatrix() const;
 
 	// TODO: Getters and setters!

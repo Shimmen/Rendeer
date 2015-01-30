@@ -86,12 +86,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BasicRenderer.cpp" />
-    <ClCompile Include="Material.cpp" />
     <ClCompile Include="PerspectiveCamera.cpp" />
     <ClCompile Include="Display.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Mesh.cpp" />
-    <ClCompile Include="RenderObject.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Transform.cpp" />
@@ -102,14 +100,15 @@
     <ClInclude Include="PerspectiveCamera.h" />
     <ClInclude Include="Display.h" />
     <ClInclude Include="Mesh.h" />
-    <ClInclude Include="RenderObject.h" />
+    <ClInclude Include="Entity.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Transform.h" />
+    <ClInclude Include="Uniform.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\shaders\ambient.fsh" />
-    <None Include="Resources\shaders\ambient.vsh" />
+    <None Include="Resources\shaders\no_light.fsh" />
+    <None Include="Resources\shaders\no_light.vsh" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
