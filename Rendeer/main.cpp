@@ -43,7 +43,8 @@ extern "C" int main(int argc, char *argv[])
 		10, 20, 200, 100, 85, 240, 47, 12, 255, 0, 143, 255,
 		100, 85, 240, 47, 12, 255, 0, 143, 255, 10, 20, 200
 	};
-	Texture blueTexture(4, 4, GL_RGB, GL_REPEAT, GL_NEAREST, bluePixels);
+	Texture blueTexture(4, 4, GL_RGB, GL_REPEAT,
+		GL_NEAREST, GL_NEAREST_MIPMAP_NEAREST, bluePixels);
 	Material blueMaterial;
 	blueMaterial.diffuseTexture = &blueTexture;
 

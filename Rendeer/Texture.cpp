@@ -42,12 +42,12 @@ Texture::Texture(const std::string& filename, GLint magFilter, GLint wrapMode)
 }
 
 Texture::Texture(int width, int height, GLenum format,
-	GLint wrapMode, GLint magFilter, unsigned char* pixels)
+	GLint wrapMode, GLint magFilter, GLint minFilter, unsigned char* pixels)
 {
 	glGenTextures(1, &textureHandle);
 	glBindTexture(GL_TEXTURE_2D, textureHandle);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapMode);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapMode);
@@ -55,7 +55,12 @@ Texture::Texture(int width, int height, GLenum format,
 	glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0,
 		format, GL_UNSIGNED_BYTE, (void *)pixels);
 
-	glGenerateMipmap(GL_TEXTURE_2D);
+	// If minFilter is mipmap compatible, make mipmaps!
+	if (minFilter == GL_LINEAR_MIPMAP_LINEAR || minFilter == GL_LINEAR_MIPMAP_NEAREST ||
+		minFilter == GL_NEAREST_MIPMAP_LINEAR || minFilter == GL_NEAREST_MIPMAP_NEAREST)
+	{
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
