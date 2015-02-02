@@ -23,17 +23,21 @@ extern "C" int main(int argc, char *argv[])
 	BasicRenderer renderer(display);
 
 	// MESH
-	Vertex vertices[4] = {
-		Vertex(glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec2(0.0, 0.0)), // bot left
-		Vertex(glm::vec3(-0.5f, +0.5f, 0.0f), glm::vec2(0.0, 1.0)), // top left
-		Vertex(glm::vec3(+0.5f, +0.5f, 0.0f), glm::vec2(1.0, 1.0)), // top right
-		Vertex(glm::vec3(+0.5f, -0.5f, 0.0f), glm::vec2(1.0, 0.0)), // bot right
+	Vertex vertices[6] = {
+		Vertex(glm::vec3(-1, -1, 0), glm::vec2(0.0, 0.0)),  // bot left
+		Vertex(glm::vec3(-1, +1, 0), glm::vec2(0.0, 1.0)),  // top left
+
+		Vertex(glm::vec3(+0, -1, -1), glm::vec2(1.0, 0.0)), // bot mid
+		Vertex(glm::vec3(+0, +1, -1), glm::vec2(1.0, 1.0)), // top mid
+		
+		Vertex(glm::vec3(+1, -1, 0), glm::vec2(2.0, 0.0)),  // bot right
+		Vertex(glm::vec3(+1, +1, 0), glm::vec2(2.0, 1.0))   // top right
 	};
-	int indices[6] = { 0, 1, 2,  0, 2, 3 };
-	Mesh triangleMesh(vertices, 4, indices, 6);
+	int indices[12] = { 0, 1, 2,  1, 3, 2,  2, 3, 5,  2, 5, 4 };
+	Mesh triangleMesh(vertices, 6, indices, 12);
 
 	// DOG MATERIAL
-	Texture dogTexture("textures/dog.png", GL_LINEAR);
+	Texture dogTexture("textures/dog.png", GL_LINEAR, GL_REPEAT);
 	Material dogMaterial;
 	dogMaterial.diffuseTexture = &dogTexture;
 
@@ -50,11 +54,11 @@ extern "C" int main(int argc, char *argv[])
 	blueMaterial.diffuseTexture = &blueTexture;
 
 	// ENTITY
-	Entity triangleEntity(triangleMesh, dogMaterial /*blueMaterial*/);
-	triangleEntity.GetTransform()->SetPosition(glm::vec3(0, 0, 0));
+	Entity angleEntity(triangleMesh, dogMaterial /*blueMaterial*/);
+	angleEntity.GetTransform()->SetPosition(glm::vec3(0, 0, 0));
 
 	// CAMERA
-	PerspectiveCamera camera(glm::vec3(0, 0, -1.5), glm::vec3(0, 0, 0),
+	PerspectiveCamera camera(glm::vec3(0, 0, -3.5), glm::vec3(0, 0, 0),
 		45.0f, 0.1f, 1000.0f, display.GetAspectRatio());
 
 	//////////
@@ -75,10 +79,10 @@ extern "C" int main(int argc, char *argv[])
 			}
 		}
 
-		triangleEntity.GetTransform()->SetRotation(glm::vec3(0, rotation, 0));
+		angleEntity.GetTransform()->SetRotation(glm::vec3(0, rotation, 0));
 		rotation += 1.0f;
 
-		renderer.Render(camera, &triangleEntity, 1);
+		renderer.Render(camera, &angleEntity, 1);
 	}
 
 	return 0;

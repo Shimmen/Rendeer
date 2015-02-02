@@ -15,8 +15,14 @@ BasicRenderer::BasicRenderer(Display& display)
 
 void BasicRenderer::Render(const PerspectiveCamera& camera, Entity *entities, int entityCount)
 {
+	glEnable(GL_DEPTH_TEST);
+
 	display->SetClearColor(0, 0, 0, 1);
-	display->Clear(GL_COLOR_BUFFER_BIT);
+	display->Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	//glEnable(GL_CULL_FACE);
+	glFrontFace(GL_CW);
+	glCullFace(GL_BACK);
 
 	shader.Bind();
 
