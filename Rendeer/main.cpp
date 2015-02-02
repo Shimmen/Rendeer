@@ -11,6 +11,7 @@
 #include "Texture.h"
 #include "BasicRenderer.h"
 #include "Entity.h"
+#include "PerspectiveCamera.h"
 
 #define WINDOW_WIDTH 1280
 #define WINDOW_HEIGHT 720
@@ -50,10 +51,17 @@ extern "C" int main(int argc, char *argv[])
 
 	// ENTITY
 	Entity triangleEntity(triangleMesh, dogMaterial /*blueMaterial*/);
+	triangleEntity.GetTransform()->SetPosition(glm::vec3(0, 0, 0));
+
+	// CAMERA
+	PerspectiveCamera camera(glm::vec3(0, 0, -1.5), glm::vec3(0, 0, 0),
+		45.0f, 0.1f, 1000.0f, display.GetAspectRatio());
 
 	//////////
 	// LOOP //
 	//////////
+
+	float rotation = 0;
 
 	bool shouldExit = false;
 	while (!shouldExit)
@@ -67,7 +75,10 @@ extern "C" int main(int argc, char *argv[])
 			}
 		}
 
-		renderer.Render(&triangleEntity, 1);
+		triangleEntity.GetTransform()->SetRotation(glm::vec3(0, rotation, 0));
+		rotation += 1.0f;
+
+		renderer.Render(camera, &triangleEntity, 1);
 	}
 
 	return 0;

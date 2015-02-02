@@ -5,6 +5,10 @@
 
 class Shader;
 
+/*
+Defines a left-handed coordinate system.
+*/
+
 class Transform
 {
 public:
@@ -16,7 +20,40 @@ public:
 
 	glm::mat4 GetModelMatrix() const;
 
-	// TODO: Getters and setters!
+	// TODO: Modifiers (like translate)!
+
+	inline glm::vec3 GetPosition() const
+	{
+		return position;
+	}
+	
+	inline glm::vec3 GetRotation() const
+	{
+		return rotation;
+	}
+
+	inline glm::vec3 GetScale() const
+	{
+		return scale;
+	}
+
+	inline Transform* SetPosition(const glm::vec3& newPosition)
+	{
+		this->position = newPosition;
+		return this;
+	}
+	
+	inline Transform* SetRotation(const glm::vec3& newRotation)
+	{
+		this->rotation = glm::radians(newRotation);
+		return this;
+	}
+	
+	inline Transform* SetScale(const glm::vec3& newScale)
+	{
+		this->scale = newScale;
+		return this;
+	}
 
 private:
 	glm::vec3 position;

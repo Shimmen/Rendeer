@@ -17,6 +17,24 @@ public:
 	// Display(const Display& source);
 	// Display& operator=(const Display& source);
 
+	inline float GetAspectRatio() const
+	{
+		return (float)GetWidth() / (float)GetHeight();
+	}
+
+	inline int GetWidth() const
+	{
+		int width;
+		SDL_GetWindowSize(window, &width, NULL);
+		return width;
+	}
+
+	inline int GetHeight() const
+	{
+		int height;
+		SDL_GetWindowSize(window, NULL, &height);
+		return height;
+	}
 
 	void SetClearColor(float r, float g, float b, float a) const;
 	void SetClearDepth(double depth) const;

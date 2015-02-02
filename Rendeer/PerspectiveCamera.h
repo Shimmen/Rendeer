@@ -2,6 +2,12 @@
 
 #include <glm/glm.hpp>
 
+#include "Transform.h"
+
+/*
+A perspective camera looking down the +Z axis.
+*/
+
 class PerspectiveCamera
 {
 public:
@@ -12,8 +18,7 @@ public:
 	glm::mat4 GetProjectionMatrix() const;
 
 private:
-	glm::vec3 position;
-	glm::vec3 rotation;
+	Transform transform;
 
 	float fov;
 	float nearClippingPlane, farClippingPlane;

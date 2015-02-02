@@ -5,17 +5,17 @@
 #include "Display.h"
 #include "Entity.h"
 #include "Texture.h"
+#include "PerspectiveCamera.h"
 
 BasicRenderer::BasicRenderer(Display& display)
-	: shader("shaders/no_light.vsh", "shaders/no_light.fsh")
+	: shader("shaders/BasicRenderer/no_light.vsh", "shaders/BasicRenderer/no_light.fsh")
 {
 	this->display = &display;
-
-	display.SetClearColor(0, 0, 0, 1);
 }
 
-void BasicRenderer::Render(/*const PerspectiveCamera& camera,*/Entity *entities, int entityCount)
+void BasicRenderer::Render(const PerspectiveCamera& camera, Entity *entities, int entityCount)
 {
+	display->SetClearColor(0, 0, 0, 1);
 	display->Clear(GL_COLOR_BUFFER_BIT);
 
 	shader.Bind();
@@ -26,6 +26,9 @@ void BasicRenderer::Render(/*const PerspectiveCamera& camera,*/Entity *entities,
 
 		entity.GetMaterial()->diffuseTexture->Bind(0);
 		shader.SetUniform("u_diffuse", 0);
+
+		glm::mat4 mvpMatrix = camera.GetProjectionMatrix() * camera.GetViewMatrix() * entity.GetTransform()->GetModelMatrix();
+		shader.SetUniform("u_mvp_matrix", mvpMatrix);
 
 		entity.GetMesh()->Render();
 	}

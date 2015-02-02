@@ -107,8 +107,8 @@
     <ClInclude Include="Uniform.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\shaders\no_light.fsh" />
-    <None Include="Resources\shaders\no_light.vsh" />
+    <None Include="Resources\shaders\BasicRenderer\no_light.fsh" />
+    <None Include="Resources\shaders\BasicRenderer\no_light.vsh" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

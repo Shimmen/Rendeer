@@ -16,7 +16,7 @@ public:
 	// Isn't needed since display is not owned by this class
 	//~BasicRenderer();
 
-	void Render(/*const PerspectiveCamera& camera,*/Entity *entities, int entityCount);
+	void Render(const PerspectiveCamera& camera, Entity *entities, int entityCount);
 
 private:
 	Display* display;

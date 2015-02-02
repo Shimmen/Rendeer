@@ -73,10 +73,10 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\shaders\no_light.fsh">
+    <None Include="Resources\shaders\BasicRenderer\no_light.fsh">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="Resources\shaders\no_light.vsh">
+    <None Include="Resources\shaders\BasicRenderer\no_light.vsh">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
