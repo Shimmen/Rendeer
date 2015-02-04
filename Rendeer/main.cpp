@@ -66,6 +66,8 @@ extern "C" int main(int argc, char *argv[])
 	//////////
 
 	float rotation = 0;
+	float rotationCamY = 0;
+	float rotationCamX = 0;
 
 	bool shouldExit = false;
 	while (!shouldExit)
@@ -79,8 +81,12 @@ extern "C" int main(int argc, char *argv[])
 			}
 		}
 
-		angleEntity.GetTransform()->SetRotation(glm::vec3(0, rotation, 0));
-		rotation += 1.0f;
+		//angleEntity.GetTransform()->SetRotation(glm::vec3(0, rotation * 3, 0));
+		//rotation += 1.0f;
+
+		//camera.GetTransform()->SetRotation(glm::vec3(rotationCamX, rotationCamY, 0));
+		//rotationCamY = sinf(rotation / 40.0f) * 40.0f;
+		//rotationCamX = cosf(rotation / 40.0f) * 40.0f;
 
 		renderer.Render(camera, &angleEntity, 1);
 	}
