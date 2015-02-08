@@ -86,21 +86,27 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BasicRenderer.cpp" />
+    <ClCompile Include="DeferredRenderer.cpp" />
+    <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="PerspectiveCamera.cpp" />
     <ClCompile Include="Display.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="ScreenAlignedQuad.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasicRenderer.h" />
+    <ClInclude Include="DeferredRenderer.h" />
+    <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="PerspectiveCamera.h" />
     <ClInclude Include="Display.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Entity.h" />
+    <ClInclude Include="ScreenAlignedQuad.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Transform.h" />
@@ -109,6 +115,8 @@
   <ItemGroup>
     <None Include="Resources\shaders\BasicRenderer\no_light.fsh" />
     <None Include="Resources\shaders\BasicRenderer\no_light.vsh" />
+    <None Include="Resources\shaders\DeferredRenderer\screen_aligned_quad.vsh" />
+    <None Include="Resources\shaders\DeferredRenderer\texturize.fsh" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

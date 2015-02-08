@@ -37,8 +37,6 @@ Texture::Texture(const std::string& filename, GLint magFilter, GLint wrapMode)
 	{
 		std::cerr << "Error: could not load texture with name: " << filename << std::endl;
 	}
-
-	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 Texture::Texture(int width, int height, GLenum format,
@@ -61,8 +59,6 @@ Texture::Texture(int width, int height, GLenum format,
 	{
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}
-
-	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 Texture::~Texture()

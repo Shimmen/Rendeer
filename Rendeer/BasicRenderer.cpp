@@ -8,17 +8,18 @@
 #include "PerspectiveCamera.h"
 
 BasicRenderer::BasicRenderer(Display& display)
-	: shader("shaders/BasicRenderer/no_light.vsh", "shaders/BasicRenderer/no_light.fsh")
+	: display(display)
+	, shader("shaders/BasicRenderer/no_light.vsh", "shaders/BasicRenderer/no_light.fsh")
 {
-	this->display = &display;
 }
 
 void BasicRenderer::Render(const PerspectiveCamera& camera, Entity *entities, int entityCount)
 {
 	glEnable(GL_DEPTH_TEST);
 
-	display->SetClearColor(0, 0, 0, 1);
-	display->Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	display.BindAsFrameBuffer();
+	glClearColor(0, 0, 0, 1);
+	display.Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	//glEnable(GL_CULL_FACE);
 	glFrontFace(GL_CW);
@@ -39,5 +40,7 @@ void BasicRenderer::Render(const PerspectiveCamera& camera, Entity *entities, in
 		entity.GetMesh()->Render();
 	}
 
-	display->SwapBuffers();
+
+
+	display.SwapBuffers();
 }

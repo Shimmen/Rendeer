@@ -26,7 +26,7 @@ public:
 	void Render(const PerspectiveCamera& camera, Entity *entities, int entityCount);
 
 private:
-	Display* display;
+	Display& display;
 
 	Shader shader;
 };

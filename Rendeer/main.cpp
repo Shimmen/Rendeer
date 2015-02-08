@@ -10,6 +10,7 @@
 #include "Mesh.h"
 #include "Texture.h"
 #include "BasicRenderer.h"
+#include "DeferredRenderer.h"
 #include "Entity.h"
 #include "PerspectiveCamera.h"
 
@@ -21,6 +22,7 @@ extern "C" int main(int argc, char *argv[])
 	// DISPLAY & RENDERER
 	Display display("Rendeer", WINDOW_WIDTH, WINDOW_HEIGHT, false);
 	BasicRenderer renderer(display);
+	DeferredRenderer deferredRenderer(display);
 
 	// MESH
 	Vertex vertices[6] = {
@@ -88,7 +90,8 @@ extern "C" int main(int argc, char *argv[])
 		//rotationCamY = sinf(rotation / 40.0f) * 40.0f;
 		//rotationCamX = cosf(rotation / 40.0f) * 40.0f;
 
-		renderer.Render(camera, &angleEntity, 1);
+		//renderer.Render(camera, &angleEntity, 1);
+		deferredRenderer.Render(camera, &angleEntity, 1);
 	}
 
 	return 0;

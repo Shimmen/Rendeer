@@ -48,23 +48,6 @@ Display::~Display()
 	SDL_Quit();
 }
 
-void Display::SetClearColor(float r, float g, float b, float a) const
-{
-	assert(r >= 0 && r <= 1 &&
-		g >= 0 && g <= 1 &&
-		b >= 0 && b <= 1 &&
-		a >= 0 && a <= 1);
-
-	glClearColor(r, g, b, a);
-}
-
-void Display::SetClearDepth(double depth) const
-{
-	assert(depth >= 0 && depth <= 1);
-
-	glClearDepth(depth);
-}
-
 void Display::Clear(GLenum buffersToClearMask) const
 {
 	assert((buffersToClearMask & GL_COLOR_BUFFER_BIT) != 0 ||

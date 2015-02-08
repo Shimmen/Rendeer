@@ -17,6 +17,11 @@ public:
 	// Display(const Display& source);
 	// Display& operator=(const Display& source);
 
+	inline void BindAsFrameBuffer() const
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
+
 	inline float GetAspectRatio() const
 	{
 		return (float)GetWidth() / (float)GetHeight();
@@ -36,8 +41,6 @@ public:
 		return height;
 	}
 
-	void SetClearColor(float r, float g, float b, float a) const;
-	void SetClearDepth(double depth) const;
 	void Clear(GLenum buffersToClearMask) const;
 
 	inline void SwapBuffers() const
