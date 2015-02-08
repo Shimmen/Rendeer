@@ -1,4 +1,4 @@
-#version 420
+#version 420 core
 
 layout(location=0) in vec2 a_position;
 

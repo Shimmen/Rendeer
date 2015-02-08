@@ -1,6 +1,6 @@
-#version 420
+#version 420 core
 
-out vec4 fragment_color;
+layout(location=0) out vec4 fragment_color;
 
 
 
