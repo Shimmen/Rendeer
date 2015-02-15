@@ -209,7 +209,7 @@ GLuint Shader::CreateShaderComponent(const std::string& source, GLenum shaderTyp
 	GLchar *strings[1];
 	strings[0] = (GLchar *)source.c_str();
 	GLint lengths[1];
-	lengths[0] = source.length();
+	lengths[0] = (GLint)source.length();
 
 	glShaderSource(shaderObject, 1, strings, lengths);
 

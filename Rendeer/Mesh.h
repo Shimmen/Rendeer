@@ -36,7 +36,7 @@ class Mesh
 {
 public:
 	Mesh(Vertex *vertices, unsigned int vertexCount, int *indices, unsigned int indexCount);
-	Mesh(const std::string& fileName);
+	Mesh(const std::string& fileName, bool genSmoothNormals);
 		
 	void Render();
 

@@ -63,6 +63,10 @@ extern "C" int main(int argc, char *argv[])
 	PerspectiveCamera camera(glm::vec3(0, 0, -3.5), glm::vec3(0, 0, 0),
 		45.0f, 0.1f, 1000.0f, display.GetAspectRatio());
 
+
+
+	Mesh teapotMesh("models/teapot.obj", true);
+
 	//////////
 	// LOOP //
 	//////////
