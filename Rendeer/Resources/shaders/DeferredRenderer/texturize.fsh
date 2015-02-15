@@ -4,7 +4,7 @@ layout(location=0) out vec4 fragment_color;
 
 
 
-in vec2 v_tex_coord;
+noperspective in vec2 v_tex_coord;
 
 uniform sampler2D u_texture;
 

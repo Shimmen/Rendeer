@@ -6,6 +6,8 @@
 #include <glm/glm.hpp>
 #include <GL/glew.h>
 
+#include "Model.h"
+
 class Vertex
 {
 public:
@@ -35,8 +37,9 @@ enum MeshBuffers
 class Mesh
 {
 public:
-	Mesh(Vertex *vertices, unsigned int vertexCount, int *indices, unsigned int indexCount);
-	Mesh(const std::string& fileName, bool genSmoothNormals);
+	Mesh(const Model& model);
+	// Should just serve a shortcut through the Model class
+	//Mesh(const std::string& fileName, bool genSmoothNormals);
 		
 	void Render();
 
@@ -48,6 +51,7 @@ private:
 
 	unsigned int indexCount;
 
+	GLuint CreateMesh(const Model& model);
 	GLuint CreateMesh(Vertex *vertices, unsigned int vertexCount,
 		int *indices, unsigned int numIndices);
 };

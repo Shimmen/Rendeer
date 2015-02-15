@@ -5,7 +5,7 @@ layout(location=0) out vec3 fragment_color;
 // we draw into the correct locations!
 
 
-in vec2 v_tex_coord;
+noperspective in vec2 v_tex_coord;
 
 uniform sampler2D u_diffuse;
 

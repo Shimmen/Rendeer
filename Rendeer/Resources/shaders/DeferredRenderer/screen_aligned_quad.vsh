@@ -2,7 +2,7 @@
 
 layout(location=0) in vec2 a_position;
 
-out vec2 v_tex_coord;
+noperspective out vec2 v_tex_coord;
 
 void main()
 {

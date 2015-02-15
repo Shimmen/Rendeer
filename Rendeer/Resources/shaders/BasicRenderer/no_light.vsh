@@ -5,7 +5,7 @@ layout(location=1) in vec2 a_tex_coord;
 
 uniform mat4 u_mvp_matrix;
 
-out vec2 v_tex_coord;
+noperspective out vec2 v_tex_coord;
 
 void main()
 {

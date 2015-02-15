@@ -88,6 +88,7 @@
     <ClCompile Include="BasicRenderer.cpp" />
     <ClCompile Include="DeferredRenderer.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
+    <ClCompile Include="Model.cpp" />
     <ClCompile Include="PerspectiveCamera.cpp" />
     <ClCompile Include="Display.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -102,6 +103,7 @@
     <ClInclude Include="DeferredRenderer.h" />
     <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="Material.h" />
+    <ClInclude Include="Model.h" />
     <ClInclude Include="PerspectiveCamera.h" />
     <ClInclude Include="Display.h" />
     <ClInclude Include="Mesh.h" />
