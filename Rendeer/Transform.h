@@ -2,6 +2,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/quaternion.hpp>
 
 class Shader;
 
@@ -12,10 +13,18 @@ Defines a left-handed coordinate system.
 class Transform
 {
 public:
+	/*
 	Transform(
 		glm::vec3 position = glm::vec3(0.0, 0.0, 0.0),
 		glm::vec3 rotation = glm::vec3(0.0, 0.0, 0.0),
-		glm::vec3 scale    = glm::vec3(1.0, 1.0, 1.0)
+		float scale = 1.0f
+	);
+	*/
+
+	Transform(
+		glm::vec3 position = glm::vec3(0.0, 0.0, 0.0),
+		glm::quat rotation = glm::angleAxis(0.0f, glm::vec3(0.0)),
+		float scale = 1.0f
 	);
 
 	glm::mat4 GetModelMatrix() const;
@@ -27,12 +36,12 @@ public:
 		return position;
 	}
 	
-	inline glm::vec3 GetRotation() const
+	inline glm::quat GetRotation() const
 	{
 		return rotation;
 	}
 
-	inline glm::vec3 GetScale() const
+	inline float GetScale() const
 	{
 		return scale;
 	}
@@ -43,13 +52,19 @@ public:
 		return this;
 	}
 	
-	inline Transform* SetRotation(const glm::vec3& newRotation)
+	inline Transform* SetRotation(const glm::vec3 axis, float angle)
 	{
-		this->rotation = glm::radians(newRotation);
+		this->rotation = glm::angleAxis(angle, glm::normalize(axis));
+		return this;
+	}
+
+	inline Transform* SetRotation(const glm::quat newRotation)
+	{
+		this->rotation = glm::normalize(newRotation);
 		return this;
 	}
 	
-	inline Transform* SetScale(const glm::vec3& newScale)
+	inline Transform* SetScale(float newScale)
 	{
 		this->scale = newScale;
 		return this;
@@ -57,6 +72,6 @@ public:
 
 private:
 	glm::vec3 position;
-	glm::vec3 rotation;
-	glm::vec3 scale;
+	glm::quat rotation;
+	float scale;
 };

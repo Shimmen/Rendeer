@@ -72,7 +72,7 @@ extern "C" int main(int argc, char *argv[])
 	angleEntity.GetTransform()->SetPosition(glm::vec3(0, 0, 0));
 
 	// CAMERA
-	PerspectiveCamera camera(glm::vec3(0, 0.5, -4.0), glm::vec3(0, 0, 0),
+	PerspectiveCamera camera(glm::vec3(0, 3, -4), glm::angleAxis(0.5f, glm::vec3(1, 0, 0)),
 		45.0f, 0.1f, 1000.0f, display.GetAspectRatio());
 
 
@@ -83,7 +83,7 @@ extern "C" int main(int argc, char *argv[])
 	Material teapotMaterial;
 	teapotMaterial.diffuseTexture = &teapotTexture;
 	Entity teapot(teapotMesh, teapotMaterial);
-	teapot.GetTransform()->SetScale(glm::vec3(0.01, 0.01, 0.01));
+	teapot.GetTransform()->SetScale(0.01f);
 	teapot.GetTransform()->SetPosition(glm::vec3(0, 1.4, 0));
 
 	std::vector<Entity *> entities;
@@ -110,14 +110,18 @@ extern "C" int main(int argc, char *argv[])
 
 		rotation += 0.3f;
 
-		teapot.GetTransform()->SetRotation(glm::vec3(0, rotation, 0));
+		teapot.GetTransform()->SetRotation(glm::vec3(0, 1, 0), rotation * 0.2f);
 		teapot.GetTransform()->SetPosition(glm::vec3(sinf(rotation / 10) * 2, 1.4, 0));
 
-		//renderer.Bind();
-		//renderer.Render(camera, entities);
-		
+		angleEntity.GetTransform()->SetRotation(glm::vec3(0, 0, 1), rotation * 0.1f);
+
+#if 0 
+		renderer.Bind();
+		renderer.Render(camera, entities);
+#else
 		deferredRenderer.Bind();
 		deferredRenderer.Render(camera, entities);
+#endif
 	}
 
 	return 0;

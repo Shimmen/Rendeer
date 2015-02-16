@@ -11,7 +11,7 @@ A perspective camera looking down the +Z axis.
 class PerspectiveCamera
 {
 public:
-	PerspectiveCamera(const glm::vec3& position, const glm::vec3& rotation,
+	PerspectiveCamera(const glm::vec3& position, const glm::quat& rotation,
 		float fov, float near, float far, float aspectRatio);
 
 	inline Transform* GetTransform() { return &transform; }

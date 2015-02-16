@@ -3,11 +3,13 @@
 #include <assert.h>
 
 #include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/quaternion.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-PerspectiveCamera::PerspectiveCamera(const glm::vec3& position, const glm::vec3& rotation,
+PerspectiveCamera::PerspectiveCamera(const glm::vec3& position, const glm::quat& rotation,
 	float fov, float near, float far, float aspectRatio)
-	: transform(position, rotation, glm::vec3())
+	: transform(position, rotation, 1)
 	, fov(fov)
 	, nearClippingPlane(near)
 	, farClippingPlane(far)
@@ -19,18 +21,9 @@ PerspectiveCamera::PerspectiveCamera(const glm::vec3& position, const glm::vec3&
 glm::mat4 PerspectiveCamera::GetViewMatrix() const
 {
 	glm::mat4 negativePosition = glm::translate(glm::mat4(1.0), -transform.GetPosition());
+	glm::mat4 negativeRotation = glm::toMat4(glm::conjugate(transform.GetRotation()));
 
-	// TODO: Quaternions! If transform was defined with quaternions, getting the negative
-	// rotation is as easy as transform.GetRotation().Conjugate();
-
-	/*
-	glm::mat4 negativeXRotation = glm::rotate(glm::mat4(1.0), transform.GetRotation().x, glm::vec3(1, 0, 0));
-	glm::mat4 negativeYRotation = glm::rotate(glm::mat4(1.0), transform.GetRotation().y, glm::vec3(0, 1, 0));
-	glm::mat4 negativeZRotation = glm::rotate(glm::mat4(1.0), transform.GetRotation().z, glm::vec3(0, 0, 1));
-	glm::mat4 negativeRotation = negativeXRotation * negativeYRotation * negativeZRotation;
-	*/
-
-	return /*negativeRotation */ negativePosition;
+	return negativeRotation * negativePosition;
 }
 
 glm::mat4 PerspectiveCamera::GetProjectionMatrix() const
