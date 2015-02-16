@@ -59,5 +59,5 @@ Mesh::~Mesh()
 void Mesh::Render()
 {
 	glBindVertexArray(vertexArray);
-	glDrawElements(GL_LINES, indexCount, GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
 }

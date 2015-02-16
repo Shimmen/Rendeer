@@ -1,5 +1,6 @@
 
 #include <string>
+#include <vector>
 
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
@@ -71,28 +72,29 @@ extern "C" int main(int argc, char *argv[])
 	angleEntity.GetTransform()->SetPosition(glm::vec3(0, 0, 0));
 
 	// CAMERA
-	PerspectiveCamera camera(glm::vec3(0, 2, -10.0), glm::vec3(0, 0, 0),
+	PerspectiveCamera camera(glm::vec3(0, 0.5, -4.0), glm::vec3(0, 0, 0),
 		45.0f, 0.1f, 1000.0f, display.GetAspectRatio());
 
 
 	
-	Model teapotModel("models/teapot.obj", true);
+	Model teapotModel("models/teapot/teapot.obj");
 	Mesh teapotMesh(teapotModel);
-	Texture teapotTexture("textures/metal3.diffuse.png");
+	Texture teapotTexture("textures/default.png");
 	Material teapotMaterial;
 	teapotMaterial.diffuseTexture = &teapotTexture;
 	Entity teapot(teapotMesh, teapotMaterial);
-	
+	teapot.GetTransform()->SetScale(glm::vec3(0.01, 0.01, 0.01));
+	teapot.GetTransform()->SetPosition(glm::vec3(0, 1.4, 0));
 
-	Entity entites[2] = { angleEntity, teapot };
+	std::vector<Entity *> entities;
+	entities.push_back(&teapot);
+	entities.push_back(&angleEntity);
 
 	//////////
 	// LOOP //
 	//////////
 
 	float rotation = 0;
-	float rotationCamY = 0;
-	float rotationCamX = 0;
 
 	bool shouldExit = false;
 	while (!shouldExit)
@@ -106,24 +108,16 @@ extern "C" int main(int argc, char *argv[])
 			}
 		}
 
-		//angleEntity.GetTransform()->SetRotation(glm::vec3(0, rotation * 3, 0));
-		rotation += 1.0f;
-
-		//angleEntity.GetTransform()->SetRotation(glm::vec3(0, 0, rotation));
-		//angleEntity.GetTransform()->SetPosition(glm::vec3(-3, 0, 2));
+		rotation += 0.3f;
 
 		teapot.GetTransform()->SetRotation(glm::vec3(0, rotation, 0));
-		teapot.GetTransform()->SetPosition(glm::vec3(0, 0, 0));
+		teapot.GetTransform()->SetPosition(glm::vec3(sinf(rotation / 10) * 2, 1.4, 0));
 
-		//camera.GetTransform()->SetRotation(glm::vec3(rotationCamX, rotationCamY, 0));
-		//rotationCamY = sinf(rotation / 40.0f) * 40.0f;
-		//rotationCamX = cosf(rotation / 40.0f) * 40.0f;
-
-		//deferredRenderer.Render(camera, entites, 2);
+		//renderer.Bind();
+		//renderer.Render(camera, entities);
 		
-
-		renderer.Render(camera, &teapot, 1);
-		//deferredRenderer.Render(camera, &teapot, 1);
+		deferredRenderer.Bind();
+		deferredRenderer.Render(camera, entities);
 	}
 
 	return 0;

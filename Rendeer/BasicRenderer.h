@@ -1,6 +1,9 @@
 #pragma once
 
+#include <vector>
+
 #include "Shader.h"
+#include "Entity.h"
 
 class PerspectiveCamera;
 class Display;
@@ -23,7 +26,9 @@ public:
 	// Isn't needed since display is not owned by this class
 	//~BasicRenderer();
 
-	void Render(const PerspectiveCamera& camera, Entity *entities, int entityCount);
+	void Bind() const;
+
+	void Render(const PerspectiveCamera& camera, const std::vector<Entity *> entities);
 
 private:
 	Display& display;

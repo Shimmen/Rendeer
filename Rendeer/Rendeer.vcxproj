@@ -117,6 +117,8 @@
   <ItemGroup>
     <None Include="Resources\shaders\BasicRenderer\no_light.fsh" />
     <None Include="Resources\shaders\BasicRenderer\no_light.vsh" />
+    <None Include="Resources\shaders\DeferredRenderer\render_to_gbuffer.fsh" />
+    <None Include="Resources\shaders\DeferredRenderer\render_to_gbuffer.vsh" />
     <None Include="Resources\shaders\DeferredRenderer\screen_aligned_quad.vsh" />
     <None Include="Resources\shaders\DeferredRenderer\texturize.fsh" />
   </ItemGroup>

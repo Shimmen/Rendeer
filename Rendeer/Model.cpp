@@ -6,13 +6,13 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-Model::Model(const std::string& fileName, bool genSmoothNormals)
+Model::Model(const std::string& fileName)
 {
-	unsigned int importerFlags = aiProcess_Triangulate | aiProcess_CalcTangentSpace | aiProcess_FlipUVs /*| aiProcess_ConvertToLeftHanded*/;
-	if (genSmoothNormals)
-	{
-		importerFlags |= aiProcess_GenSmoothNormals;
-	}
+	unsigned int importerFlags = 0;
+	importerFlags |= aiProcess_Triangulate;
+	importerFlags |= aiProcess_CalcTangentSpace;
+	importerFlags |= aiProcess_FlipUVs;
+	importerFlags |= aiProcess_GenSmoothNormals;
 
 	Assimp::Importer importer;
 

@@ -13,34 +13,37 @@ BasicRenderer::BasicRenderer(Display& display)
 {
 }
 
-void BasicRenderer::Render(const PerspectiveCamera& camera, Entity *entities, int entityCount)
+void BasicRenderer::Bind() const
 {
-	glEnable(GL_DEPTH_TEST);
-
 	display.BindAsFrameBuffer();
 	glClearColor(0, 0, 0, 1);
-	display.Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	//glEnable(GL_CULL_FACE);
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+	glDepthMask(GL_TRUE);
+
+	glEnable(GL_CULL_FACE);
 	glFrontFace(GL_CW);
 	glCullFace(GL_BACK);
+}
 
+void BasicRenderer::Render(const PerspectiveCamera& camera, const std::vector<Entity *> entities)
+{
+	display.Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	shader.Bind();
 
-	for (int i = 0; i < entityCount; ++i)
+	for (auto it = entities.begin(); it != entities.end(); ++it)
 	{
-		Entity entity = entities[i];
+		Entity *entity = *it;
 
-		entity.GetMaterial()->diffuseTexture->Bind(0);
+		entity->GetMaterial()->diffuseTexture->Bind(0);
 		shader.SetUniform("u_diffuse", 0);
 
-		glm::mat4 mvpMatrix = camera.GetProjectionMatrix() * camera.GetViewMatrix() * entity.GetTransform()->GetModelMatrix();
+		glm::mat4 mvpMatrix = camera.GetProjectionMatrix() * camera.GetViewMatrix() * entity->GetTransform()->GetModelMatrix();
 		shader.SetUniform("u_mvp_matrix", mvpMatrix);
 
-		entity.GetMesh()->Render();
+		entity->GetMesh()->Render();
 	}
-
-
 
 	display.SwapBuffers();
 }

@@ -109,5 +109,11 @@
     <None Include="Resources\shaders\DeferredRenderer\texturize.fsh">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="Resources\shaders\DeferredRenderer\render_to_gbuffer.fsh">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resources\shaders\DeferredRenderer\render_to_gbuffer.vsh">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

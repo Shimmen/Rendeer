@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 #include "Shader.h"
 #include "Texture.h"
 #include "FrameBuffer.h"
@@ -17,11 +19,14 @@ class DeferredRenderer
 public:
 	DeferredRenderer(Display& display);
 
-	void Render(const PerspectiveCamera& camera, Entity *entities, int entityCount);
+	void Bind() const;
+
+	void Render(const PerspectiveCamera& camera, const std::vector<Entity *> entities);
 
 private:
 	FrameBuffer gBuffer;
 	Texture gBufferAlbedo;
+	Texture gBufferNormal;
 	Texture gBufferDepth;
 
 	Shader plainShader;
