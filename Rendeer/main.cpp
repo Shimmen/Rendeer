@@ -27,7 +27,7 @@ extern "C" int main(int argc, char *argv[])
 	DeferredRenderer deferredRenderer(display);
 
 
-
+#if 0
 	// MESH
 	Vertex vertices[6] = {
 		Vertex(glm::vec3(-1, -1, 0), glm::vec2(0.0, 0.0)),  // bot left
@@ -70,6 +70,10 @@ extern "C" int main(int argc, char *argv[])
 	// ENTITY
 	Entity angleEntity(angleMesh, dogMaterial);
 	angleEntity.GetTransform()->SetPosition(glm::vec3(0, 0, 0));
+#endif
+
+
+
 
 	// CAMERA
 	PerspectiveCamera camera(glm::vec3(0, 3, -4), glm::angleAxis(0.5f, glm::vec3(1, 0, 0)),
@@ -88,7 +92,7 @@ extern "C" int main(int argc, char *argv[])
 
 	std::vector<Entity *> entities;
 	entities.push_back(&teapot);
-	entities.push_back(&angleEntity);
+	//entities.push_back(&angleEntity);
 
 	//////////
 	// LOOP //
@@ -113,9 +117,9 @@ extern "C" int main(int argc, char *argv[])
 		teapot.GetTransform()->SetRotation(glm::vec3(0, 1, 0), rotation * 0.2f);
 		teapot.GetTransform()->SetPosition(glm::vec3(sinf(rotation / 10) * 2, 1.4, 0));
 
-		angleEntity.GetTransform()->SetRotation(glm::vec3(0, 0, 1), rotation * 0.1f);
+		//angleEntity.GetTransform()->SetRotation(glm::vec3(0, 0, 1), rotation * 0.1f);
 
-#if 0 
+#if 0
 		renderer.Bind();
 		renderer.Render(camera, entities);
 #else

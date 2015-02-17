@@ -29,7 +29,6 @@ void DeferredRenderer::Bind() const
 {
 	glClearColor(0, 0, 0, 1);
 
-	glEnable(GL_CULL_FACE);
 	glFrontFace(GL_CW);
 	glCullFace(GL_BACK);
 }
@@ -40,6 +39,7 @@ void DeferredRenderer::Render(const PerspectiveCamera& camera, const std::vector
 	gBuffer.Bind();
 	glViewport(0, 0, display.GetWidth(), display.GetHeight());
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	static const GLenum drawBuffers[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
@@ -53,8 +53,10 @@ void DeferredRenderer::Render(const PerspectiveCamera& camera, const std::vector
 		entity->GetMaterial()->diffuseTexture->Bind(0);
 		plainShader.SetUniform("u_diffuse", 0);
 
-		glm::mat4 mvpMatrix = camera.GetProjectionMatrix() * camera.GetViewMatrix() * entity->GetTransform()->GetModelMatrix();
-		plainShader.SetUniform("u_mvp_matrix", mvpMatrix);
+		glm::mat4 modelViewMatrix = camera.GetViewMatrix() * entity->GetTransform()->GetModelMatrix();
+		glm::mat4 projectionMatrix = camera.GetProjectionMatrix();
+		plainShader.SetUniform("u_model_view_matrix", modelViewMatrix);
+		plainShader.SetUniform("u_projection_matrix", projectionMatrix);
 
 		entity->GetMesh()->Render();
 	}
@@ -64,6 +66,7 @@ void DeferredRenderer::Render(const PerspectiveCamera& camera, const std::vector
 	display.BindAsFrameBuffer();
 	glViewport(0, 0, display.GetWidth(), display.GetHeight());
 	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
 	display.Clear(GL_COLOR_BUFFER_BIT);
 
 	screenSpaceShader.Bind();

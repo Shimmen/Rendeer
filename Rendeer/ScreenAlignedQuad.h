@@ -24,5 +24,6 @@ public:
 	void Render();
 
 private:
+	GLuint vertexArray;
 	GLuint vertexBuffer;
 };
