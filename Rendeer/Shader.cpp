@@ -42,50 +42,11 @@ Shader::~Shader()
 	glDeleteProgram(shaderProgram);
 }
 
-/* TODO: Remove!
-void Shader::UpdateUniforms(const Transform& transform, const Material& material) const
-{
-	Update transform based uniforms (modelMatrix)
-	
-
-	// If the shader has a diffuse texture
-	// we will need to bind SOMETHING to it
-	if (shader.HasDiffuseTexture())
-	{
-		// Tell the shader that the diffuse texture
-		// will be bound at texture unit 0
-		glUniform1i(shader.GetDiffuseTexture().GetHandle(), 0);
-
-		// If this material has a diffuse texture,
-		// bind it at the apropriate texture unit,
-		// which is 0 for diffuse textures.
-		if (diffuseTexture != NULL)
-		{
-			diffuseTexture->Bind(0);
-		}
-		// If this material doesn't specify a diffuse
-		// texture, bind the default diffuse texture
-		else
-		{
-			// Get default diffuse texture.
-			// Should probably be defined as globals
-			// or more safe alternative in Texture.h
-			Texture *defaultDiffuse = 0;
-			defaultDiffuse->Bind(0);
-		}
-	}
-
-	// Repeat the above method for all members
-	// that should be set to uniforms in the shader.
-	// Things like other textures (normalMap etc.),
-	// and other uniform stuff
-}
-*/
-
-
 bool Shader::HasUniformWithName(const std::string& uniformName)
 {
-	return (uniformLocations[uniformName] != NULL);
+	// TODO: Fix this! It is checking for NULL which is equal to 0 and the first
+	// uniform is obviously at location 0.
+	return true; (uniformLocations[uniformName] != NULL);
 }
 
 // It is your own responsibility to keep track of the types of the uniforms
@@ -93,6 +54,13 @@ void Shader::SetUniform(const std::string& uniformName, int intValue)
 {
 #ifdef SHADER_ALWAYS_BIND_WHEN_NEEDED
 	Bind();
+#endif
+
+#ifdef SHADER_ALWAYS_CHECK_IF_UNIFORM_EXISTS
+	if (HasUniformWithName(uniformName) == false)
+	{
+		throw("Error: uniform not defined in shader. Could also have been removed if it wasn't used.");
+	}
 #endif
 
 	glUniform1i(uniformLocations[uniformName], intValue);
@@ -104,6 +72,13 @@ void Shader::SetUniform(const std::string& uniformName, float floatValue)
 	Bind();
 #endif
 
+#ifdef SHADER_ALWAYS_CHECK_IF_UNIFORM_EXISTS
+	if (HasUniformWithName(uniformName) == false)
+	{
+		throw("Error: uniform not defined in shader. Could also have been removed if it wasn't used.");
+	}
+#endif
+
 	glUniform1f(uniformLocations[uniformName], floatValue);
 }
 
@@ -111,6 +86,13 @@ void Shader::SetUniform(const std::string& uniformName, const glm::vec2& vector2
 {
 #ifdef SHADER_ALWAYS_BIND_WHEN_NEEDED
 	Bind();
+#endif
+
+#ifdef SHADER_ALWAYS_CHECK_IF_UNIFORM_EXISTS
+	if (HasUniformWithName(uniformName) == false)
+	{
+		throw("Error: uniform not defined in shader. Could also have been removed if it wasn't used.");
+	}
 #endif
 
 	glUniform2fv(uniformLocations[uniformName], 1, glm::value_ptr(vector2));
@@ -122,6 +104,13 @@ void Shader::SetUniform(const std::string& uniformName, const glm::vec3& vector3
 	Bind();
 #endif
 
+#ifdef SHADER_ALWAYS_CHECK_IF_UNIFORM_EXISTS
+	if (HasUniformWithName(uniformName) == false)
+	{
+		throw("Error: uniform not defined in shader. Could also have been removed if it wasn't used.");
+	}
+#endif
+
 	glUniform3fv(uniformLocations[uniformName], 1, glm::value_ptr(vector3));
 }
 
@@ -131,6 +120,13 @@ void Shader::SetUniform(const std::string& uniformName, const glm::mat3& matrix3
 	Bind();
 #endif
 
+#ifdef SHADER_ALWAYS_CHECK_IF_UNIFORM_EXISTS
+	if (HasUniformWithName(uniformName) == false)
+	{
+		throw("Error: uniform not defined in shader. Could also have been removed if it wasn't used.");
+	}
+#endif
+
 	glUniformMatrix3fv(uniformLocations[uniformName], 1, GL_FALSE, glm::value_ptr(matrix3));
 }
 
@@ -138,6 +134,13 @@ void Shader::SetUniform(const std::string& uniformName, const glm::mat4& matrix4
 {
 #ifdef SHADER_ALWAYS_BIND_WHEN_NEEDED
 	Bind();
+#endif
+
+#ifdef SHADER_ALWAYS_CHECK_IF_UNIFORM_EXISTS
+	if (HasUniformWithName(uniformName) == false)
+	{
+		throw("Error: uniform not defined in shader. Could also have been removed if it wasn't used.");
+	}
 #endif
 
 	glUniformMatrix4fv(uniformLocations[uniformName], 1, GL_FALSE, glm::value_ptr(matrix4));

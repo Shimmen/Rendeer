@@ -72,9 +72,10 @@ void DeferredRenderer::Render(const PerspectiveCamera& camera, const std::vector
 	screenSpaceShader.Bind();
 
 	gBufferAlbedo.Bind(10);
+	screenSpaceShader.SetUniform("u_albedo", 10);
 	gBufferNormal.Bind(11);
-	gBufferDepth.Bind(20);
-	screenSpaceShader.SetUniform("u_texture", 10);
+	screenSpaceShader.SetUniform("u_normals", 11);
+	//gBufferDepth.Bind(20);
 	
 	quad.Render();
 
