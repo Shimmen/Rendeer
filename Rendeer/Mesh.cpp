@@ -54,7 +54,7 @@ GLuint Mesh::CreateMesh(const Model& model)
 	///////////////////////
 
 	// Unbind this just as a security precaution
-	// (so no things about the vertex array get changed)
+	// (so nothing regarding the vertex array get changed)
 	glBindVertexArray(0);
 
 	return vertexArray;

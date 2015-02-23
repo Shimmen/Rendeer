@@ -85,8 +85,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="BasicRenderer.cpp" />
     <ClCompile Include="DeferredRenderer.cpp" />
+    <ClCompile Include="DiffuseMaterial.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="PerspectiveCamera.cpp" />
@@ -99,10 +99,12 @@
     <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BasicRenderer.h" />
     <ClInclude Include="DeferredRenderer.h" />
+    <ClInclude Include="DiffuseMaterial.h" />
     <ClInclude Include="FrameBuffer.h" />
-    <ClInclude Include="Material.h" />
+    <ClInclude Include="DirectionalLight.h" />
+    <ClInclude Include="GBuffer.h" />
+    <ClInclude Include="IMaterial.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="PerspectiveCamera.h" />
     <ClInclude Include="Display.h" />
@@ -113,14 +115,6 @@
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Uniform.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\shaders\BasicRenderer\no_light.fsh" />
-    <None Include="Resources\shaders\BasicRenderer\no_light.vsh" />
-    <None Include="Resources\shaders\DeferredRenderer\render_to_gbuffer.fsh" />
-    <None Include="Resources\shaders\DeferredRenderer\render_to_gbuffer.vsh" />
-    <None Include="Resources\shaders\DeferredRenderer\screen_aligned_quad.vsh" />
-    <None Include="Resources\shaders\DeferredRenderer\texturize.fsh" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

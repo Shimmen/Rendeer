@@ -17,9 +17,10 @@ public:
 	// Display(const Display& source);
 	// Display& operator=(const Display& source);
 
-	inline void BindAsFrameBuffer() const
+	inline void BindAsDrawFrameBuffer() const
 	{
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		// The display is only for drawing on
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 	}
 
 	inline float GetAspectRatio() const
@@ -40,8 +41,6 @@ public:
 		SDL_GetWindowSize(window, NULL, &height);
 		return height;
 	}
-
-	void Clear(GLenum buffersToClearMask) const;
 
 	inline void SwapBuffers() const
 	{

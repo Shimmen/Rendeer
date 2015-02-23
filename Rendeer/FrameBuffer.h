@@ -16,19 +16,25 @@ glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2
 class FrameBuffer
 {
 public:
+	// TODO: Implement/make use of the bool flag!
 	FrameBuffer(bool attachDefaultDepthStencilRenderBuffer = false);
-	~FrameBuffer();
+	virtual ~FrameBuffer();
 
 	void AttachTexture(const Texture& texture, GLenum attatchment) const;
 
 	bool IsComplete(GLenum *statusIfNotComplete = nullptr) const;
 
-	inline void Bind() const
+	inline void BindAsDrawFrameBuffer() const
 	{
-		glBindFramebuffer(GL_FRAMEBUFFER, frameBufferHandle);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, frameBufferHandle);
+	}
+	
+	inline void BindAsReadFrameBuffer() const
+	{
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, frameBufferHandle);
 	}
 
-private:
+protected:
 	GLuint frameBufferHandle;
 
 	// TODO:Maybe do some RAM store of the components attatched to the GPU memory framebuffer.

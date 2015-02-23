@@ -47,13 +47,3 @@ Display::~Display()
 	SDL_DestroyWindow(window);
 	SDL_Quit();
 }
-
-void Display::Clear(GLenum buffersToClearMask) const
-{
-	assert((buffersToClearMask & GL_COLOR_BUFFER_BIT) != 0 ||
-		(buffersToClearMask & GL_DEPTH_BUFFER_BIT) != 0 ||
-		(buffersToClearMask & GL_STENCIL_BUFFER_BIT) != 0);
-
-	glClear(buffersToClearMask);
-}
-

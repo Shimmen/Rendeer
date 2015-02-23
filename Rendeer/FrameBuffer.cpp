@@ -16,7 +16,7 @@ void FrameBuffer::AttachTexture(const Texture& texture, GLenum attatchment) cons
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, frameBufferHandle);
 
-	// TODO: Will the last variable, the 0 that is the mipmap level ever be used?
+	// TODO: Will the last variable, the 0, that is the mipmap level ever be used?
 	glFramebufferTexture2D(GL_FRAMEBUFFER, attatchment, GL_TEXTURE_2D, texture.GetHandle(), 0);
 }
 

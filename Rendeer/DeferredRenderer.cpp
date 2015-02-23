@@ -3,21 +3,17 @@
 #include "Display.h"
 #include "Entity.h"
 #include "Texture.h"
-#include "Material.h"
+#include "DiffuseMaterial.h"
 #include "PerspectiveCamera.h"
 
 DeferredRenderer::DeferredRenderer(Display& display)
 	: display(display)
-	, plainShader("shaders/DeferredRenderer/render_to_gbuffer.vsh", "shaders/DeferredRenderer/render_to_gbuffer.fsh")
-	, screenSpaceShader("shaders/DeferredRenderer/screen_aligned_quad.vsh", "shaders/DeferredRenderer/texturize.fsh")
-	, gBufferAlbedo(display.GetWidth(), display.GetHeight(), GL_RGB, GL_CLAMP_TO_BORDER, GL_LINEAR, GL_LINEAR)
-	, gBufferNormal(display.GetWidth(), display.GetHeight(), GL_RGB, GL_CLAMP_TO_BORDER, GL_NEAREST, GL_NEAREST)
-	, gBufferDepth(display.GetWidth(), display.GetHeight(), GL_DEPTH_COMPONENT, GL_CLAMP_TO_EDGE, GL_NEAREST, GL_NEAREST)
+	, gBuffer(display.GetWidth(), display.GetHeight())
+	, screenSpaceShader("shaders/postprocess.vsh",
+	                    "shaders/light_default.fsh")
 {
-	gBuffer.AttachTexture(gBufferAlbedo, GL_COLOR_ATTACHMENT0);
-	gBuffer.AttachTexture(gBufferNormal, GL_COLOR_ATTACHMENT1);
-	gBuffer.AttachTexture(gBufferDepth, GL_DEPTH_ATTACHMENT);
-
+	// This really shouldn't need to be here,
+	// since the GBuffer is its own class now
 	GLenum reason = 0;
 	if (!gBuffer.IsComplete(&reason))
 	{
@@ -27,57 +23,47 @@ DeferredRenderer::DeferredRenderer(Display& display)
 
 void DeferredRenderer::Bind() const
 {
+	glViewport(0, 0, display.GetWidth(), display.GetHeight());
 	glClearColor(0, 0, 0, 1);
 
 	glFrontFace(GL_CW);
 	glCullFace(GL_BACK);
+
+	glDepthFunc(GL_LEQUAL);
 }
 
-void DeferredRenderer::Render(const PerspectiveCamera& camera, const std::vector<Entity *> entities)
+void DeferredRenderer::BindForObjectPass() const
 {
-	// Render to G-Buffer
-	gBuffer.Bind();
-	glViewport(0, 0, display.GetWidth(), display.GetHeight());
-	glEnable(GL_DEPTH_TEST);
+	// TODO: If this is bound as a READ frame buffer, it gets rendered.
+	// However, it doesn't seem to animate (which could mean it doesn't redraw)
+	// And it really should be DRAW
+	gBuffer.BindAsDrawFrameBuffer();
+
 	glEnable(GL_CULL_FACE);
+	glEnable(GL_DEPTH_TEST);
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
-	static const GLenum drawBuffers[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
-	glDrawBuffers(2, drawBuffers);
-	plainShader.Bind();
+}
 
-	for (auto it = entities.begin(); it != entities.end(); ++it)
-	{
-		Entity *entity = *it;
+void DeferredRenderer::RenderLightPass()
+{
+	// Set up the gl state to render light pass
+	display.BindAsDrawFrameBuffer();
 
-		entity->GetMaterial()->diffuseTexture->Bind(0);
-		plainShader.SetUniform("u_diffuse", 0);
-
-		glm::mat4 modelViewMatrix = camera.GetViewMatrix() * entity->GetTransform()->GetModelMatrix();
-		glm::mat4 projectionMatrix = camera.GetProjectionMatrix();
-		plainShader.SetUniform("u_model_view_matrix", modelViewMatrix);
-		plainShader.SetUniform("u_projection_matrix", projectionMatrix);
-
-		entity->GetMesh()->Render();
-	}
-
-
-	// Render to screen
-	display.BindAsFrameBuffer();
-	glViewport(0, 0, display.GetWidth(), display.GetHeight());
-	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
-	display.Clear(GL_COLOR_BUFFER_BIT);
+	glDisable(GL_DEPTH_TEST);
 
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	// Render the scene with a default light shader
 	screenSpaceShader.Bind();
 
-	gBufferAlbedo.Bind(10);
+	gBuffer.GetAlbedoTexture().Bind(10);
 	screenSpaceShader.SetUniform("u_albedo", 10);
-	gBufferNormal.Bind(11);
+	gBuffer.GetNormalTexture().Bind(11);
 	screenSpaceShader.SetUniform("u_normals", 11);
-	//gBufferDepth.Bind(20);
-	
-	quad.Render();
+	//gBuffer.GetDepthTexture().Bind(12);
+	//screenSpaceShader.SetUniform("u_depth", 12);
 
-	display.SwapBuffers();
+	quad.Render();
 }

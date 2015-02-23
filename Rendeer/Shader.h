@@ -10,7 +10,7 @@
 
 class Transform;
 class Texture;
-struct Material;
+class Material;
 
 
 #define SHADER_ALWAYS_BIND_WHEN_NEEDED
@@ -28,6 +28,11 @@ public:
 		glUseProgram(shaderProgram);
 	}
 	
+	inline void Unbind() const
+	{
+		glUseProgram(0);
+	}
+	
 	bool HasUniformWithName(const std::string& uniformName);
 	
 	// It is your own responsibility to keep track of the types of the uniforms
@@ -37,9 +42,6 @@ public:
 	void SetUniform(const std::string& uniformName, const glm::vec3& vector3);
 	void SetUniform(const std::string& uniformName, const glm::mat3& matrix3);
 	void SetUniform(const std::string& uniformName, const glm::mat4& matrix4);
-
-	// TODO: Remove this, shader handles should be abstracted away for outside this class
-	inline GLuint GetHandle() { return shaderProgram; }
 
 private:
 	GLuint shaderProgram;

@@ -33,9 +33,6 @@
     <ClCompile Include="PerspectiveCamera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BasicRenderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Transform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -49,6 +46,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DiffuseMaterial.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -68,13 +68,7 @@
     <ClInclude Include="PerspectiveCamera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BasicRenderer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Transform.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Material.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Uniform.h">
@@ -95,25 +89,17 @@
     <ClInclude Include="Model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\shaders\BasicRenderer\no_light.fsh">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Resources\shaders\BasicRenderer\no_light.vsh">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Resources\shaders\DeferredRenderer\screen_aligned_quad.vsh">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Resources\shaders\DeferredRenderer\texturize.fsh">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Resources\shaders\DeferredRenderer\render_to_gbuffer.fsh">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Resources\shaders\DeferredRenderer\render_to_gbuffer.vsh">
-      <Filter>Resource Files</Filter>
-    </None>
+    <ClInclude Include="DirectionalLight.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IMaterial.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DiffuseMaterial.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

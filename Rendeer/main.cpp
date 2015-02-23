@@ -6,15 +6,15 @@
 #include <glm/glm.hpp>
 #include <SDL.h>
 
-#include "Display.h"
-#include "Shader.h"
 #include "Mesh.h"
-#include "Texture.h"
-#include "BasicRenderer.h"
-#include "DeferredRenderer.h"
-#include "Entity.h"
-#include "PerspectiveCamera.h"
 #include "Model.h"
+#include "Shader.h"
+#include "Entity.h"
+#include "Texture.h"
+#include "Display.h"
+#include "DiffuseMaterial.h"
+#include "DeferredRenderer.h"
+#include "PerspectiveCamera.h"
 
 #define WINDOW_WIDTH 1280
 #define WINDOW_HEIGHT 720
@@ -23,7 +23,6 @@ extern "C" int main(int argc, char *argv[])
 {
 	// DISPLAY & RENDERER
 	Display display("Rendeer", WINDOW_WIDTH, WINDOW_HEIGHT, false);
-	BasicRenderer renderer(display);
 	DeferredRenderer deferredRenderer(display);
 
 
@@ -84,7 +83,7 @@ extern "C" int main(int argc, char *argv[])
 	Model teapotModel("models/teapot/teapot.obj");
 	Mesh teapotMesh(teapotModel);
 	Texture teapotTexture("textures/default.png");
-	Material teapotMaterial;
+	DiffuseMaterial teapotMaterial;
 	teapotMaterial.diffuseTexture = &teapotTexture;
 	Entity teapot(teapotMesh, teapotMaterial);
 	teapot.GetTransform()->SetScale(0.01f);
@@ -98,7 +97,7 @@ extern "C" int main(int argc, char *argv[])
 	// LOOP //
 	//////////
 
-	float rotation = 0;
+	float timer = 0.0f;
 
 	bool shouldExit = false;
 	while (!shouldExit)
@@ -112,20 +111,18 @@ extern "C" int main(int argc, char *argv[])
 			}
 		}
 
-		rotation += 0.3f;
+		timer += 0.3f;
+		teapot.GetTransform()->SetRotation(glm::vec3(0, 1, 0), timer * 0.2f);
+		teapot.GetTransform()->SetPosition(glm::vec3(sinf(timer / 10) * 2, 1.4, 0));
 
-		teapot.GetTransform()->SetRotation(glm::vec3(0, 1, 0), rotation * 0.2f);
-		teapot.GetTransform()->SetPosition(glm::vec3(sinf(rotation / 10) * 2, 1.4, 0));
-
-		//angleEntity.GetTransform()->SetRotation(glm::vec3(0, 0, 1), rotation * 0.1f);
-
-#if 0
-		renderer.Bind();
-		renderer.Render(camera, entities);
-#else
 		deferredRenderer.Bind();
-		deferredRenderer.Render(camera, entities);
-#endif
+
+		deferredRenderer.BindForObjectPass();
+		teapot.Render(deferredRenderer, camera);
+
+		deferredRenderer.RenderLightPass();
+		
+		display.SwapBuffers();
 	}
 
 	return 0;

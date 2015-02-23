@@ -13,9 +13,9 @@ smooth out vec3 v_normal;
 void main()
 {
 	v_tex_coord = a_tex_coord;
-	
+
 	// Only uniform scaling is supported for now.
 	v_normal = mat3(u_model_view_matrix) * a_normal;
 
-    gl_Position = u_projection_matrix * u_model_view_matrix * vec4(a_position, 1.0);
+  gl_Position = u_projection_matrix * u_model_view_matrix * vec4(a_position, 1.0);
 }
