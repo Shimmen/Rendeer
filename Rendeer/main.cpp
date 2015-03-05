@@ -97,6 +97,8 @@ extern "C" int main(int argc, char *argv[])
 	// LOOP //
 	//////////
 
+	deferredRenderer.Bind();
+
 	float timer = 0.0f;
 
 	bool shouldExit = false;
@@ -114,8 +116,6 @@ extern "C" int main(int argc, char *argv[])
 		timer += 0.3f;
 		teapot.GetTransform()->SetRotation(glm::vec3(0, 1, 0), timer * 0.2f);
 		teapot.GetTransform()->SetPosition(glm::vec3(sinf(timer / 10) * 2, 1.4, 0));
-
-		deferredRenderer.Bind();
 
 		deferredRenderer.BindForObjectPass();
 		teapot.Render(deferredRenderer, camera);

@@ -34,9 +34,6 @@ void DeferredRenderer::Bind() const
 
 void DeferredRenderer::BindForObjectPass() const
 {
-	// TODO: If this is bound as a READ frame buffer, it gets rendered.
-	// However, it doesn't seem to animate (which could mean it doesn't redraw)
-	// And it really should be DRAW
 	gBuffer.BindAsDrawFrameBuffer();
 
 	glEnable(GL_CULL_FACE);
@@ -62,6 +59,10 @@ void DeferredRenderer::RenderLightPass()
 	screenSpaceShader.SetUniform("u_albedo", 10);
 	gBuffer.GetNormalTexture().Bind(11);
 	screenSpaceShader.SetUniform("u_normals", 11);
+	
+	// Don't do this right now! Since it isn't used in the shader
+	// it will get optimized away and these calls will produce undefined
+	// behaviour!
 	//gBuffer.GetDepthTexture().Bind(12);
 	//screenSpaceShader.SetUniform("u_depth", 12);
 
