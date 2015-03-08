@@ -87,6 +87,7 @@
   <ItemGroup>
     <ClCompile Include="DeferredRenderer.cpp" />
     <ClCompile Include="DiffuseMaterial.cpp" />
+    <ClCompile Include="DirectionalLight.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="PerspectiveCamera.cpp" />
@@ -104,6 +105,7 @@
     <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="DirectionalLight.h" />
     <ClInclude Include="GBuffer.h" />
+    <ClInclude Include="ILight.h" />
     <ClInclude Include="IMaterial.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="PerspectiveCamera.h" />

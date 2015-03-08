@@ -36,12 +36,12 @@ glm::mat4 PerspectiveCamera::GetProjectionMatrix() const
 	glm::mat4 projection = glm::mat4(0.0);
 
 	float const tanHalfFovY = tan(fov / 2.0f);
-	
+
 	projection[0][0] = 1.0f / (aspectRatio * tanHalfFovY);
 	projection[1][1] = 1.0f / (tanHalfFovY);
-	projection[2][2] = (-nearClippingPlane - farClippingPlane) / (nearClippingPlane - farClippingPlane);
+	projection[2][2] = (nearClippingPlane + farClippingPlane) / (farClippingPlane - nearClippingPlane);
 	projection[2][3] = 1.0f;
-	projection[3][2] = (2.0f * farClippingPlane * nearClippingPlane) / (nearClippingPlane - farClippingPlane);
+	projection[3][2] = - (2.0f * farClippingPlane * nearClippingPlane) / (farClippingPlane - nearClippingPlane);
 
 	return projection;
 }

@@ -18,5 +18,5 @@ void main()
 	vec3 packedNormal = normal * vec3(0.5) + vec3(0.5);
 	o_normal = packedNormal;
 
-    o_fragment_color = texture(u_diffuse, inverted_tex_coord).rgb;
+  o_fragment_color = texture(u_diffuse, inverted_tex_coord).rgb;
 }

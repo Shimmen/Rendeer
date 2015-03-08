@@ -4,13 +4,12 @@
 #include "Entity.h"
 #include "Texture.h"
 #include "DiffuseMaterial.h"
+#include "DirectionalLight.h"
 #include "PerspectiveCamera.h"
 
 DeferredRenderer::DeferredRenderer(Display& display)
 	: display(display)
 	, gBuffer(display.GetWidth(), display.GetHeight())
-	, screenSpaceShader("shaders/postprocess.vsh",
-	                    "shaders/light_default.fsh")
 {
 	// This really shouldn't need to be here,
 	// since the GBuffer is its own class now
@@ -21,7 +20,7 @@ DeferredRenderer::DeferredRenderer(Display& display)
 	}
 }
 
-void DeferredRenderer::Bind() const
+void DeferredRenderer::BindForUsage() const
 {
 	glViewport(0, 0, display.GetWidth(), display.GetHeight());
 	glClearColor(0, 0, 0, 1);
@@ -32,39 +31,56 @@ void DeferredRenderer::Bind() const
 	glDepthFunc(GL_LEQUAL);
 }
 
-void DeferredRenderer::BindForObjectPass() const
+
+void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::vector<DirectionalLight *>& lights, const PerspectiveCamera& camera)
 {
-	gBuffer.BindAsDrawFrameBuffer();
-
-	glEnable(GL_CULL_FACE);
-	glEnable(GL_DEPTH_TEST);
-
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	RenderGeometryPass(entities, camera);
+	RenderLightPass(lights, camera);
+	display.SwapBuffers();
 }
 
-void DeferredRenderer::RenderLightPass()
+void DeferredRenderer::RenderGeometryPass(const std::vector<Entity *>& entities, const PerspectiveCamera& camera)
 {
-	// Set up the gl state to render light pass
-	display.BindAsDrawFrameBuffer();
+	// Set state for geometry rendering
+	gBuffer.BindAsDrawFrameBuffer();
+	glEnable(GL_CULL_FACE);
+	glEnable(GL_DEPTH_TEST);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	for (auto it = entities.begin(); it != entities.end(); ++it)
+	{
+		Entity *entity = (*it);
+		entity->Render(*this, camera);
+	}
+}
+
+void DeferredRenderer::RenderLightPass(const std::vector<DirectionalLight *>& lights, const PerspectiveCamera& camera)
+{
+	// Set up the gl state to render the light pass
+	display.BindAsDrawFrameBuffer();
 	glDisable(GL_CULL_FACE);
 	glDisable(GL_DEPTH_TEST);
-
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	// Render the scene with a default light shader
-	screenSpaceShader.Bind();
-
 	gBuffer.GetAlbedoTexture().Bind(10);
-	screenSpaceShader.SetUniform("u_albedo", 10);
 	gBuffer.GetNormalTexture().Bind(11);
-	screenSpaceShader.SetUniform("u_normals", 11);
-	
-	// Don't do this right now! Since it isn't used in the shader
-	// it will get optimized away and these calls will produce undefined
-	// behaviour!
 	//gBuffer.GetDepthTexture().Bind(12);
-	//screenSpaceShader.SetUniform("u_depth", 12);
 
-	quad.Render();
+	for (auto it = lights.begin(); it != lights.end(); ++it)
+	{
+		ILight *light = (*it);
+		Shader *lightShader = light->GetShader();
+
+		lightShader->Bind();
+
+		lightShader->SetUniform("u_albedo", 10);
+		lightShader->SetUniform("u_normals", 11);
+	    //lightShader->SetUniform("u_depth", 12);
+
+		// Ask the light to sets its shader's uniforms (except the gBuffer related
+		// ones, since they are set here)
+		light->SetUniforms(*this, camera);
+
+		quad.Render();
+	}
 }

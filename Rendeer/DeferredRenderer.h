@@ -3,24 +3,28 @@
 #include <vector>
 
 #include "Shader.h"
+#include "Entity.h"
 #include "GBuffer.h"
 #include "ScreenAlignedQuad.h"
 
 class Display;
+class DirectionalLight;
 
 class DeferredRenderer
 {
 public:
 	DeferredRenderer(Display& display);
 
-	void Bind() const;
-	void BindForObjectPass() const;
-	void RenderLightPass();
+	void BindForUsage() const;
+	void Render(const std::vector<Entity *>& entities, const std::vector<DirectionalLight *>& lights, const PerspectiveCamera& camera);
 
 private:
-	GBuffer gBuffer;
+	
+	void RenderGeometryPass(const std::vector<Entity *>& entities, const PerspectiveCamera& camera);
+	void RenderLightPass(const std::vector<DirectionalLight *>& lights, const PerspectiveCamera& camera);
 
-	Shader screenSpaceShader;
+
+	GBuffer gBuffer;
 	ScreenAlignedQuad quad;
 
 	Display& display;
