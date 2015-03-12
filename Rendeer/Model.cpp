@@ -21,6 +21,7 @@ Model::Model(const std::string& fileName)
 	if (scene == nullptr)
 	{
 		std::cerr << "Error: could not load Model with file name: " << fileName << std::endl;
+		exit(1);
 	}
 
 	// Get the first mesh (we sort of assume there is only one)

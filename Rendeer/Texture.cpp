@@ -14,11 +14,22 @@ Texture::Texture(const std::string& filename, GLint magFilter, GLint wrapMode)
 
 	int componentCount = 0;
 	unsigned char *pixels =
-		stbi_load(filename.c_str(), &width, &height, &componentCount, MIN_COMPONENT_COUNT);
+		stbi_load(filename.c_str(), &this->width, &this->height, &componentCount, MIN_COMPONENT_COUNT);
 
 	// If image was loaded properly
 	if (pixels != NULL && componentCount != 0)
 	{
+		// Mirror image on the y-axis, since stbi loads the image so the first pixel is the top left one.
+		// OpenGL expects the lower left pixel to be the first.
+		float halfHeight = this->height / 2.0f;
+		for (int y = 0; y < halfHeight; ++y)
+		{
+			for (int x = 0; x < this->width; ++x)
+			{
+				std::swap(pixels[x + y * width], pixels[x + (height - 1 - y) * width]);
+			}
+		}
+
 		internalFormat = (componentCount == 3) ? GL_RGB : GL_RGBA;
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);

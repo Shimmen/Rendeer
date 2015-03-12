@@ -12,8 +12,8 @@
 #include "Entity.h"
 #include "Texture.h"
 #include "Display.h"
+#include "Lighting.h"
 #include "DiffuseMaterial.h"
-#include "DirectionalLight.h"
 #include "DeferredRenderer.h"
 #include "PerspectiveCamera.h"
 
@@ -48,6 +48,9 @@ extern "C" int main(int argc, char *argv[])
 	DirectionalLight directionalLight(glm::quat(0.655617990970857f, 0.055478958634923616f, -0.7025613967450166f, 0.08004676010739724f), // just some random stuff
 		glm::vec3(1.0f, 0.95f, 0.88f), 0.5f);
 
+	// POINT LIGHT
+	//PointLight pointLight();
+
 	// LIGHTS
 	std::vector<DirectionalLight *> lights;
 	lights.push_back(&directionalLight);
@@ -73,7 +76,7 @@ extern "C" int main(int argc, char *argv[])
 		}
 
 		timer += 0.3f;
-		teapot.GetTransform()->SetRotation(glm::vec3(0, 1, 0), timer * 0.2f);
+		teapot.GetTransform()->SetRotation(glm::vec3(0, 1, 0), timer * 0.1f);
 		teapot.GetTransform()->SetPosition(glm::vec3(sinf(timer / 10) * 2, 1.4, 0));
 
 		// Try rotating it properly. Quaternions are complicated...

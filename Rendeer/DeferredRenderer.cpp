@@ -3,8 +3,8 @@
 #include "Display.h"
 #include "Entity.h"
 #include "Texture.h"
+#include "Lighting.h"
 #include "DiffuseMaterial.h"
-#include "DirectionalLight.h"
 #include "PerspectiveCamera.h"
 
 DeferredRenderer::DeferredRenderer(Display& display)
@@ -62,6 +62,8 @@ void DeferredRenderer::RenderLightPass(const std::vector<DirectionalLight *>& li
 	glDisable(GL_DEPTH_TEST);
 	glClear(GL_COLOR_BUFFER_BIT);
 
+	// TODO: Enable blending!
+
 	gBuffer.GetAlbedoTexture().Bind(10);
 	gBuffer.GetNormalTexture().Bind(11);
 	//gBuffer.GetDepthTexture().Bind(12);
@@ -73,6 +75,7 @@ void DeferredRenderer::RenderLightPass(const std::vector<DirectionalLight *>& li
 
 		lightShader->Bind();
 
+		// TODO: Set uniform bindings in shader
 		lightShader->SetUniform("u_albedo", 10);
 		lightShader->SetUniform("u_normals", 11);
 	    //lightShader->SetUniform("u_depth", 12);

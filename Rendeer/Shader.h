@@ -13,7 +13,6 @@ class Texture;
 class Material;
 
 
-#define SHADER_ALWAYS_BIND_WHEN_NEEDED
 #define SHADER_ALWAYS_CHECK_IF_UNIFORM_EXISTS
 
 class Shader
@@ -51,6 +50,8 @@ private:
 	void LocateAndRegisterUniforms();
 
 	// Shader creation
+	const std::string INCLUDE_DIRECTIVE = "#include";
+
 	std::string ReadFile(const std::string& filePath);
 	GLuint CreateShaderComponent(const std::string& source, GLenum shaderType);
 	void CheckShaderErrors(GLuint shader, int isProgram, GLuint stageFlag,

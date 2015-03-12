@@ -1,5 +1,7 @@
 #include "Shader.h"
 
+#include <vector>
+
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Uniform.h"
@@ -52,10 +54,6 @@ bool Shader::HasUniformWithName(const std::string& uniformName)
 // It is your own responsibility to keep track of the types of the uniforms
 void Shader::SetUniform(const std::string& uniformName, int intValue)
 {
-#ifdef SHADER_ALWAYS_BIND_WHEN_NEEDED
-	Bind();
-#endif
-
 #ifdef SHADER_ALWAYS_CHECK_IF_UNIFORM_EXISTS
 	if (HasUniformWithName(uniformName) == false)
 	{
@@ -68,10 +66,6 @@ void Shader::SetUniform(const std::string& uniformName, int intValue)
 
 void Shader::SetUniform(const std::string& uniformName, float floatValue)
 {
-#ifdef SHADER_ALWAYS_BIND_WHEN_NEEDED
-	Bind();
-#endif
-
 #ifdef SHADER_ALWAYS_CHECK_IF_UNIFORM_EXISTS
 	if (HasUniformWithName(uniformName) == false)
 	{
@@ -84,10 +78,6 @@ void Shader::SetUniform(const std::string& uniformName, float floatValue)
 
 void Shader::SetUniform(const std::string& uniformName, const glm::vec2& vector2)
 {
-#ifdef SHADER_ALWAYS_BIND_WHEN_NEEDED
-	Bind();
-#endif
-
 #ifdef SHADER_ALWAYS_CHECK_IF_UNIFORM_EXISTS
 	if (HasUniformWithName(uniformName) == false)
 	{
@@ -100,10 +90,6 @@ void Shader::SetUniform(const std::string& uniformName, const glm::vec2& vector2
 
 void Shader::SetUniform(const std::string& uniformName, const glm::vec3& vector3)
 {
-#ifdef SHADER_ALWAYS_BIND_WHEN_NEEDED
-	Bind();
-#endif
-
 #ifdef SHADER_ALWAYS_CHECK_IF_UNIFORM_EXISTS
 	if (HasUniformWithName(uniformName) == false)
 	{
@@ -116,10 +102,6 @@ void Shader::SetUniform(const std::string& uniformName, const glm::vec3& vector3
 
 void Shader::SetUniform(const std::string& uniformName, const glm::mat3& matrix3)
 {
-#ifdef SHADER_ALWAYS_BIND_WHEN_NEEDED
-	Bind();
-#endif
-
 #ifdef SHADER_ALWAYS_CHECK_IF_UNIFORM_EXISTS
 	if (HasUniformWithName(uniformName) == false)
 	{
@@ -132,10 +114,6 @@ void Shader::SetUniform(const std::string& uniformName, const glm::mat3& matrix3
 
 void Shader::SetUniform(const std::string& uniformName, const glm::mat4& matrix4)
 {
-#ifdef SHADER_ALWAYS_BIND_WHEN_NEEDED
-	Bind();
-#endif
-
 #ifdef SHADER_ALWAYS_CHECK_IF_UNIFORM_EXISTS
 	if (HasUniformWithName(uniformName) == false)
 	{
@@ -181,8 +159,10 @@ void Shader::LocateAndRegisterUniforms()
 
 std::string Shader::ReadFile(const std::string& filePath)
 {
+	const std::string fullFilePath = "shaders/" + filePath;
+
 	std::ifstream fileStream;
-	fileStream.open(filePath);
+	fileStream.open(fullFilePath);
 
 	std::string result;
 	std::string line;
@@ -192,6 +172,55 @@ std::string Shader::ReadFile(const std::string& filePath)
 		while (fileStream.good())
 		{
 			getline(fileStream, line);
+
+			//if (line begins with INCLUDE_DIRECTIVE, find the second blank space-separated thing in the line and call this function recursively.
+			// Append the result to this current string. Also, if it was an include directive, don't include the actual line.
+
+			// If the line begins with the include directive plus one (or more blankspaces)
+			if (line.find(Shader::INCLUDE_DIRECTIVE + " ") == 0)
+			{
+				const char * const DELIMITERS = " ";
+
+				// get non-const char * from string
+				const size_t lineBufferLength = line.length() + 1;
+				char * lineChars = new char[lineBufferLength];
+				strcpy_s(lineChars, lineBufferLength, line.c_str());
+
+				char *context = NULL;
+				std::vector<std::string> tokens;
+				char *currentToken = strtok_s(lineChars, DELIMITERS, &context);
+
+				while (currentToken != NULL)
+				{
+					tokens.push_back(std::string(currentToken));
+					currentToken = strtok_s(NULL, DELIMITERS, &context);
+				}
+
+				delete lineChars;
+
+				// Iff there are two tokens, assume the second is the path.
+				if (tokens.size() == 2)
+				{
+					// Extract the path from inside the quotation marks
+					// TODO: Handle relative paths (from the current file's context)
+					std::string path = tokens[1].substr(1, tokens[1].length() - 2);
+
+					// Append the contents, then continue on the next line.
+					result.append(ReadFile(path));
+					continue;
+				}
+				else
+				{
+					// Yep, I'm using goto.
+					goto appendCurrentLine;
+				}
+			}
+			else
+			{
+				goto appendCurrentLine;
+			}
+
+			appendCurrentLine:
 			result.append(line + "\n");
 		}
 		fileStream.close();
