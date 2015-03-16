@@ -46,9 +46,7 @@ Shader::~Shader()
 
 bool Shader::HasUniformWithName(const std::string& uniformName)
 {
-	// TODO: Fix this! It is checking for NULL which is equal to 0 and the first
-	// uniform is obviously at location 0.
-	return true; (uniformLocations[uniformName] != NULL);
+	return uniformExist[uniformName];
 }
 
 // It is your own responsibility to keep track of the types of the uniforms
@@ -127,6 +125,7 @@ void Shader::SetUniform(const std::string& uniformName, const glm::mat4& matrix4
 
 void Shader::LocateAndRegisterUniforms()
 {
+	// This acts as a maximum length. Can be increased if needed.
 	static const int NAME_BUFFER_LENGTH = 70;
 
 	this->Bind();
@@ -144,14 +143,15 @@ void Shader::LocateAndRegisterUniforms()
 		int uniformNameLength = 0;
 
 		glGetActiveUniform(shaderProgram, GLuint(i), NAME_BUFFER_LENGTH - 1, &uniformNameLength, &elementCount, &type, uniformName);
-		
+
 		// End the string with a null-terminator.
 		uniformName[uniformNameLength] = 0;
 
 		GLuint location = glGetUniformLocation(shaderProgram, uniformName);
 
-		// Add uniform to the map
+		// Add uniform to the maps
 		uniformLocations[uniformName] = location;
+		uniformExist[uniformName] = true;
 	}
 }
 

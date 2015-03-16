@@ -15,6 +15,7 @@ class Material;
 
 #define SHADER_ALWAYS_CHECK_IF_UNIFORM_EXISTS
 
+
 class Shader
 {
 public:
@@ -45,6 +46,7 @@ public:
 private:
 	GLuint shaderProgram;
 	std::map<std::string, GLuint> uniformLocations;
+	std::map<std::string, bool> uniformExist;
 
 	// Uniform "finding"
 	void LocateAndRegisterUniforms();
