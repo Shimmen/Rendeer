@@ -27,8 +27,8 @@ extern "C" int main(int argc, char *argv[])
 	DeferredRenderer deferredRenderer(display);
 
 	// CAMERA
-	PerspectiveCamera camera(glm::vec3(0, 3, -4), glm::angleAxis(0.5f, glm::vec3(1, 0, 0)),
-		45.0f, 0.1f, 1000.0f, display.GetAspectRatio());
+	PerspectiveCamera camera(glm::vec3(0, 1.5f, -2.8f), glm::angleAxis(0.5f, glm::vec3(1, 0, 0)),
+		glm::radians(70.0f), 1.0f, 1000.0f, display.GetAspectRatio());
 
 	// TEAPOT
 	Model teapotModel("models/teapot/teapot.obj");
@@ -38,22 +38,45 @@ extern "C" int main(int argc, char *argv[])
 	teapotMaterial.diffuseTexture = &teapotTexture;
 	Entity teapot(teapotMesh, teapotMaterial);
 	teapot.GetTransform()->SetScale(0.01f);
-	teapot.GetTransform()->SetPosition(glm::vec3(0, 1.4, 0));
+	teapot.GetTransform()->SetPosition(glm::vec3(0, 0, 0));
+
+	// TABLE
+	Model tableModel("models/table/table.3ds");
+	Mesh tableMesh(tableModel);
+	//Texture tableTexture("models/table/wood.jpg");
+	Texture tableTexture("textures/default.png");
+	DiffuseMaterial tableMaterial;
+	tableMaterial.diffuseTexture = &tableTexture;
+	Entity table(tableMesh, tableMaterial);
+	table.GetTransform()->SetScale(60.0f);
+	table.GetTransform()->SetRotation(glm::angleAxis(1.57f, glm::vec3(1, 0, 0)));
+	
+	// FLOOR
+	Model floorModel("models/floor.obj");
+	Mesh floorMesh(floorModel);
+	Texture floorTexture("textures/wood1.diffuse.png");
+	DiffuseMaterial floorMaterial;
+	floorMaterial.diffuseTexture = &floorTexture;
+	Entity floor(floorMesh, floorMaterial);
+	floor.GetTransform()->SetScale(1.0f);
+	floor.GetTransform()->SetPosition(glm::vec3(0, -1, 10.0f));
 
 	// ENTITIES
 	std::vector<Entity *> entities;
 	entities.push_back(&teapot);
+	entities.push_back(&table);
+	entities.push_back(&floor);
 
 	// DIRECTIONAL LIGHT
-	DirectionalLight directionalLight(glm::quat(0.655617990970857f, 0.055478958634923616f, -0.7025613967450166f, 0.08004676010739724f), // just some random stuff
-		glm::vec3(1.0f, 0.95f, 0.88f), 0.5f);
+	DirectionalLight directionalLight(glm::quat(1, 1, 0, 1), glm::vec3(1.0f, 0.95f, 0.88f), 0.5f);
 
 	// POINT LIGHT
-	//PointLight pointLight();
+	PointLight pointLight(glm::vec3(0, 2, -1), glm::vec3(256, 30, 40), 0.07f);
 
 	// LIGHTS
-	std::vector<DirectionalLight *> lights;
+	std::vector<ILight *> lights;
 	lights.push_back(&directionalLight);
+	//lights.push_back(&pointLight);
 
 	//////////
 	// LOOP //
@@ -77,7 +100,14 @@ extern "C" int main(int argc, char *argv[])
 
 		timer += 0.3f;
 		teapot.GetTransform()->SetRotation(glm::vec3(0, 1, 0), timer * 0.1f);
-		teapot.GetTransform()->SetPosition(glm::vec3(sinf(timer / 10) * 2, 1.4, 0));
+		teapot.GetTransform()->SetPosition(glm::vec3(sinf(timer / 10), 0, 0));
+
+		pointLight.GetTransform()->SetPosition(glm::vec3(0, 2, 0));
+
+		//table.GetTransform()->SetScale(timer * 0.3f);
+		//printf("%f\n", timer * 0.3f);
+
+		table.GetTransform()->SetPosition(glm::vec3(0, 0, sinf(timer / 15) * 4 + 2.5));
 
 		// Try rotating it properly. Quaternions are complicated...
 		//directionalLight.GetTransform()->Rotate ...;

@@ -32,7 +32,7 @@ void DeferredRenderer::BindForUsage() const
 }
 
 
-void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::vector<DirectionalLight *>& lights, const PerspectiveCamera& camera)
+void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::vector<ILight *>& lights, const PerspectiveCamera& camera)
 {
 	RenderGeometryPass(entities, camera);
 	RenderLightPass(lights, camera);
@@ -54,7 +54,7 @@ void DeferredRenderer::RenderGeometryPass(const std::vector<Entity *>& entities,
 	}
 }
 
-void DeferredRenderer::RenderLightPass(const std::vector<DirectionalLight *>& lights, const PerspectiveCamera& camera)
+void DeferredRenderer::RenderLightPass(const std::vector<ILight *>& lights, const PerspectiveCamera& camera)
 {
 	// Set up the gl state to render the light pass
 	display.BindAsDrawFrameBuffer();
@@ -66,7 +66,7 @@ void DeferredRenderer::RenderLightPass(const std::vector<DirectionalLight *>& li
 
 	gBuffer.GetAlbedoTexture().Bind(10);
 	gBuffer.GetNormalTexture().Bind(11);
-	//gBuffer.GetDepthTexture().Bind(12);
+	gBuffer.GetDepthTexture().Bind(12);
 
 	for (auto it = lights.begin(); it != lights.end(); ++it)
 	{

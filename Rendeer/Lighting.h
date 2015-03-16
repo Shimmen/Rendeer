@@ -42,7 +42,7 @@ class DirectionalLight
 public:
 	DirectionalLight(const glm::quat& directionRotation, glm::vec3 color, float intensity)
 		: ILight(new Shader("postprocess.vsh", "Lights/DirectionalLight.fsh"),
-		Transform(glm::vec3(0, 0, 0), directionRotation, 1.0f), color, intensity) {}
+		Transform(glm::vec3(0, 0, 0), glm::normalize(directionRotation), 1.0f), color, intensity) {}
 
 	virtual ~DirectionalLight() {}
 

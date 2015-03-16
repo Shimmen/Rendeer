@@ -7,7 +7,7 @@ layout(location=2) in vec3 a_normal;
 uniform mat4 u_model_view_matrix;
 uniform mat4 u_projection_matrix;
 
-noperspective out vec2 v_tex_coord;
+smooth out vec2 v_tex_coord;
 smooth out vec3 v_normal;
 
 void main()

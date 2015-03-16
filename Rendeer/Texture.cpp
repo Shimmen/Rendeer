@@ -26,7 +26,7 @@ Texture::Texture(const std::string& filename, GLint magFilter, GLint wrapMode)
 		{
 			for (int x = 0; x < this->width; ++x)
 			{
-				std::swap(pixels[x + y * width], pixels[x + (height - 1 - y) * width]);
+				//std::swap(pixels[x + y * width], pixels[x + (height - 1 - y) * width]);
 			}
 		}
 

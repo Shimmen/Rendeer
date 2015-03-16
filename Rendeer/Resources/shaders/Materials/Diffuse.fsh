@@ -5,7 +5,7 @@
 layout(location=0) out vec3 o_fragment_color;
 layout(location=1) out vec3 o_normal;
 
-noperspective in vec2 v_tex_coord;
+smooth in vec2 v_tex_coord;
 smooth in vec3 v_normal;
 
 uniform sampler2D u_diffuse;

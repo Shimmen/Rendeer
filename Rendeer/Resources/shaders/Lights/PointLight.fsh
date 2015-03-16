@@ -18,9 +18,12 @@ uniform vec3  u_light_view_space_position;
 uniform vec3  u_light_color = vec3(1.0, 1.0, 1.0);
 uniform float u_light_intensity = 1.0;
 
+uniform mat4  u_projection_matrix;
+uniform mat4  u_inverse_projection_matrix;
+
 void main()
 {
-	// Get surface normal (it's in view space)
+	// Get surface normal (in view space)
 	vec3 encodedNormal = texture(u_normals, v_tex_coord).xyz;
 	vec3 normal = normalize(decodeNormal(encodedNormal));
 
@@ -29,13 +32,17 @@ void main()
   float linearDepth = linearDepth(nonLinearDepth, u_projection_matrix);
   vec3 viewSpacePos = viewSpacePosition(v_tex_coord, linearDepth, u_inverse_projection_matrix);
 
-  // Get vector from light to fragment
+  // Get vector (and distance) from light to fragment
   vec3 lightToFrag = viewSpacePos - u_light_view_space_position;
+	float lightToFragDistance = length(lightToFrag);
 
-  /*
-    TODO: HANDLE MAX RANGE!!!
-    i.e. skip fragment if too far away"
-  */
+	// "Discard" fragment if it's too far away for the light
+	// TODO: Handle without branching in some way?
+	if(lightToFragDistance > ATTENUATION_MAX_LIGHT_RANGE)
+	{
+		o_fragment_color = vec4(0, 0, 0, 0);
+		return;
+	}
 
   vec3 lightDirection = normalize(lightToFrag);
 
@@ -43,13 +50,11 @@ void main()
 	float lambertianFactor = dot(-lightDirection, normal);
 	lambertianFactor = max(lambertianFactor, 0.0);
 
-  /*
-    TODO: HANDLE ATTENUATION!!!
-  */
-  float attenuation = 1.0;
+	// Calculate attenuation factor
+  float attenuationFactor = attenuation(lightToFragDistance);
 
 	// Calculate the the light's influence on the fragment's color
-	vec3 lightInfluence = u_light_color * u_light_intensity * lambertianFactor * attenuation;
+	vec3 lightInfluence = u_light_color * u_light_intensity * lambertianFactor * attenuationFactor;
 
 	// Calculate the final fragment color
 	o_fragment_color = texture(u_albedo, v_tex_coord) * vec4(lightInfluence, 1.0);

@@ -11,7 +11,11 @@ void DirectionalLight::SetUniforms(const DeferredRenderer& renderer, const Persp
 {
 	shader->Bind();
 	
-	shader->SetUniform("u_light_direction",  glm::eulerAngles(this->transform.GetRotation()));
+	// Rotate the light direction to view space
+	glm::quat lightDirectionQuat = camera.GetTransform()->GetRotation() * this->transform.GetRotation();
+	glm::vec3 lightDirectionEuler = glm::eulerAngles(lightDirectionQuat);
+
+	shader->SetUniform("u_light_direction", lightDirectionEuler);
 	shader->SetUniform("u_light_color", this->color);
 	shader->SetUniform("u_light_intensity", this->intensity);
 }
@@ -26,4 +30,7 @@ void PointLight::SetUniforms(const DeferredRenderer& renderer, const Perspective
 	shader->SetUniform("u_light_view_space_position", glm::vec3(lightViewSpacePos));
 	shader->SetUniform("u_light_color", this->color);
 	shader->SetUniform("u_light_intensity", this->intensity);
+
+	shader->SetUniform("u_projection_matrix", camera.GetProjectionMatrix());
+	shader->SetUniform("u_inverse_projection_matrix", glm::inverse((camera.GetProjectionMatrix())));
 }

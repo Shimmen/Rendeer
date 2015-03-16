@@ -20,7 +20,7 @@ uniform float u_light_intensity = 1.0;
 
 void main()
 {
-	// Get surface normal (in world space)
+	// Get surface normal (in view space)
 	vec3 encodedNormal = texture(u_normals, v_tex_coord).xyz;
 	vec3 normal = normalize(decodeNormal(encodedNormal));
 

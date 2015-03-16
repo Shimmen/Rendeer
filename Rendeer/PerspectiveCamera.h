@@ -14,7 +14,7 @@ public:
 	PerspectiveCamera(const glm::vec3& position, const glm::quat& rotation,
 		float fov, float near, float far, float aspectRatio);
 
-	inline Transform* GetTransform() { return &transform; }
+	inline const Transform* GetTransform() const { return &transform; }
 
 	glm::mat4 GetViewMatrix() const;
 	glm::mat4 GetProjectionMatrix() const;
