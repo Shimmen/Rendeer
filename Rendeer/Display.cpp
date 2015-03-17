@@ -7,7 +7,7 @@ Display::Display(const std::string& title,
 {
 	if (SDL_Init(SDL_INIT_VIDEO) != 0)
 	{
-		std::cerr << "SDL_Init Error: " << SDL_GetError() << std::endl;
+		std::cerr << "SDL_Init video error: " << SDL_GetError() << std::endl;
 		exit(1);
 	}
 

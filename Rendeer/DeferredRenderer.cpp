@@ -18,6 +18,13 @@ DeferredRenderer::DeferredRenderer(Display& display)
 	{
 		std::cout << "Error: G Buffer is incomplete!\nReason: " << reason << std::endl;
 	}
+
+	renderTextureShader = new Shader("postprocess.vsh", "render_texture.fsh");
+}
+
+DeferredRenderer::~DeferredRenderer()
+{
+	delete renderTextureShader;
 }
 
 void DeferredRenderer::BindForUsage() const
@@ -32,14 +39,20 @@ void DeferredRenderer::BindForUsage() const
 }
 
 
-void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::vector<ILight *>& lights, const PerspectiveCamera& camera)
+void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::vector<ILight *>& lights, PerspectiveCamera& camera)
 {
 	RenderGeometryPass(entities, camera);
+
+#if 1
 	RenderLightPass(lights, camera);
+#else
+	RenderTextureToScreen(gBuffer.GetDepthTexture());
+#endif
+
 	display.SwapBuffers();
 }
 
-void DeferredRenderer::RenderGeometryPass(const std::vector<Entity *>& entities, const PerspectiveCamera& camera)
+void DeferredRenderer::RenderGeometryPass(const std::vector<Entity *>& entities, PerspectiveCamera& camera)
 {
 	// Set state for geometry rendering
 	gBuffer.BindAsDrawFrameBuffer();
@@ -54,7 +67,7 @@ void DeferredRenderer::RenderGeometryPass(const std::vector<Entity *>& entities,
 	}
 }
 
-void DeferredRenderer::RenderLightPass(const std::vector<ILight *>& lights, const PerspectiveCamera& camera)
+void DeferredRenderer::RenderLightPass(const std::vector<ILight *>& lights, PerspectiveCamera& camera)
 {
 	// Set up the gl state to render the light pass
 	display.BindAsDrawFrameBuffer();
@@ -71,14 +84,6 @@ void DeferredRenderer::RenderLightPass(const std::vector<ILight *>& lights, cons
 	for (auto it = lights.begin(); it != lights.end(); ++it)
 	{
 		ILight *light = (*it);
-		Shader *lightShader = light->GetShader();
-
-		lightShader->Bind();
-
-		// TODO: Set uniform bindings in shader
-		lightShader->SetUniform("u_albedo", 10);
-		lightShader->SetUniform("u_normals", 11);
-	    //lightShader->SetUniform("u_depth", 12);
 
 		// Ask the light to sets its shader's uniforms (except the gBuffer related
 		// ones, since they are set here)
@@ -86,4 +91,18 @@ void DeferredRenderer::RenderLightPass(const std::vector<ILight *>& lights, cons
 
 		quad.Render();
 	}
+}
+
+void DeferredRenderer::RenderTextureToScreen(const Texture& texture)
+{
+	display.BindAsDrawFrameBuffer();
+	renderTextureShader->Bind();
+
+	texture.Bind(0);
+	renderTextureShader->SetUniform("u_texture", 0);
+
+	glDisable(GL_CULL_FACE);
+	glDisable(GL_DEPTH_TEST);
+	glClear(GL_COLOR_BUFFER_BIT);
+	quad.Render();
 }

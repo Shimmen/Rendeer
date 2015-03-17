@@ -37,8 +37,8 @@ extern "C" int main(int argc, char *argv[])
 	DiffuseMaterial teapotMaterial;
 	teapotMaterial.diffuseTexture = &teapotTexture;
 	Entity teapot(teapotMesh, teapotMaterial);
-	teapot.GetTransform()->SetScale(0.01f);
-	teapot.GetTransform()->SetPosition(glm::vec3(0, 0, 0));
+	teapot.GetTransform().SetScale(0.01f);
+	teapot.GetTransform().SetPosition(glm::vec3(0, 0, 0));
 
 	// TABLE
 	Model tableModel("models/table/table.3ds");
@@ -48,8 +48,8 @@ extern "C" int main(int argc, char *argv[])
 	DiffuseMaterial tableMaterial;
 	tableMaterial.diffuseTexture = &tableTexture;
 	Entity table(tableMesh, tableMaterial);
-	table.GetTransform()->SetScale(60.0f);
-	table.GetTransform()->SetRotation(glm::angleAxis(1.57f, glm::vec3(1, 0, 0)));
+	table.GetTransform().SetScale(60.0f);
+	table.GetTransform().SetRotation(glm::angleAxis(1.57f, glm::vec3(1, 0, 0)));
 	
 	// FLOOR
 	Model floorModel("models/floor.obj");
@@ -58,8 +58,8 @@ extern "C" int main(int argc, char *argv[])
 	DiffuseMaterial floorMaterial;
 	floorMaterial.diffuseTexture = &floorTexture;
 	Entity floor(floorMesh, floorMaterial);
-	floor.GetTransform()->SetScale(1.0f);
-	floor.GetTransform()->SetPosition(glm::vec3(0, -1, 10.0f));
+	floor.GetTransform().SetScale(1.0f);
+	floor.GetTransform().SetPosition(glm::vec3(0, -1, 10.0f));
 
 	// ENTITIES
 	std::vector<Entity *> entities;
@@ -71,7 +71,7 @@ extern "C" int main(int argc, char *argv[])
 	DirectionalLight directionalLight(glm::quat(1, 1, 0, 1), glm::vec3(1.0f, 0.95f, 0.88f), 0.5f);
 
 	// POINT LIGHT
-	PointLight pointLight(glm::vec3(0, 2, -1), glm::vec3(256, 30, 40), 0.07f);
+	PointLight pointLight(glm::vec3(0, 1, 0), glm::vec3(1.0f, 0.1f, 0.15f), 1.0f);
 
 	// LIGHTS
 	std::vector<ILight *> lights;
@@ -81,6 +81,12 @@ extern "C" int main(int argc, char *argv[])
 	//////////
 	// LOOP //
 	//////////
+
+	if (SDL_Init(SDL_INIT_EVENTS) != 0)
+	{
+		std::cerr << "SDL_Init events error: " << SDL_GetError() << std::endl;
+		exit(1);
+	}
 
 	deferredRenderer.BindForUsage();
 
@@ -96,18 +102,52 @@ extern "C" int main(int argc, char *argv[])
 			{
 				shouldExit = true;
 			}
+			else if (event.type == SDL_KEYDOWN)
+			{
+				float dCameraX = 0;
+				float dCameraY = 0;
+				float dCameraZ = 0;
+
+				switch (event.key.keysym.sym)
+				{
+				case SDLK_LEFT:
+					dCameraX -= 0.1f;
+					break;
+				case SDLK_RIGHT:
+					dCameraX += 0.1f;
+					break;
+				case SDLK_UP:
+					dCameraZ += 0.1f;
+					break;
+				case SDLK_DOWN:
+					dCameraZ -= 0.1f;
+					break;
+				case SDLK_SPACE:
+					dCameraY += 0.1f;
+					break;
+				case SDLK_LSHIFT:
+					dCameraY -= 0.1f;
+					break;
+				default:
+					break;
+				}
+
+				glm::vec3 position = camera.GetTransform().GetPosition();
+				position += glm::vec3(dCameraX, dCameraY, dCameraZ);
+				camera.GetTransform().SetPosition(position);
+			}
 		}
 
 		timer += 0.3f;
-		teapot.GetTransform()->SetRotation(glm::vec3(0, 1, 0), timer * 0.1f);
-		teapot.GetTransform()->SetPosition(glm::vec3(sinf(timer / 10), 0, 0));
+		teapot.GetTransform().SetRotation(glm::vec3(0, 1, 0), timer * 0.1f);
+		teapot.GetTransform().SetPosition(glm::vec3(sinf(timer / 10), 0, 0));
 
-		pointLight.GetTransform()->SetPosition(glm::vec3(0, 2, 0));
+		//pointLight.GetTransform()->SetPosition(glm::vec3(0, 2, 0));
 
 		//table.GetTransform()->SetScale(timer * 0.3f);
 		//printf("%f\n", timer * 0.3f);
 
-		table.GetTransform()->SetPosition(glm::vec3(0, 0, sinf(timer / 15) * 4 + 2.5));
+		table.GetTransform().SetPosition(glm::vec3(0, 0, sinf(timer / 15) * 4 + 2.5));
 
 		// Try rotating it properly. Quaternions are complicated...
 		//directionalLight.GetTransform()->Rotate ...;

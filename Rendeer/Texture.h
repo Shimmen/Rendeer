@@ -13,8 +13,8 @@ public:
 		GLint magFilter, GLint minFilter, unsigned char* pixels = 0);
 	~Texture();
 
-	void Bind();
-	void Bind(int textureTarget);
+	void Bind() const;
+	void Bind(int textureTarget) const;
 
 	inline GLuint GetHandle() const { return textureHandle; }
 

@@ -40,7 +40,7 @@ void main()
 	// TODO: Handle without branching in some way?
 	if(lightToFragDistance > ATTENUATION_MAX_LIGHT_RANGE)
 	{
-		o_fragment_color = vec4(0, 0, 0, 0);
+		o_fragment_color = vec4(0, 0, 0, 1);
 		return;
 	}
 

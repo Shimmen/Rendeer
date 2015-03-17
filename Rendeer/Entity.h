@@ -28,7 +28,7 @@ public:
 		mesh->Render();
 	}
 
-	inline Transform* GetTransform() { return &transform; }
+	inline Transform& GetTransform() { return transform; }
 	inline IMaterial* GetMaterial() { return material; }
 	inline Mesh* GetMesh() { return mesh; }
 

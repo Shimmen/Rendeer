@@ -77,13 +77,13 @@ Texture::~Texture()
 	glDeleteTextures(1, &textureHandle);
 }
 
-void Texture::Bind()
+void Texture::Bind() const
 {
 	// Bind this texture as GL_TEXTURE0
 	Bind(0);
 }
 
-void Texture::Bind(int textureTarget)
+void Texture::Bind(int textureTarget) const
 {
 	// 32 is the maximum active textures possible/allowed
 	assert(textureTarget >= 0 && textureTarget < 32);

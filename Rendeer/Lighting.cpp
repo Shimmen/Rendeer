@@ -7,12 +7,15 @@
 #include "DeferredRenderer.h"
 #include "PerspectiveCamera.h"
 
-void DirectionalLight::SetUniforms(const DeferredRenderer& renderer, const PerspectiveCamera& camera)
+void DirectionalLight::SetUniforms(const DeferredRenderer& renderer, PerspectiveCamera& camera)
 {
 	shader->Bind();
 	
+	shader->SetUniform("u_albedo", 10);
+	shader->SetUniform("u_normals", 11);
+
 	// Rotate the light direction to view space
-	glm::quat lightDirectionQuat = camera.GetTransform()->GetRotation() * this->transform.GetRotation();
+	glm::quat lightDirectionQuat = camera.GetTransform().GetRotation() * this->transform.GetRotation();
 	glm::vec3 lightDirectionEuler = glm::eulerAngles(lightDirectionQuat);
 
 	shader->SetUniform("u_light_direction", lightDirectionEuler);
@@ -20,9 +23,13 @@ void DirectionalLight::SetUniforms(const DeferredRenderer& renderer, const Persp
 	shader->SetUniform("u_light_intensity", this->intensity);
 }
 
-void PointLight::SetUniforms(const DeferredRenderer& renderer, const PerspectiveCamera& camera)
+void PointLight::SetUniforms(const DeferredRenderer& renderer, PerspectiveCamera& camera)
 {
 	shader->Bind();
+
+	shader->SetUniform("u_albedo", 10);
+	shader->SetUniform("u_normals", 11);
+	shader->SetUniform("u_depth", 12);
 
 	// Transform the light from world space to view space
 	glm::vec4 lightViewSpacePos = camera.GetViewMatrix() * glm::vec4(this->transform.GetPosition(), 1.0f);

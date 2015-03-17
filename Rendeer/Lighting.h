@@ -23,7 +23,7 @@ public:
 	}
 
 	// this->shader should already be set when function is called
-	virtual void SetUniforms(const DeferredRenderer& renderer, const PerspectiveCamera& camera) = 0;
+	virtual void SetUniforms(const DeferredRenderer& renderer, PerspectiveCamera& camera) = 0;
 
 	Shader* GetShader() const { return shader; }
 	Transform* GetTransform() { return &transform; }
@@ -46,7 +46,7 @@ public:
 
 	virtual ~DirectionalLight() {}
 
-	void SetUniforms(const DeferredRenderer& renderer, const PerspectiveCamera& camera);
+	void SetUniforms(const DeferredRenderer& renderer, PerspectiveCamera& camera);
 };
 
 class PointLight 
@@ -59,5 +59,5 @@ public:
 
 	virtual ~PointLight() {}
 
-	void SetUniforms(const DeferredRenderer& renderer, const PerspectiveCamera& camera);
+	void SetUniforms(const DeferredRenderer& renderer, PerspectiveCamera& camera);
 };
