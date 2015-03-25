@@ -104,6 +104,7 @@
     <ClInclude Include="DiffuseMaterial.h" />
     <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="GBuffer.h" />
+    <ClInclude Include="Input.h" />
     <ClInclude Include="Lighting.h" />
     <ClInclude Include="IMaterial.h" />
     <ClInclude Include="Model.h" />

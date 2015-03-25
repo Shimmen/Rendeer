@@ -82,61 +82,62 @@ extern "C" int main(int argc, char *argv[])
 	// LOOP //
 	//////////
 
-	if (SDL_Init(SDL_INIT_EVENTS) != 0)
-	{
-		std::cerr << "SDL_Init events error: " << SDL_GetError() << std::endl;
-		exit(1);
-	}
-
 	deferredRenderer.BindForUsage();
 
 	float timer = 0.0f;
 
-	bool shouldExit = false;
-	while (!shouldExit)
+	while (!display.IsCloseRequested())
 	{
-		SDL_Event event;
-		while (SDL_PollEvent(&event))
+		// Start every frame by polling events
+		display.PollEvents();
+
+		// Make the escape button quit the app/close the window
+		if (display.GetInput().WasKeyPressed(SDL_SCANCODE_ESCAPE))
 		{
-			if (event.type == SDL_QUIT || event.key.keysym.sym == SDLK_ESCAPE)
-			{
-				shouldExit = true;
-			}
-			else if (event.type == SDL_KEYDOWN)
-			{
-				float dCameraX = 0;
-				float dCameraY = 0;
-				float dCameraZ = 0;
-
-				switch (event.key.keysym.sym)
-				{
-				case SDLK_LEFT:
-					dCameraX -= 0.1f;
-					break;
-				case SDLK_RIGHT:
-					dCameraX += 0.1f;
-					break;
-				case SDLK_UP:
-					dCameraZ += 0.1f;
-					break;
-				case SDLK_DOWN:
-					dCameraZ -= 0.1f;
-					break;
-				case SDLK_SPACE:
-					dCameraY += 0.1f;
-					break;
-				case SDLK_LSHIFT:
-					dCameraY -= 0.1f;
-					break;
-				default:
-					break;
-				}
-
-				glm::vec3 position = camera.GetTransform().GetPosition();
-				position += glm::vec3(dCameraX, dCameraY, dCameraZ);
-				camera.GetTransform().SetPosition(position);
-			}
+			break;
 		}
+
+
+
+
+		// Move the camera (for now in this very temporary solution)
+		glm::vec3 translation = glm::vec3();
+		float speed = 0.08f;
+
+		const Input input = display.GetInput();
+		if (input.IsKeyDown(SDL_SCANCODE_W))
+		{
+			translation.z += speed;
+		}
+		if (input.IsKeyDown(SDL_SCANCODE_S))
+		{
+			translation.z -= speed;
+		}
+		if (input.IsKeyDown(SDL_SCANCODE_A))
+		{
+			translation.x -= speed;
+		}
+		if (input.IsKeyDown(SDL_SCANCODE_D))
+		{
+			translation.x += speed;
+		}
+		if (input.IsKeyDown(SDL_SCANCODE_SPACE))
+		{
+			translation.y += speed;
+		}
+		if (input.IsKeyDown(SDL_SCANCODE_LSHIFT))
+		{
+			translation.y -= speed;
+		}
+
+		glm::vec3 newPosition = camera.GetTransform().GetPosition() + translation;
+		camera.GetTransform().SetPosition(newPosition);
+
+
+
+
+
+
 
 		timer += 0.3f;
 		teapot.GetTransform().SetRotation(glm::vec3(0, 1, 0), timer * 0.1f);

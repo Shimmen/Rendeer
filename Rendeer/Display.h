@@ -6,6 +6,8 @@
 #include <GL/glew.h>
 #include <SDL.h>
 
+#include "Input.h"
+
 class Display
 {
 public:
@@ -13,13 +15,25 @@ public:
 		int width = 1280, int height = 720, bool fullscreen = false);
 	~Display();
 
-	// Don't implement these, default behaviour is desireable
+	// Don't implement these, default behaviour is desired
 	// Display(const Display& source);
 	// Display& operator=(const Display& source);
 
+	void PollEvents();
+
+	inline const Input& GetInput() const
+	{
+		return input;
+	}
+
+	inline bool IsCloseRequested() const
+	{
+		return isCloseRequested;
+	}
+
 	inline void BindAsDrawFrameBuffer() const
 	{
-		// The display is only for drawing on
+		// The display is only for drawing on (not reading)
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 	}
 
@@ -50,4 +64,7 @@ public:
 private:
 	SDL_Window *window;
 	SDL_GLContext glContext;
+
+	bool isCloseRequested;
+	Input input;
 };

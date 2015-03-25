@@ -85,8 +85,7 @@ void DeferredRenderer::RenderLightPass(const std::vector<ILight *>& lights, Pers
 	{
 		ILight *light = (*it);
 
-		// Ask the light to sets its shader's uniforms (except the gBuffer related
-		// ones, since they are set here)
+		// Ask the light to sets its shader's uniforms
 		light->SetUniforms(*this, camera);
 
 		quad.Render();

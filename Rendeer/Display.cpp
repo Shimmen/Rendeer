@@ -4,6 +4,7 @@
 
 Display::Display(const std::string& title,
 	int width, int height, bool fullscreen)
+	: isCloseRequested(false)
 {
 	if (SDL_Init(SDL_INIT_VIDEO) != 0)
 	{
@@ -31,6 +32,7 @@ Display::Display(const std::string& title,
 		width, height, windowFlags);
 
 	glContext = SDL_GL_CreateContext(window);
+	SDL_GL_MakeCurrent(window, glContext);
 
 	// Must be done after gl context is aquired
 	glewExperimental = GL_TRUE;
@@ -46,4 +48,32 @@ Display::~Display()
 	SDL_GL_DeleteContext(glContext);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
+}
+
+void Display::PollEvents()
+{
+	input.ResetPressedAndReleasedKeys();
+
+	SDL_Event event;
+	while (SDL_PollEvent(&event))
+	{
+		if (event.type == SDL_QUIT)
+		{
+			isCloseRequested = true;
+		}
+		else if (event.type == SDL_KEYDOWN)
+		{
+			if (event.key.repeat == 0)
+			{
+				input.SetKeyPressed(event.key.keysym.scancode);
+			}
+		}
+		else if (event.type == SDL_KEYUP)
+		{
+			if (event.key.repeat == 0)
+			{
+				input.SetKeyReleased(event.key.keysym.scancode);
+			}
+		}
+	}
 }
