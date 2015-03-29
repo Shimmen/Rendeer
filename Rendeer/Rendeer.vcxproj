@@ -53,14 +53,14 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)\ExternalDependencies\glm;$(ProjectDir)\ExternalDependencies\SDL2-2.0.3\include;$(ProjectDir)\ExternalDependencies\glew-1.11.0\include;$(ProjectDir)\ExternalDependencies\assimp-3.1.1\include;$(ProjectDir)\ExternalDependencies\stb;$(ProjectDir)\ExternalDependencies\glad;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\ExternalDependencies\glm;$(ProjectDir)\ExternalDependencies\SDL2-2.0.3\include;$(ProjectDir)\ExternalDependencies\assimp-3.1.1\include;$(ProjectDir)\ExternalDependencies\stb;$(ProjectDir)\ExternalDependencies\glad;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)\ExternalDependencies\assimp-3.1.1\lib64;$(ProjectDir)\ExternalDependencies\glew-1.11.0\lib\Release\x64;$(ProjectDir)\ExternalDependencies\SDL2-2.0.3\lib\x64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2test.lib;glew32.lib;opengl32.lib;assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)\ExternalDependencies\assimp-3.1.1\lib64;$(ProjectDir)\ExternalDependencies\SDL2-2.0.3\lib\x64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2test.lib;opengl32.lib;assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -73,15 +73,15 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)\ExternalDependencies\glm;$(ProjectDir)\ExternalDependencies\SDL2-2.0.3\include;$(ProjectDir)\ExternalDependencies\glew-1.11.0\include;$(ProjectDir)\ExternalDependencies\assimp-3.1.1\include;$(ProjectDir)\ExternalDependencies\stb;$(ProjectDir)\ExternalDependencies\glad;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\ExternalDependencies\glm;$(ProjectDir)\ExternalDependencies\SDL2-2.0.3\include;$(ProjectDir)\ExternalDependencies\assimp-3.1.1\include;$(ProjectDir)\ExternalDependencies\stb;$(ProjectDir)\ExternalDependencies\glad;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(ProjectDir)\ExternalDependencies\assimp-3.1.1\lib64;$(ProjectDir)\ExternalDependencies\glew-1.11.0\lib\Release\x64;$(ProjectDir)\ExternalDependencies\SDL2-2.0.3\lib\x64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2test.lib;glew32.lib;opengl32.lib;assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)\ExternalDependencies\assimp-3.1.1\lib64;$(ProjectDir)\ExternalDependencies\SDL2-2.0.3\lib\x64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2test.lib;opengl32.lib;assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
