@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 
-#include <GL/glew.h>
+#include <glad/glad.h>
 #include <SDL.h>
 
 #include "Input.h"

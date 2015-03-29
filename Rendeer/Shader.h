@@ -5,7 +5,7 @@
 #include <iostream>
 #include <map>
 
-#include <GL/glew.h>
+#include <glad/glad.h>
 #include <glm/glm.hpp>
 
 class Transform;

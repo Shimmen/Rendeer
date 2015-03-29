@@ -34,13 +34,9 @@ Display::Display(const std::string& title,
 	glContext = SDL_GL_CreateContext(window);
 	SDL_GL_MakeCurrent(window, glContext);
 
+	// Load OpenGL extentions.
 	// Must be done after gl context is aquired
-	glewExperimental = GL_TRUE;
-	if (glewInit() != GLEW_OK)
-	{
-		std::cerr << "GLEW Error!" << std::endl;
-		exit(1);
-	}
+	gladLoadGL();
 }
 
 Display::~Display()

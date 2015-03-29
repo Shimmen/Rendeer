@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <GL/glew.h>
+#include <glad/glad.h>
 
 #define MIN_COMPONENT_COUNT 3
 

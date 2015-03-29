@@ -1,6 +1,6 @@
 #pragma once
 
-#include <GL/glew.h>
+#include <glad/glad.h>
 
 /*
 A simple mesh that is a suitable mesh for rendering to textures etc.

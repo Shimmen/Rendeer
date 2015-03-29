@@ -53,7 +53,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)\ExternalDependencies\glm;$(ProjectDir)\ExternalDependencies\SDL2-2.0.3\include;$(ProjectDir)\ExternalDependencies\glew-1.11.0\include;$(ProjectDir)\ExternalDependencies\assimp-3.1.1\include;$(ProjectDir)\ExternalDependencies\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\ExternalDependencies\glm;$(ProjectDir)\ExternalDependencies\SDL2-2.0.3\include;$(ProjectDir)\ExternalDependencies\glew-1.11.0\include;$(ProjectDir)\ExternalDependencies\assimp-3.1.1\include;$(ProjectDir)\ExternalDependencies\stb;$(ProjectDir)\ExternalDependencies\glad;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -73,7 +73,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)\ExternalDependencies\glm;$(ProjectDir)\ExternalDependencies\SDL2-2.0.3\include;$(ProjectDir)\ExternalDependencies\glew-1.11.0\include;$(ProjectDir)\ExternalDependencies\assimp-3.1.1\include;$(ProjectDir)\ExternalDependencies\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\ExternalDependencies\glm;$(ProjectDir)\ExternalDependencies\SDL2-2.0.3\include;$(ProjectDir)\ExternalDependencies\glew-1.11.0\include;$(ProjectDir)\ExternalDependencies\assimp-3.1.1\include;$(ProjectDir)\ExternalDependencies\stb;$(ProjectDir)\ExternalDependencies\glad;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -87,6 +87,7 @@
   <ItemGroup>
     <ClCompile Include="DeferredRenderer.cpp" />
     <ClCompile Include="DiffuseMaterial.cpp" />
+    <ClCompile Include="glad.c" />
     <ClCompile Include="Lighting.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="Model.cpp" />
