@@ -4,7 +4,6 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
-#include "Uniform.h"
 #include "Texture.h"
 
 Shader::Shader(const std::string& vertexShaderFilePath,
