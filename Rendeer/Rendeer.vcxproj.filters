@@ -110,5 +110,8 @@
     <ClInclude Include="Window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DebugGBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

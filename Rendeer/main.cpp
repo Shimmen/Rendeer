@@ -19,13 +19,13 @@
 #include "DeferredRenderer.h"
 #include "PerspectiveCamera.h"
 
-#define WINDOW_WIDTH 1280
-#define WINDOW_HEIGHT 720
+#define WINDOW_WIDTH 950
+#define WINDOW_HEIGHT 600
 
-extern "C" int main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
 	// DISPLAY & RENDERER
-	Window window(WINDOW_WIDTH, WINDOW_HEIGHT, "Rendeer");
+	Window window(WINDOW_WIDTH, WINDOW_HEIGHT, "Rendeer", false, true);
 	DeferredRenderer deferredRenderer(window);
 
 	// CAMERA
@@ -51,9 +51,9 @@ extern "C" int main(int argc, char *argv[])
 	tableMaterial.diffuseTexture = &tableTexture;
 	Entity table(tableMesh, tableMaterial);
 	table.GetTransform().SetScale(60.0f);
-	table.GetTransform().SetRotation(glm::angleAxis(1.57f, glm::vec3(1, 0, 0)));
+	table.GetTransform().SetRotation(glm::angleAxis(1.57f /* PI/2.0 == 90 deg */, glm::vec3(1, 0, 0)));
 	
-	// FLOOR
+	// PANEL
 	Model floorModel("models/floor.obj");
 	Mesh floorMesh(floorModel);
 	Texture floorTexture("textures/wood1.diffuse.png");
@@ -73,7 +73,7 @@ extern "C" int main(int argc, char *argv[])
 	DirectionalLight directionalLight(glm::quat(1, 1, 0, 1), glm::vec3(1.0f, 0.95f, 0.88f), 0.5f);
 
 	// POINT LIGHT
-	PointLight pointLight(glm::vec3(0, 1, 0), glm::vec3(1.0f, 0.1f, 0.15f), 1.0f);
+	PointLight pointLight(glm::vec3(0, 0.1f, 0), glm::vec3(1.0f, 0.1f, 0.15f), 1.0f);
 
 	// LIGHTS
 	std::vector<ILight *> lights;
@@ -104,6 +104,7 @@ extern "C" int main(int argc, char *argv[])
 		
 		// Move the camera (for now in this very temporary solution)
 		glm::vec3 translation = glm::vec3();
+		float yRotation = 0;
 		float speed = 0.08f;
 
 		const Keyboard keyboard = window.GetKeyboard();
@@ -131,12 +132,18 @@ extern "C" int main(int argc, char *argv[])
 		{
 			translation.y -= speed;
 		}
+		if (keyboard.IsKeyDown(GLFW_KEY_Q))
+		{
+			yRotation -= speed * 0.14f;
+		}
+		if (keyboard.IsKeyDown(GLFW_KEY_E))
+		{
+			yRotation += speed * 0.14f;
+		}
 
-		glm::vec3 newPosition = camera.GetTransform().GetPosition() + translation;
-		camera.GetTransform().SetPosition(newPosition);
-
-
-
+		camera.GetTransform().
+			Translate(translation)->
+			Rotate(glm::vec3(0, 1, 0), yRotation);
 
 
 		timer += 0.3f;

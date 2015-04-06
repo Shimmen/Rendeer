@@ -14,9 +14,7 @@ void DirectionalLight::SetUniforms(const DeferredRenderer& renderer, Perspective
 	shader->SetUniform("u_albedo", 10);
 	shader->SetUniform("u_normals", 11);
 
-	// Rotate the light direction to view space
-	glm::quat lightDirectionQuat = camera.GetTransform().GetRotation() * this->transform.GetRotation();
-	glm::vec3 lightDirectionEuler = glm::eulerAngles(lightDirectionQuat);
+	glm::vec3 lightDirectionEuler = glm::eulerAngles(this->transform.GetRotation());
 
 	shader->SetUniform("u_light_direction", lightDirectionEuler);
 	shader->SetUniform("u_light_color", this->color);
@@ -29,15 +27,13 @@ void PointLight::SetUniforms(const DeferredRenderer& renderer, PerspectiveCamera
 
 	shader->SetUniform("u_albedo", 10);
 	shader->SetUniform("u_normals", 11);
-	shader->SetUniform("u_depth", 12);
+	//shader->SetUniform("u_depth", 12); // TODO
+	shader->SetUniform("u_position", 13); // TODO
 
-	// Transform the light from world space to view space
-	glm::vec4 lightViewSpacePos = camera.GetViewMatrix() * glm::vec4(this->transform.GetPosition(), 1.0f);
-
-	shader->SetUniform("u_light_view_space_position", glm::vec3(lightViewSpacePos));
+	shader->SetUniform("u_light_position", this->transform.GetPosition());
 	shader->SetUniform("u_light_color", this->color);
 	shader->SetUniform("u_light_intensity", this->intensity);
 
-	shader->SetUniform("u_projection_matrix", camera.GetProjectionMatrix());
-	shader->SetUniform("u_inverse_projection_matrix", glm::inverse((camera.GetProjectionMatrix())));
+	//shader->SetUniform("u_projection_matrix", camera.GetProjectionMatrix()); // TODO
+	//shader->SetUniform("u_inverse_projection_matrix", glm::inverse((camera.GetProjectionMatrix()))); // TODO
 }

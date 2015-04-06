@@ -49,7 +49,7 @@ Texture::Texture(const std::string& filename, GLint magFilter, GLint wrapMode)
 	}
 }
 
-Texture::Texture(int width, int height, GLenum format,
+Texture::Texture(int width, int height, GLenum format, GLenum internalFormat,
 	GLint wrapMode, GLint magFilter, GLint minFilter, unsigned char* pixels)
 {
 	glGenTextures(1, &textureHandle);
@@ -60,7 +60,7 @@ Texture::Texture(int width, int height, GLenum format,
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapMode);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapMode);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0,
+	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0,
 		format, GL_UNSIGNED_BYTE, (void *)pixels);
 
 	// If minFilter is mipmap compatible, make mipmaps!

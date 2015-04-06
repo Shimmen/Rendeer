@@ -13,13 +13,6 @@ Defines a left-handed coordinate system.
 class Transform
 {
 public:
-	/*
-	Transform(
-		glm::vec3 position = glm::vec3(0.0, 0.0, 0.0),
-		glm::vec3 rotation = glm::vec3(0.0, 0.0, 0.0),
-		float scale = 1.0f
-	);
-	*/
 
 	Transform(
 		glm::vec3 position = glm::vec3(0.0, 0.0, 0.0),
@@ -29,7 +22,6 @@ public:
 
 	glm::mat4 GetModelMatrix() const;
 
-	// TODO: Modifiers (like translate)!
 
 	inline glm::vec3 GetPosition() const
 	{
@@ -69,6 +61,32 @@ public:
 		this->scale = newScale;
 		return this;
 	}
+
+	inline Transform* Translate(const glm::vec3& translation)
+	{
+		this->position += translation;
+		return this;
+	}
+
+	inline Transform* Scale(float scaleFactor)
+	{
+		this->scale *= scaleFactor;
+		return this;
+	}
+
+	inline Transform* Rotate(const glm::vec3 axis, float angle)
+	{
+		glm::quat quaternionRotation = glm::angleAxis(angle, glm::normalize(axis));
+		return Rotate(quaternionRotation);
+	}
+
+	inline Transform* Rotate(const glm::quat rotation)
+	{
+		this->rotation = glm::normalize(rotation * this->rotation);
+		return this;
+	}
+
+	
 
 private:
 	glm::vec3 position;

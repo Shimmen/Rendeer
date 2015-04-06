@@ -5,6 +5,7 @@
 #include "Shader.h"
 #include "Entity.h"
 #include "GBuffer.h"
+#include "DebugGBuffer.h"
 #include "ScreenAlignedQuad.h"
 
 class Window;
@@ -25,7 +26,8 @@ private:
 	void RenderLightPass(const std::vector<ILight *>& lights, PerspectiveCamera& camera);
 
 
-	GBuffer gBuffer;
+	//GBuffer gBuffer;
+	DebugGBuffer gBuffer;
 	ScreenAlignedQuad quad;
 
 	Window& window;

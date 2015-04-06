@@ -46,11 +46,9 @@ void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::
 {
 	RenderGeometryPass(entities, camera);
 
-#if 1
 	RenderLightPass(lights, camera);
-#else
-	RenderTextureToScreen(gBuffer.GetDepthTexture());
-#endif
+	//RenderTextureToScreen(gBuffer.GetAlbedoTexture());
+	//RenderTextureToScreen(gBuffer.GetPositionTexture());
 
 	window.SwapBuffers();
 }
@@ -59,9 +57,13 @@ void DeferredRenderer::RenderGeometryPass(const std::vector<Entity *>& entities,
 {
 	// Set state for geometry rendering
 	gBuffer.BindAsDrawFrameBuffer();
-	glEnable(GL_CULL_FACE);
+
 	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glEnable(GL_CULL_FACE);
 
 	for (auto it = entities.begin(); it != entities.end(); ++it)
 	{
@@ -74,15 +76,22 @@ void DeferredRenderer::RenderLightPass(const std::vector<ILight *>& lights, Pers
 {
 	// Set up the gl state to render the light pass
 	window.BindAsDrawFramebuffer();
-	glDisable(GL_CULL_FACE);
-	glDisable(GL_DEPTH_TEST);
-	glClear(GL_COLOR_BUFFER_BIT);
 
-	// TODO: Enable blending!
+	glEnable(GL_BLEND);
+	glBlendEquation(GL_FUNC_ADD);
+	glBlendFunc(GL_ONE, GL_ONE);
+
+	glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
+
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	glClear(GL_COLOR_BUFFER_BIT); 
+	glDisable(GL_CULL_FACE);
 
 	gBuffer.GetAlbedoTexture().Bind(10);
 	gBuffer.GetNormalTexture().Bind(11);
 	gBuffer.GetDepthTexture().Bind(12);
+	gBuffer.GetPositionTexture().Bind(13); // TODO
 
 	for (auto it = lights.begin(); it != lights.end(); ++it)
 	{
@@ -93,6 +102,8 @@ void DeferredRenderer::RenderLightPass(const std::vector<ILight *>& lights, Pers
 
 		quad.Render();
 	}
+
+	glDisable(GL_BLEND);
 }
 
 void DeferredRenderer::RenderTextureToScreen(const Texture& texture)

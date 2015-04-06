@@ -12,9 +12,10 @@ noperspective in vec2 v_tex_coord;
 uniform sampler2D u_albedo;
 uniform sampler2D u_normals;
 uniform sampler2D u_depth;
+uniform sampler2D u_position; // TODO
 
 
-uniform vec3  u_light_view_space_position;
+uniform vec3  u_light_position;
 uniform vec3  u_light_color = vec3(1.0, 1.0, 1.0);
 uniform float u_light_intensity = 1.0;
 
@@ -28,12 +29,17 @@ void main()
 	vec3 normal = normalize(decodeNormal(encodedNormal));
 
   // Get fragment view space position
+	/*
   float nonLinearDepth = texture(u_depth, v_tex_coord).r;
   float linearDepth = linearDepth(nonLinearDepth, u_projection_matrix);
   vec3 viewSpacePos = viewSpacePosition(v_tex_coord, linearDepth, u_inverse_projection_matrix);
+	*/
+
+	// TODO: Only for debugging, position will be calculated from depth
+	vec3 fragPos = texture(u_position, v_tex_coord).xyz;
 
   // Get vector (and distance) from light to fragment
-  vec3 lightToFrag = viewSpacePos - u_light_view_space_position;
+  vec3 lightToFrag = fragPos - u_light_position;
 	float lightToFragDistance = length(lightToFrag);
 
 	// "Discard" fragment if it's too far away for the light

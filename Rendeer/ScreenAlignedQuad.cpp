@@ -5,10 +5,10 @@ ScreenAlignedQuad::ScreenAlignedQuad()
 	// Should probably be a singleton in the future,
 	// so this sits quite nicely here in that case.
 	GLfloat vertices[8] = {
-		-1.0f, -1.0f,
-		1.0f, -1.0f,
-		-1.0f, 1.0f,
-		1.0f, 1.0f
+		-1.0f, -1.0f,  // bottom left
+		1.0f, -1.0f,   // bottom right
+		-1.0f, 1.0f,   // top left
+		1.0f, 1.0f,    // top right
 	};
 
 	glGenVertexArrays(1, &vertexArray);
