@@ -101,42 +101,39 @@ extern "C" int main(int argc, char *argv[])
 
 
 
-		/*
-
+		
 		// Move the camera (for now in this very temporary solution)
 		glm::vec3 translation = glm::vec3();
 		float speed = 0.08f;
 
-		const Input input = display.GetInput();
-		if (input.IsKeyDown(SDL_SCANCODE_W))
+		const Keyboard keyboard = window.GetKeyboard();
+		if (keyboard.IsKeyDown(GLFW_KEY_W))
 		{
 			translation.z += speed;
 		}
-		if (input.IsKeyDown(SDL_SCANCODE_S))
+		if (keyboard.IsKeyDown(GLFW_KEY_S))
 		{
 			translation.z -= speed;
 		}
-		if (input.IsKeyDown(SDL_SCANCODE_A))
+		if (keyboard.IsKeyDown(GLFW_KEY_A))
 		{
 			translation.x -= speed;
 		}
-		if (input.IsKeyDown(SDL_SCANCODE_D))
+		if (keyboard.IsKeyDown(GLFW_KEY_D))
 		{
 			translation.x += speed;
 		}
-		if (input.IsKeyDown(SDL_SCANCODE_SPACE))
+		if (keyboard.IsKeyDown(GLFW_KEY_SPACE))
 		{
 			translation.y += speed;
 		}
-		if (input.IsKeyDown(SDL_SCANCODE_LSHIFT))
+		if (keyboard.IsKeyDown(GLFW_KEY_LEFT_SHIFT))
 		{
 			translation.y -= speed;
 		}
 
 		glm::vec3 newPosition = camera.GetTransform().GetPosition() + translation;
 		camera.GetTransform().SetPosition(newPosition);
-
-		*/
 
 
 
