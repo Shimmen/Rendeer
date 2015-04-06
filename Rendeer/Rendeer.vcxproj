@@ -55,14 +55,14 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)\ExternalDependencies\glm;$(ProjectDir)\ExternalDependencies\SDL2-2.0.3\include;$(ProjectDir)\ExternalDependencies\assimp-3.1.1\include;$(ProjectDir)\ExternalDependencies\stb;$(ProjectDir)\ExternalDependencies\glad;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\ExternalDependencies\glm;$(ProjectDir)\ExternalDependencies\glfw\include;$(ProjectDir)\ExternalDependencies\assimp-3.1.1\include;$(ProjectDir)\ExternalDependencies\stb;$(ProjectDir)\ExternalDependencies\glad;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)\ExternalDependencies\assimp-3.1.1\lib64;$(ProjectDir)\ExternalDependencies\SDL2-2.0.3\lib\x64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2test.lib;opengl32.lib;assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)\ExternalDependencies\glfw\lib;$(ProjectDir)\ExternalDependencies\assimp-3.1.1\lib64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;opengl32.lib;assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -75,50 +75,51 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)\ExternalDependencies\glm;$(ProjectDir)\ExternalDependencies\SDL2-2.0.3\include;$(ProjectDir)\ExternalDependencies\assimp-3.1.1\include;$(ProjectDir)\ExternalDependencies\stb;$(ProjectDir)\ExternalDependencies\glad;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\ExternalDependencies\glm;$(ProjectDir)\ExternalDependencies\glfw\include;$(ProjectDir)\ExternalDependencies\assimp-3.1.1\include;$(ProjectDir)\ExternalDependencies\stb;$(ProjectDir)\ExternalDependencies\glad;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(ProjectDir)\ExternalDependencies\assimp-3.1.1\lib64;$(ProjectDir)\ExternalDependencies\SDL2-2.0.3\lib\x64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2test.lib;opengl32.lib;assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)\ExternalDependencies\glfw\lib;$(ProjectDir)\ExternalDependencies\assimp-3.1.1\lib64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;opengl32.lib;assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="DeferredRenderer.cpp" />
     <ClCompile Include="DiffuseMaterial.cpp" />
     <ClCompile Include="glad.c" />
+    <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="Lighting.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="PerspectiveCamera.cpp" />
-    <ClCompile Include="Display.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="ScreenAlignedQuad.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DeferredRenderer.h" />
     <ClInclude Include="DiffuseMaterial.h" />
     <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="GBuffer.h" />
-    <ClInclude Include="Input.h" />
+    <ClInclude Include="Keyboard.h" />
     <ClInclude Include="Lighting.h" />
     <ClInclude Include="IMaterial.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="PerspectiveCamera.h" />
-    <ClInclude Include="Display.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="ScreenAlignedQuad.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Transform.h" />
+    <ClInclude Include="Window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

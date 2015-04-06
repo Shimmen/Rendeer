@@ -1,15 +1,15 @@
 #include "DeferredRenderer.h"
 
-#include "Display.h"
+#include "Window.h"
 #include "Entity.h"
 #include "Texture.h"
 #include "Lighting.h"
 #include "DiffuseMaterial.h"
 #include "PerspectiveCamera.h"
 
-DeferredRenderer::DeferredRenderer(Display& display)
-	: display(display)
-	, gBuffer(display.GetWidth(), display.GetHeight())
+DeferredRenderer::DeferredRenderer(Window& window)
+	: window(window)
+	, gBuffer(window.GetFramebufferWidth(), window.GetFramebufferHeight())
 {
 	// This really shouldn't need to be here,
 	// since the GBuffer is its own class now
@@ -29,7 +29,10 @@ DeferredRenderer::~DeferredRenderer()
 
 void DeferredRenderer::BindForUsage() const
 {
-	glViewport(0, 0, display.GetWidth(), display.GetHeight());
+	int width, height;
+	window.GetFramebufferSize(&width, &height);
+
+	glViewport(0, 0, width, height);
 	glClearColor(0, 0, 0, 1);
 
 	glFrontFace(GL_CW);
@@ -49,7 +52,7 @@ void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::
 	RenderTextureToScreen(gBuffer.GetDepthTexture());
 #endif
 
-	display.SwapBuffers();
+	window.SwapBuffers();
 }
 
 void DeferredRenderer::RenderGeometryPass(const std::vector<Entity *>& entities, PerspectiveCamera& camera)
@@ -70,7 +73,7 @@ void DeferredRenderer::RenderGeometryPass(const std::vector<Entity *>& entities,
 void DeferredRenderer::RenderLightPass(const std::vector<ILight *>& lights, PerspectiveCamera& camera)
 {
 	// Set up the gl state to render the light pass
-	display.BindAsDrawFrameBuffer();
+	window.BindAsDrawFramebuffer();
 	glDisable(GL_CULL_FACE);
 	glDisable(GL_DEPTH_TEST);
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -94,7 +97,7 @@ void DeferredRenderer::RenderLightPass(const std::vector<ILight *>& lights, Pers
 
 void DeferredRenderer::RenderTextureToScreen(const Texture& texture)
 {
-	display.BindAsDrawFrameBuffer();
+	window.BindAsDrawFramebuffer();
 	renderTextureShader->Bind();
 
 	texture.Bind(0);

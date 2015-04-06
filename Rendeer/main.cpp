@@ -4,14 +4,16 @@
 
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
-#include <SDL.h>
+
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
 #include "Mesh.h"
 #include "Model.h"
 #include "Shader.h"
 #include "Entity.h"
+#include "Window.h"
 #include "Texture.h"
-#include "Display.h"
 #include "Lighting.h"
 #include "DiffuseMaterial.h"
 #include "DeferredRenderer.h"
@@ -23,12 +25,12 @@
 extern "C" int main(int argc, char *argv[])
 {
 	// DISPLAY & RENDERER
-	Display display("Rendeer", WINDOW_WIDTH, WINDOW_HEIGHT, false);
-	DeferredRenderer deferredRenderer(display);
+	Window window(WINDOW_WIDTH, WINDOW_HEIGHT, "Rendeer");
+	DeferredRenderer deferredRenderer(window);
 
 	// CAMERA
 	PerspectiveCamera camera(glm::vec3(0, 1.5f, -2.8f), glm::angleAxis(0.5f, glm::vec3(1, 0, 0)),
-		glm::radians(70.0f), 1.0f, 1000.0f, display.GetAspectRatio());
+		glm::radians(70.0f), 1.0f, 1000.0f, window.GetAspectRatio());
 
 	// TEAPOT
 	Model teapotModel("models/teapot/teapot.obj");
@@ -86,19 +88,20 @@ extern "C" int main(int argc, char *argv[])
 
 	float timer = 0.0f;
 
-	while (!display.IsCloseRequested())
+	while (!window.IsCloseRequested())
 	{
 		// Start every frame by polling events
-		display.PollEvents();
+		window.PollEvents();
 
 		// Make the escape button quit the app/close the window
-		if (display.GetInput().WasKeyPressed(SDL_SCANCODE_ESCAPE))
+		if (window.GetKeyboard().WasKeyPressed(GLFW_KEY_ESCAPE))
 		{
 			break;
 		}
 
 
 
+		/*
 
 		// Move the camera (for now in this very temporary solution)
 		glm::vec3 translation = glm::vec3();
@@ -133,7 +136,7 @@ extern "C" int main(int argc, char *argv[])
 		glm::vec3 newPosition = camera.GetTransform().GetPosition() + translation;
 		camera.GetTransform().SetPosition(newPosition);
 
-
+		*/
 
 
 
@@ -158,8 +161,6 @@ extern "C" int main(int argc, char *argv[])
 
 	return 0;
 }
-
-
 
 
 

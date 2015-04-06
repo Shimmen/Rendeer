@@ -7,13 +7,13 @@
 #include "GBuffer.h"
 #include "ScreenAlignedQuad.h"
 
-class Display;
+class Window;
 class ILight;
 
 class DeferredRenderer
 {
 public:
-	DeferredRenderer(Display& display);
+	DeferredRenderer(Window& display);
 	~DeferredRenderer();
 
 	void BindForUsage() const;
@@ -28,7 +28,7 @@ private:
 	GBuffer gBuffer;
 	ScreenAlignedQuad quad;
 
-	Display& display;
+	Window& window;
 
 
 
