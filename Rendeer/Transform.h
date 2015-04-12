@@ -2,7 +2,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/quaternion.hpp>
 
 class Shader;
 
@@ -16,7 +16,7 @@ public:
 
 	Transform(
 		glm::vec3 position = glm::vec3(0.0, 0.0, 0.0),
-		glm::quat rotation = glm::angleAxis(1.0f, glm::vec3(0.0)),
+		glm::quat orientation = glm::angleAxis(1.0f, glm::vec3(0.0)),
 		float scale = 1.0f
 	);
 
@@ -28,9 +28,9 @@ public:
 		return position;
 	}
 	
-	inline glm::quat GetRotation() const
+	inline glm::quat GetOrientation() const
 	{
-		return rotation;
+		return orientation;
 	}
 
 	inline float GetScale() const
@@ -44,15 +44,15 @@ public:
 		return this;
 	}
 	
-	inline Transform* SetRotation(const glm::vec3 axis, float angle)
+	inline Transform* SetOrientation(const glm::vec3 axis, float angle)
 	{
-		this->rotation = glm::angleAxis(angle, glm::normalize(axis));
+		this->orientation = glm::angleAxis(angle, glm::normalize(axis));
 		return this;
 	}
 
-	inline Transform* SetRotation(const glm::quat newRotation)
+	inline Transform* SetOrientation(const glm::quat newRotation)
 	{
-		this->rotation = glm::normalize(newRotation);
+		this->orientation = glm::normalize(newRotation);
 		return this;
 	}
 	
@@ -82,14 +82,35 @@ public:
 
 	inline Transform* Rotate(const glm::quat rotation)
 	{
-		this->rotation = glm::normalize(rotation * this->rotation);
+		this->orientation = glm::normalize(rotation * this->orientation);
 		return this;
 	}
 
-	
+
+
+	glm::vec3 RotateVector(const glm::vec3& vector3) const;
+	glm::vec3 RotateVector(const glm::vec4& vector) const;
+
+	inline glm::vec3 GetRight() const
+	{
+		return RotateVector(glm::vec4(1, 0, 0, 0));
+	}
+
+	inline glm::vec3 GetForward() const
+	{
+		return RotateVector(glm::vec4(0, 0, 1, 0));
+	}
+
+	inline glm::vec3 GetUp() const
+	{
+		return RotateVector(glm::vec4(0, 1, 0, 0));
+	}
+
+
+
 
 private:
 	glm::vec3 position;
-	glm::quat rotation;
+	glm::quat orientation;
 	float scale;
 };

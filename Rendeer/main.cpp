@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
 	tableMaterial.diffuseTexture = &tableTexture;
 	Entity table(tableMesh, tableMaterial);
 	table.GetTransform().SetScale(60.0f);
-	table.GetTransform().SetRotation(glm::angleAxis(1.57f /* PI/2.0 == 90 deg */, glm::vec3(1, 0, 0)));
+	table.GetTransform().SetOrientation(glm::angleAxis(1.57f /* PI/2.0 == 90 deg */, glm::vec3(1, 0, 0)));
 	
 	// PANEL
 	Model floorModel("models/floor.obj");
@@ -141,13 +141,16 @@ int main(int argc, char *argv[])
 			yRotation += speed * 0.14f;
 		}
 
+		// Rotate translation to model space
+		translation = camera.GetTransform().RotateVector(translation);
+
 		camera.GetTransform().
 			Translate(translation)->
 			Rotate(glm::vec3(0, 1, 0), yRotation);
 
 
 		timer += 0.3f;
-		teapot.GetTransform().SetRotation(glm::vec3(0, 1, 0), timer * 0.1f);
+		teapot.GetTransform().SetOrientation(glm::vec3(0, 1, 0), timer * 0.1f);
 		teapot.GetTransform().SetPosition(glm::vec3(sinf(timer / 10), 0, 0));
 
 		//pointLight.GetTransform()->SetPosition(glm::vec3(0, 2, 0));
@@ -165,70 +168,3 @@ int main(int argc, char *argv[])
 
 	return 0;
 }
-
-
-
-
-
-
-
-/*
-
-// BLUE MATERIAL
-unsigned char bluePixels[4 * 4 * 3] = {
-47, 12, 255, 0, 143, 255, 10, 20, 200, 100, 85, 240,
-0, 143, 255, 10, 20, 200, 100, 85, 240, 47, 12, 255,
-10, 20, 200, 100, 85, 240, 47, 12, 255, 0, 143, 255,
-100, 85, 240, 47, 12, 255, 0, 143, 255, 10, 20, 200
-};
-Texture blueTexture(4, 4, GL_RGB, GL_REPEAT,
-GL_NEAREST, GL_NEAREST_MIPMAP_NEAREST, bluePixels);
-Material blueMaterial;
-blueMaterial.diffuseTexture = &blueTexture;
-
-*/
-
-#if 0
-// MESH
-Vertex vertices[6] = {
-	Vertex(glm::vec3(-1, -1, 0), glm::vec2(0.0, 0.0)),  // bot left
-	Vertex(glm::vec3(-1, +1, 0), glm::vec2(0.0, 1.0)),  // top left
-
-	Vertex(glm::vec3(+0, -1, -1), glm::vec2(1.0, 0.0)), // bot mid
-	Vertex(glm::vec3(+0, +1, -1), glm::vec2(1.0, 1.0)), // top mid
-
-	Vertex(glm::vec3(+1, -1, 0), glm::vec2(2.0, 0.0)),  // bot right
-	Vertex(glm::vec3(+1, +1, 0), glm::vec2(2.0, 1.0))   // top right
-};
-int indices[12] = { 0, 1, 2, 1, 3, 2, 2, 3, 5, 2, 5, 4 };
-
-Model angleModel;
-angleModel.positions.push_back(*vertices[0].GetPosition());
-angleModel.positions.push_back(*vertices[1].GetPosition());
-angleModel.positions.push_back(*vertices[2].GetPosition());
-angleModel.positions.push_back(*vertices[3].GetPosition());
-angleModel.positions.push_back(*vertices[4].GetPosition());
-angleModel.positions.push_back(*vertices[5].GetPosition());
-
-angleModel.texCoords.push_back(*vertices[0].GetTexCoord());
-angleModel.texCoords.push_back(*vertices[1].GetTexCoord());
-angleModel.texCoords.push_back(*vertices[2].GetTexCoord());
-angleModel.texCoords.push_back(*vertices[3].GetTexCoord());
-angleModel.texCoords.push_back(*vertices[4].GetTexCoord());
-angleModel.texCoords.push_back(*vertices[5].GetTexCoord());
-
-angleModel.indices.push_back(0); angleModel.indices.push_back(1); angleModel.indices.push_back(2);
-angleModel.indices.push_back(1); angleModel.indices.push_back(3); angleModel.indices.push_back(2);
-angleModel.indices.push_back(2); angleModel.indices.push_back(3); angleModel.indices.push_back(5);
-angleModel.indices.push_back(2); angleModel.indices.push_back(5); angleModel.indices.push_back(4);
-Mesh angleMesh(angleModel);
-
-// DOG MATERIAL
-Texture dogTexture("textures/dog.png", GL_LINEAR, GL_REPEAT);
-Material dogMaterial;
-dogMaterial.diffuseTexture = &dogTexture;
-
-// ENTITY
-Entity angleEntity(angleMesh, dogMaterial);
-angleEntity.GetTransform()->SetPosition(glm::vec3(0, 0, 0));
-#endif

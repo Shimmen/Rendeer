@@ -14,7 +14,7 @@ void DirectionalLight::SetUniforms(const DeferredRenderer& renderer, Perspective
 	shader->SetUniform("u_albedo", 10);
 	shader->SetUniform("u_normals", 11);
 
-	glm::vec3 lightDirectionEuler = glm::eulerAngles(this->transform.GetRotation());
+	glm::vec3 lightDirectionEuler = glm::eulerAngles(this->transform.GetOrientation());
 
 	shader->SetUniform("u_light_direction", lightDirectionEuler);
 	shader->SetUniform("u_light_color", this->color);

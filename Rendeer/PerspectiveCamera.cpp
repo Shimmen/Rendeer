@@ -21,7 +21,7 @@ PerspectiveCamera::PerspectiveCamera(const glm::vec3& position, const glm::quat&
 glm::mat4 PerspectiveCamera::GetViewMatrix() const
 {
 	glm::mat4 negativePosition = glm::translate(glm::mat4(1.0), -transform.GetPosition());
-	glm::mat4 negativeRotation = glm::toMat4(glm::conjugate(transform.GetRotation()));
+	glm::mat4 negativeRotation = glm::toMat4(glm::conjugate(transform.GetOrientation()));
 
 	return negativeRotation * negativePosition;
 }
