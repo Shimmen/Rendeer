@@ -91,20 +91,9 @@ public:
 	glm::vec3 RotateVector(const glm::vec3& vector3) const;
 	glm::vec3 RotateVector(const glm::vec4& vector) const;
 
-	inline glm::vec3 GetRight() const
-	{
-		return RotateVector(glm::vec4(1, 0, 0, 0));
-	}
-
-	inline glm::vec3 GetForward() const
-	{
-		return RotateVector(glm::vec4(0, 0, 1, 0));
-	}
-
-	inline glm::vec3 GetUp() const
-	{
-		return RotateVector(glm::vec4(0, 1, 0, 0));
-	}
+	glm::vec3 GetRight() const;
+	glm::vec3 GetForward() const;
+	glm::vec3 GetUp() const;
 
 
 
