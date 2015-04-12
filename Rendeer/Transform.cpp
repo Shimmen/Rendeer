@@ -41,17 +41,17 @@ glm::vec3 Transform::RotateVector(const glm::vec4& vector) const
 	return glm::vec3(glm::rotate(this->orientation, vector));
 }
 
-inline glm::vec3 Transform::GetRight() const
+glm::vec3 Transform::GetRight() const
 {
 	return RotateVector(glm::vec4(1, 0, 0, 0));
 }
 
-inline glm::vec3 Transform::GetForward() const
+glm::vec3 Transform::GetForward() const
 {
 	return RotateVector(glm::vec4(0, 0, 1, 0));
 }
 
-inline glm::vec3 Transform::GetUp() const
+glm::vec3 Transform::GetUp() const
 {
 	return RotateVector(glm::vec4(0, 1, 0, 0));
 }

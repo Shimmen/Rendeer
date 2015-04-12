@@ -6,6 +6,7 @@
 #include <string>
 
 #include "Keyboard.h"
+#include "Mouse.h"
 
 class Window
 {
@@ -63,30 +64,56 @@ public:
 		glfwSwapBuffers(windowHandle);
 	}
 
-	inline void PollEvents() const
-	{
-		glfwPollEvents();
-	}
-
 	inline bool IsCloseRequested() const
 	{
 		return (glfwWindowShouldClose(windowHandle) != 0);
 	}
 
+	inline bool IsFullscreen() const
+	{
+		return isFullscreen;
+	}
+
+	inline void SetCursorHidden(bool hidden) const
+	{
+		int mode = (hidden) ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL;
+		glfwSetInputMode(windowHandle, GLFW_CURSOR, mode);
+		this->cursorIsHidden = hidden;
+	}
+
+	inline bool IsCursorHidden() const
+	{
+		return this->cursorIsHidden;
+	}
 	
 	inline const Keyboard& GetKeyboard() const
 	{
 		return *keyboard;
 	}
+
+	inline const Mouse& GetMouse() const
+	{
+		return *mouse;
+	}
 	
+	void PollEvents() const;
 	
 private:
-	GLFWwindow * windowHandle;
+	GLFWwindow *windowHandle;
 
-	// The input classes and their callbacks need to access certain members of the Window class
+	// You should be able to change this, given a const Window.
+	// The state if this isnt really a big deal really.
+	mutable bool cursorIsHidden;
+
+	bool isFullscreen;
+
+	// The input classes and their callbacks require
+	//access to certain members of the Window class
 	friend class Keyboard;
+	friend class Mouse;
 
 	Keyboard *keyboard;
+	Mouse *mouse;
 
 };
 

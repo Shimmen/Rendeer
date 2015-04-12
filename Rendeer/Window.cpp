@@ -52,17 +52,33 @@ Window::Window(int width, int height, const std::string& title, bool fullResolut
 
 	// Create input handlers
 	keyboard = new Keyboard(windowHandle);
+	mouse = new Mouse(windowHandle);
+
+	SetCursorHidden(fullResolutionFullscreen == true);
+	isFullscreen = fullResolutionFullscreen;
 }
 
 Window::~Window()
 {
-	// Make sure no key callbacks will be sent out to
-	// classes that 
+	// Not really needed, but why not.
 	glfwSetKeyCallback(windowHandle, NULL);
+	glfwSetMouseButtonCallback(windowHandle, NULL);
+	glfwSetCursorPosCallback(windowHandle, NULL);
 
-	delete keyboard;
 
-	// Only one window is "allowed" at the moment.
 	glfwDestroyWindow(windowHandle);
+	
+	// Only one window is "allowed" at the moment.
 	glfwTerminate();
+}
+
+void Window::PollEvents() const
+{
+	// Very important that these get called BEFORE polling new events
+	// If not, the wasPressed/Released arrays will be cleared as soon
+	// as they get filled in by glfwPollEvents().
+	keyboard->Update();
+	mouse->Update();
+
+	glfwPollEvents();
 }

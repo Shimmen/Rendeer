@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
 	// LIGHTS
 	std::vector<ILight *> lights;
 	lights.push_back(&directionalLight);
-	//lights.push_back(&pointLight);
+	lights.push_back(&pointLight);
 
 	//////////
 	// LOOP //
@@ -96,16 +96,18 @@ int main(int argc, char *argv[])
 		// Make the escape button quit the app/close the window
 		if (window.GetKeyboard().WasKeyPressed(GLFW_KEY_ESCAPE))
 		{
-			break;
+			window.SetCursorHidden(false);
 		}
-
+		if (window.GetMouse().WasButtonPressed(GLFW_MOUSE_BUTTON_LEFT))
+		{
+			window.SetCursorHidden(true);
+		}
 
 
 		
 		// Move the camera (for now in this very temporary solution)
 		glm::vec3 translation = glm::vec3();
-		float yRotation = 0;
-		float speed = 0.08f;
+		const float speed = 0.08f;
 
 		const Keyboard keyboard = window.GetKeyboard();
 		if (keyboard.IsKeyDown(GLFW_KEY_W))
@@ -132,36 +134,32 @@ int main(int argc, char *argv[])
 		{
 			translation.y -= speed;
 		}
-		if (keyboard.IsKeyDown(GLFW_KEY_Q))
-		{
-			yRotation -= speed * 0.14f;
-		}
-		if (keyboard.IsKeyDown(GLFW_KEY_E))
-		{
-			yRotation += speed * 0.14f;
-		}
 
-		// Rotate translation to model space
+		// Rotate translation to model space and translate
 		translation = camera.GetTransform().RotateVector(translation);
+		camera.GetTransform().Translate(translation);
 
-		camera.GetTransform().
-			Translate(translation)->
-			Rotate(glm::vec3(0, 1, 0), yRotation);
+		// If cursor is hidden, rotate camera
+		if (window.IsCursorHidden())
+		{
+			const float mouseSensitivity = 0.001f;
+			const glm::vec2 mouseDelta = window.GetMouse().GetMouseDelta();
+
+			camera.GetTransform().Rotate(glm::vec3(0, 1, 0), mouseDelta.x * mouseSensitivity);
+			camera.GetTransform().Rotate(camera.GetTransform().GetRight(), mouseDelta.y * mouseSensitivity);
+		}
 
 
-		timer += 0.3f;
-		teapot.GetTransform().SetOrientation(glm::vec3(0, 1, 0), timer * 0.1f);
-		teapot.GetTransform().SetPosition(glm::vec3(sinf(timer / 10), 0, 0));
+		timer += 0.03f;
+		teapot.GetTransform().SetOrientation(glm::vec3(0, 1, 0), timer);
+		teapot.GetTransform().SetPosition(glm::vec3(sinf(timer), 0, 0));
 
 		//pointLight.GetTransform()->SetPosition(glm::vec3(0, 2, 0));
 
 		//table.GetTransform()->SetScale(timer * 0.3f);
 		//printf("%f\n", timer * 0.3f);
 
-		table.GetTransform().SetPosition(glm::vec3(0, 0, sinf(timer / 15) * 4 + 2.5));
-
-		// Try rotating it properly. Quaternions are complicated...
-		//directionalLight.GetTransform()->Rotate ...;
+		table.GetTransform().SetPosition(glm::vec3(0, 0, sinf(timer) * 4 + 2.5));
 
 		deferredRenderer.Render(entities, lights, camera);
 	}

@@ -8,10 +8,10 @@ Keyboard::Keyboard(GLFWwindow *glfwWindow)
 	memset(isKeyDown, 0, KEYBOARD_KEY_COUNT * sizeof(bool));
 	ResetPressedAndReleasedKeys();
 
-	glfwSetKeyCallback(glfwWindow, Keyboard::keyEventCallback);
+	glfwSetKeyCallback(glfwWindow, Keyboard::KeyEventCallback);
 }
 
-/* static */ void Keyboard::keyEventCallback(GLFWwindow *glfwWindow, int key, int scancode, int action, int mods)
+/* static */ void Keyboard::KeyEventCallback(GLFWwindow *glfwWindow, int key, int scancode, int action, int mods)
 {
 	Window& window = Window::FromGlfwWindow(glfwWindow);
 

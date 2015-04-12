@@ -9,23 +9,27 @@ class Keyboard
 {
 public:
 
-	inline bool IsKeyDown(int key) const { return isKeyDown[key]; }
-	inline bool WasKeyPressed(int key) const { return wasKeyPressed[key]; }
-	inline bool WasKeyReleased(int key) const { return wasKeyReleased[key]; }
-
 	Keyboard(GLFWwindow *glfwWindow);
 
 	// The reseting of the key callback is done by the Window
 	// when it's destroyed. If a new keyboard handler is set
 	// and the initial keyboard handler gets detructed, the
-	// window shouldn't loose it's 
+	// window shouldn't loose its callback
 	//~Keyboard();
 
-	static void keyEventCallback(GLFWwindow *glfwWindow, int key, int scancode, int action, int mods);
+	inline bool IsKeyDown(int key) const { return isKeyDown[key]; }
+	inline bool WasKeyPressed(int key) const { return wasKeyPressed[key]; }
+	inline bool WasKeyReleased(int key) const { return wasKeyReleased[key]; }
+
+	inline void Update()
+	{
+		ResetPressedAndReleasedKeys();
+	}
+
+	static void KeyEventCallback(GLFWwindow *glfwWindow, int key, int scancode, int action, int mods);
 
 private:
 
-	// Will reset the arrays wasPressedKeys and wasReleasedKeys to false.
 	inline void ResetPressedAndReleasedKeys()
 	{
 		// Set all bytes to false (i.e. 0).
