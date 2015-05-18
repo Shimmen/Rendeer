@@ -41,6 +41,12 @@ Texture::Texture(const std::string& filename, GLint magFilter, GLint wrapMode)
 
 		glGenerateMipmap(GL_TEXTURE_2D);
 
+		// Set the maximum anisotropic filtering to the highest possible value that the
+		// hardware and the drivers can use.
+		GLfloat maxAnisotropy;
+		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAnisotropy);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAnisotropy);
+
 		stbi_image_free(pixels);
 	}
 	else
