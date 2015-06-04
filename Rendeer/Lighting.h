@@ -66,12 +66,19 @@ class SpotLight
 	: public ILight
 {
 public:
-	SpotLight(const glm::vec3 position, const glm::quat orientation, glm::vec3 color, float intensity, float coneAngle)
+	SpotLight(const glm::vec3 position, const glm::quat orientation, glm::vec3 color, float intensity, float outerConeAngle, float innerConeAngle)
 		: ILight(new Shader("postprocess.vsh", "Lights/SpotLight.fsh"),
 		Transform(position, orientation, 1.0f), color, intensity),
-        coneAngle(coneAngle)
+        outerConeAngle(outerConeAngle), innerConeAngle(innerConeAngle)
     {
-        assert(coneAngle < glm::radians(90.0f));
+        assert(outerConeAngle >= innerConeAngle);
+
+/*
+        assert(outerConeAngle < glm::radians(90.0f));
+        assert(innerConeAngle < glm::radians(90.0f));
+        assert(outerConeAngle > glm::radians(0.0f));
+        assert(innerConeAngle > glm::radians(0.0f));
+*/
     }
 
 	virtual ~SpotLight() {}
@@ -80,6 +87,6 @@ public:
 
 private:
 
-    float coneAngle;
-
+    float outerConeAngle;
+    float innerConeAngle;
 };

@@ -17,7 +17,8 @@ uniform sampler2D u_position; // TODO
 
 uniform vec3  u_light_position;
 uniform vec3  u_light_direction;
-uniform float u_light_cone_angle;
+uniform float u_light_outer_cone_angle;
+uniform float u_light_inner_cone_angle;
 uniform vec3  u_light_color = vec3(1.0, 1.0, 1.0);
 uniform float u_light_intensity = 1.0;
 
@@ -54,22 +55,23 @@ void main()
 
    vec3 lightDirection = normalize(lightToFrag);
 
-	// Calculate the lambertian factor for the fragment
-	float lambertianFactor = dot(-lightDirection, normal);
-	lambertianFactor = max(lambertianFactor, 0.0);
-
-	// Calculate attenuation factor
-   float attenuationFactor = attenuation(lightToFragDistance);
-
-	// Calculate the the light's influence on the fragment's color
-	vec3 lightInfluence = u_light_color * u_light_intensity * lambertianFactor * attenuationFactor;
-
    // Compare the angle direction of the light to the actual direct from the fragment and the light
 	float angleOfDeviation = dot(normalize(u_light_direction), normalize(lightDirection));
 
-	if(angleOfDeviation > 1.0 - u_light_cone_angle)
+	if(angleOfDeviation > cos(u_light_outer_cone_angle))
    {
-      // Calculate the final fragment color
+		// Calculate the lambertian factor for the fragment
+		float lambertianFactor = dot(-lightDirection, normal);
+		lambertianFactor = max(lambertianFactor, 0.0);
+
+	   float attenuationFactor = attenuation(lightToFragDistance);
+
+		// Calculate the the light's influence on the fragment's color
+		vec3 lightInfluence = u_light_color * u_light_intensity * lambertianFactor * attenuationFactor;
+
+		// Smooth the edge between the inner and outer cone angles
+		lightInfluence *= smoothstep(cos(u_light_outer_cone_angle), cos(u_light_inner_cone_angle), angleOfDeviation);
+
    	o_fragment_color = texture(u_albedo, v_tex_coord) * vec4(lightInfluence, 1.0);
    }
    else

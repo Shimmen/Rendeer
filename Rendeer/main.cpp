@@ -27,7 +27,7 @@
 int main(int argc, char *argv[])
 {
 	// DISPLAY & RENDERER
-	Window window(WINDOW_WIDTH, WINDOW_HEIGHT, "Rendeer", false, true);
+	Window window(WINDOW_WIDTH, WINDOW_HEIGHT, "Rendeer", true, true);
 	DeferredRenderer deferredRenderer(window);
 
 	// CAMERA
@@ -72,13 +72,13 @@ int main(int argc, char *argv[])
 	entities.push_back(&floor);
 
 	// DIRECTIONAL LIGHT
-	DirectionalLight directionalLight(glm::quat(1, 1, 0, 1), glm::vec3(0.92f, 0.95f, 0.88f), 0.25f);
+	DirectionalLight directionalLight(glm::quat(1, 1, 0, 1), glm::vec3(0.92f, 0.95f, 0.88f), 0.15f);
 
 	// POINT LIGHT
 	PointLight pointLight(glm::vec3(0, 0.1f, 0), glm::vec3(1.0f, 0.1f, 0.15f), 1.0f);
 
 	// SPOT LIGHT
-    SpotLight spotLight(glm::vec3(0, 1.0f, 4), glm::quat(glm::normalize(glm::vec3(1, -3, 0))), glm::vec3(0, 0, 1), 2.5f, glm::radians(7.0f));
+    SpotLight spotLight(glm::vec3(0, -0.65f, 4), glm::quat(glm::normalize(glm::vec3(1, -3, 0))), glm::vec3(0, 0, 1), 1.0f, glm::radians(20.0f), glm::radians(15.5f));
 
 	// LIGHTS
 	std::vector<ILight *> lights;
@@ -162,7 +162,7 @@ int main(int argc, char *argv[])
 		teapot.GetTransform().SetOrientation(glm::vec3(0, 1, 0), timer);
 		table.GetTransform().SetPosition(glm::vec3(0, 0, sinf(timer) * 1.0f + 0.85f));
 
-#if 1
+#if 0
         auto cameraPosition = camera.GetTransform().GetPosition();
 		auto cameraOrientation = camera.GetTransform().GetOrientation();
 		spotLight.GetTransform()->SetPosition(cameraPosition)->SetOrientation(cameraOrientation);
