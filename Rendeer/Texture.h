@@ -8,7 +8,7 @@
 class Texture
 {
 public:
-	Texture(const std::string& filename, GLint magFilter = GL_LINEAR, GLint wrapMode = GL_REPEAT);
+	Texture(const std::string& filename, GLint magFilter = GL_LINEAR, GLint wrapMode = GL_REPEAT, bool srgb = true);
 	Texture(int width, int height, GLenum format, GLenum internalFormat, GLint wrapMode,
 		GLint magFilter, GLint minFilter, unsigned char* pixels = 0);
 	~Texture();

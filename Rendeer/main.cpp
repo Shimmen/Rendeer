@@ -4,6 +4,8 @@
 
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
+#include <glm/gtx/quaternion.hpp>
+#include <glm/gtc/quaternion.hpp>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -40,7 +42,7 @@ int main(int argc, char *argv[])
 	teapotMaterial.diffuseTexture = &teapotTexture;
 	Entity teapot(teapotMesh, teapotMaterial);
 	teapot.GetTransform().SetScale(0.01f);
-	teapot.GetTransform().SetPosition(glm::vec3(0, 0, 0));
+	teapot.GetTransform().SetPosition(glm::vec3(0, 0, 1));
 
 	// TABLE
 	Model tableModel("models/table/table.3ds");
@@ -51,14 +53,14 @@ int main(int argc, char *argv[])
 	tableMaterial.diffuseTexture = &tableTexture;
 	Entity table(tableMesh, tableMaterial);
 	table.GetTransform().SetScale(60.0f);
-	table.GetTransform().SetOrientation(glm::angleAxis(1.57f /* PI/2.0 == 90 deg */, glm::vec3(1, 0, 0)));
+	table.GetTransform().SetOrientation(glm::angleAxis(glm::radians(90.0f), glm::vec3(1, 0, 0)));
 	
 	// PANEL
 	Model floorModel("models/floor.obj");
 	Mesh floorMesh(floorModel);
 	Texture floorTexture("textures/wood1.diffuse.png");
 	DiffuseMaterial floorMaterial;
-	floorMaterial.diffuseTexture = &floorTexture;
+	floorMaterial.diffuseTexture = &tableTexture;// &floorTexture;
 	Entity floor(floorMesh, floorMaterial);
 	floor.GetTransform().SetScale(1.0f);
 	floor.GetTransform().SetPosition(glm::vec3(0, -1, 10.0f));
@@ -70,20 +72,25 @@ int main(int argc, char *argv[])
 	entities.push_back(&floor);
 
 	// DIRECTIONAL LIGHT
-	DirectionalLight directionalLight(glm::quat(1, 1, 0, 1), glm::vec3(1.0f, 0.95f, 0.88f), 0.5f);
+	DirectionalLight directionalLight(glm::quat(1, 1, 0, 1), glm::vec3(0.92f, 0.95f, 0.88f), 0.25f);
 
 	// POINT LIGHT
 	PointLight pointLight(glm::vec3(0, 0.1f, 0), glm::vec3(1.0f, 0.1f, 0.15f), 1.0f);
+
+	// SPOT LIGHT
+    SpotLight spotLight(glm::vec3(0, 1.0f, 4), glm::quat(glm::normalize(glm::vec3(1, -3, 0))), glm::vec3(0, 0, 1), 2.5f, glm::radians(7.0f));
 
 	// LIGHTS
 	std::vector<ILight *> lights;
 	lights.push_back(&directionalLight);
 	lights.push_back(&pointLight);
+	lights.push_back(&spotLight);
 
 	//////////
 	// LOOP //
 	//////////
 
+    // Will set up the renderer for rendering
 	deferredRenderer.BindForUsage();
 
 	float timer = 0.0f;
@@ -151,15 +158,17 @@ int main(int argc, char *argv[])
 
 
 		timer += 0.03f;
+
 		teapot.GetTransform().SetOrientation(glm::vec3(0, 1, 0), timer);
-		teapot.GetTransform().SetPosition(glm::vec3(sinf(timer), 0, 0));
+		table.GetTransform().SetPosition(glm::vec3(0, 0, sinf(timer) * 1.0f + 0.85f));
 
-		//pointLight.GetTransform()->SetPosition(glm::vec3(0, 2, 0));
-
-		//table.GetTransform()->SetScale(timer * 0.3f);
-		//printf("%f\n", timer * 0.3f);
-
-		table.GetTransform().SetPosition(glm::vec3(0, 0, sinf(timer) * 4 + 2.5));
+#if 1
+        auto cameraPosition = camera.GetTransform().GetPosition();
+		auto cameraOrientation = camera.GetTransform().GetOrientation();
+		spotLight.GetTransform()->SetPosition(cameraPosition)->SetOrientation(cameraOrientation);
+#else
+	    spotLight.GetTransform()->Rotate(glm::quat(glm::vec3(0.0f, 0.01f, 0.0f)));
+#endif
 
 		deferredRenderer.Render(entities, lights, camera);
 	}

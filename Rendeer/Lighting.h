@@ -61,3 +61,25 @@ public:
 
 	void SetUniforms(const DeferredRenderer& renderer, PerspectiveCamera& camera);
 };
+
+class SpotLight
+	: public ILight
+{
+public:
+	SpotLight(const glm::vec3 position, const glm::quat orientation, glm::vec3 color, float intensity, float coneAngle)
+		: ILight(new Shader("postprocess.vsh", "Lights/SpotLight.fsh"),
+		Transform(position, orientation, 1.0f), color, intensity),
+        coneAngle(coneAngle)
+    {
+        assert(coneAngle < glm::radians(90.0f));
+    }
+
+	virtual ~SpotLight() {}
+
+	void SetUniforms(const DeferredRenderer& renderer, PerspectiveCamera& camera);
+
+private:
+
+    float coneAngle;
+
+};

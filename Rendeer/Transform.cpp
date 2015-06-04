@@ -43,15 +43,15 @@ glm::vec3 Transform::RotateVector(const glm::vec4& vector) const
 
 glm::vec3 Transform::GetRight() const
 {
-	return RotateVector(glm::vec4(1, 0, 0, 0));
+	return glm::normalize(RotateVector(glm::vec4(1, 0, 0, 0)));
 }
 
 glm::vec3 Transform::GetForward() const
 {
-	return RotateVector(glm::vec4(0, 0, 1, 0));
+	return glm::normalize(RotateVector(glm::vec4(0, 0, 1, 0)));
 }
 
 glm::vec3 Transform::GetUp() const
 {
-	return RotateVector(glm::vec4(0, 1, 0, 0));
+	return glm::normalize(RotateVector(glm::vec4(0, 1, 0, 0)));
 }

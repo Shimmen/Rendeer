@@ -46,7 +46,7 @@ public:
 	
 	inline Transform* SetOrientation(const glm::vec3 axis, float angle)
 	{
-		this->orientation = glm::angleAxis(angle, glm::normalize(axis));
+		SetOrientation(glm::angleAxis(angle, glm::normalize(axis)));
 		return this;
 	}
 
