@@ -40,6 +40,11 @@ public:
 		return height;
 	}
 
+    inline void SetWindowPosition(int xPos, int yPos) const
+    {
+        glfwSetWindowPos(windowHandle, xPos, yPos);
+    }
+
 	inline float GetAspectRatio() const
 	{
 		int width, height;

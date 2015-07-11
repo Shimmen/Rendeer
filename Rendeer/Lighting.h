@@ -72,13 +72,8 @@ public:
         outerConeAngle(outerConeAngle), innerConeAngle(innerConeAngle)
     {
         assert(outerConeAngle >= innerConeAngle);
-
-/*
-        assert(outerConeAngle < glm::radians(90.0f));
-        assert(innerConeAngle < glm::radians(90.0f));
-        assert(outerConeAngle > glm::radians(0.0f));
-        assert(innerConeAngle > glm::radians(0.0f));
-*/
+        assert(outerConeAngle >= 0);
+        assert(innerConeAngle >= 0);
     }
 
 	virtual ~SpotLight() {}

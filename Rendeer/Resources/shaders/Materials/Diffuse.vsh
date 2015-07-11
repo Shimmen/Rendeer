@@ -21,5 +21,5 @@ void main()
 	// TODO: Only for debugging, position will be calculated from depth
 	v_position = (u_model_matrix * vec4(a_position, 1.0)).xyz;
 
-  gl_Position = u_view_projection_matrix * u_model_matrix * vec4(a_position, 1.0);
+	gl_Position = u_view_projection_matrix * u_model_matrix * vec4(a_position, 1.0);
 }

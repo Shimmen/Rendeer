@@ -21,13 +21,13 @@
 #include "DeferredRenderer.h"
 #include "PerspectiveCamera.h"
 
-#define WINDOW_WIDTH 1200
-#define WINDOW_HEIGHT 750
+#define WINDOW_WIDTH 1960
+#define WINDOW_HEIGHT 1080
 
 int main(int argc, char *argv[])
 {
 	// DISPLAY & RENDERER
-	Window window(WINDOW_WIDTH, WINDOW_HEIGHT, "Rendeer", true, true);
+	Window window(WINDOW_WIDTH, WINDOW_HEIGHT, "Rendeer", false, true);
 	DeferredRenderer deferredRenderer(window);
 
 	// CAMERA
@@ -47,7 +47,6 @@ int main(int argc, char *argv[])
 	// TABLE
 	Model tableModel("models/table/table.3ds");
 	Mesh tableMesh(tableModel);
-	//Texture tableTexture("models/table/wood.jpg");
 	Texture tableTexture("textures/default.png");
 	DiffuseMaterial tableMaterial;
 	tableMaterial.diffuseTexture = &tableTexture;
@@ -72,7 +71,7 @@ int main(int argc, char *argv[])
 	entities.push_back(&floor);
 
 	// DIRECTIONAL LIGHT
-	DirectionalLight directionalLight(glm::quat(1, 1, 0, 1), glm::vec3(0.92f, 0.95f, 0.88f), 0.15f);
+	DirectionalLight directionalLight(glm::quat(1, 1, 0, 1), glm::vec3(0.92f, 0.95f, 0.88f), 0.35f);
 
 	// POINT LIGHT
 	PointLight pointLight(glm::vec3(0, 0.1f, 0), glm::vec3(1.0f, 0.1f, 0.15f), 1.0f);
@@ -149,7 +148,7 @@ int main(int argc, char *argv[])
 		// If cursor is hidden, rotate camera
 		if (window.IsCursorHidden())
 		{
-			const float mouseSensitivity = 0.001f;
+			const float mouseSensitivity = 0.0006f;
 			const glm::vec2 mouseDelta = window.GetMouse().GetMouseDelta();
 
 			camera.GetTransform().Rotate(glm::vec3(0, 1, 0), mouseDelta.x * mouseSensitivity);
