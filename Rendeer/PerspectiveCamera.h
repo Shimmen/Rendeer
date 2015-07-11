@@ -26,4 +26,3 @@ private:
 	float nearClippingPlane, farClippingPlane;
 	float aspectRatio;
 };
-

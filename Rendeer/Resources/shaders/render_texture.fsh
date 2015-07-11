@@ -7,8 +7,8 @@ noperspective in vec2 v_tex_coord;
 uniform sampler2D u_texture;
 
 /*
-   This shader will just render any texture without
-   any effects or lighting calculations.
+	This shader will just render any texture without
+	any effects or lighting calculations.
 */
 
 void main()

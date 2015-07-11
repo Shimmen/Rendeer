@@ -32,10 +32,10 @@ Texture::Texture(const std::string& filename, GLint magFilter, GLint wrapMode, b
 		internalFormat = (componentCount == 3) ? GL_RGB : GL_RGBA;
 
 /*
-        if (srgb)
-        {
-            internalFormat = (internalFormat == GL_RGB) ? GL_SRGB8 : GL_SRGB8_ALPHA8;
-        }
+		if (srgb)
+		{
+			internalFormat = (internalFormat == GL_RGB) ? GL_SRGB8 : GL_SRGB8_ALPHA8;
+		}
 */
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);

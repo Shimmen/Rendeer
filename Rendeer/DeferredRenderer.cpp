@@ -41,7 +41,7 @@ void DeferredRenderer::BindForUsage() const
 	glDepthFunc(GL_LEQUAL);
 
 /*
-    glEnable(GL_FRAMEBUFFER_SRGB);
+	glEnable(GL_FRAMEBUFFER_SRGB);
 */
 }
 
@@ -89,7 +89,7 @@ void DeferredRenderer::RenderLightPass(const std::vector<ILight *>& lights, Pers
 	glDepthMask(GL_FALSE);
 
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-	glClear(GL_COLOR_BUFFER_BIT); 
+	glClear(GL_COLOR_BUFFER_BIT);
 	glDisable(GL_CULL_FACE);
 
 	gBuffer.GetAlbedoTexture().Bind(10);

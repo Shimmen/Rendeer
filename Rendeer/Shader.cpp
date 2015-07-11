@@ -23,11 +23,11 @@ Shader::Shader(const std::string& vertexShaderFilePath,
 	// Link program
 	glLinkProgram(shaderProgram);
 	CheckShaderErrors(shaderProgram, true, GL_LINK_STATUS, "Error linking program: ");
-	
+
 	// Validate program
 	glValidateProgram(shaderProgram);
 	CheckShaderErrors(shaderProgram, true, GL_VALIDATE_STATUS, "Could not validate program: ");
-	
+
 	// Release shader components
 	glDetachShader(shaderProgram, vertexShader);
 	glDetachShader(shaderProgram, fragmentShader);
@@ -268,7 +268,7 @@ void Shader::CheckShaderErrors(GLuint shader, int isProgram, GLuint stageFlag,
 	if (success == GL_FALSE)
 	{
 		GLchar errorMessage[1024] = {};
-		
+
 		if (isProgram)
 		{
 			glGetProgramInfoLog(shader, sizeof(errorMessage), NULL, errorMessage);

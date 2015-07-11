@@ -21,7 +21,7 @@ Model::Model(const std::string& fileName)
 	if (scene == nullptr)
 	{
 		std::cerr << "Error: could not load Model with file name: " << fileName << std::endl;
-        std::cerr << importer.GetErrorString() << std::endl;
+		std::cerr << importer.GetErrorString() << std::endl;
 		exit(1);
 	}
 

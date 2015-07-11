@@ -41,7 +41,7 @@ public:
 	Mesh(const Model& model);
 	// Should just serve a shortcut through the Model class
 	//Mesh(const std::string& fileName, bool genSmoothNormals);
-		
+
 	void Render();
 
 	~Mesh();
@@ -56,4 +56,3 @@ private:
 	GLuint CreateMesh(Vertex *vertices, unsigned int vertexCount,
 		int *indices, unsigned int numIndices);
 };
-

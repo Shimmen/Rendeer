@@ -49,7 +49,7 @@ public:
 	void SetUniforms(const DeferredRenderer& renderer, PerspectiveCamera& camera);
 };
 
-class PointLight 
+class PointLight
 	: public ILight
 {
 public:
@@ -69,12 +69,12 @@ public:
 	SpotLight(const glm::vec3 position, const glm::quat orientation, glm::vec3 color, float intensity, float outerConeAngle, float innerConeAngle)
 		: ILight(new Shader("postprocess.vsh", "Lights/SpotLight.fsh"),
 		Transform(position, orientation, 1.0f), color, intensity),
-        outerConeAngle(outerConeAngle), innerConeAngle(innerConeAngle)
-    {
-        assert(outerConeAngle >= innerConeAngle);
-        assert(outerConeAngle >= 0);
-        assert(innerConeAngle >= 0);
-    }
+		outerConeAngle(outerConeAngle), innerConeAngle(innerConeAngle)
+	{
+		assert(outerConeAngle >= innerConeAngle);
+		assert(outerConeAngle >= 0);
+		assert(innerConeAngle >= 0);
+	}
 
 	virtual ~SpotLight() {}
 
@@ -82,6 +82,6 @@ public:
 
 private:
 
-    float outerConeAngle;
-    float innerConeAngle;
+	float outerConeAngle;
+	float innerConeAngle;
 };

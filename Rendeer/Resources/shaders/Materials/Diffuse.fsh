@@ -14,7 +14,7 @@ uniform sampler2D u_diffuse;
 
 void main()
 {
-  // Must normalize after vertex->fragment lerp
+	// Must normalize after vertex->fragment lerp
 	vec3 normal = normalize(v_normal);
 	o_normal = encodeNormal(normal);
 

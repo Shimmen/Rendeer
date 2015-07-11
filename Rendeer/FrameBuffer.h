@@ -28,7 +28,7 @@ public:
 	{
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, frameBufferHandle);
 	}
-	
+
 	inline void BindAsReadFrameBuffer() const
 	{
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, frameBufferHandle);
