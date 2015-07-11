@@ -55,8 +55,8 @@ void SpotLight::SetUniforms(const DeferredRenderer& renderer, PerspectiveCamera&
 	auto lightForward = this->transform.GetForward();
 	auto viewSpaceLightForward = camera.GetTransform().GetInverse().RotateVector(lightForward);
 
-	shader->SetUniform("u_light_position", viewSpaceLightPosition/*this->transform.GetPosition()*/);
-	shader->SetUniform("u_light_direction", viewSpaceLightForward/*this->transform.GetForward()*/);
+	shader->SetUniform("u_light_position", viewSpaceLightPosition);
+	shader->SetUniform("u_light_direction", viewSpaceLightForward);
 	shader->SetUniform("u_light_outer_cone_angle", this->outerConeAngle);
 	shader->SetUniform("u_light_inner_cone_angle", this->innerConeAngle);
 	shader->SetUniform("u_light_color", this->color);

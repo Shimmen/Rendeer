@@ -72,7 +72,7 @@ void main()
 		// Smooth the edge between the inner and outer cone angles
 		lightInfluence *= smoothstep(cos(u_light_outer_cone_angle), cos(u_light_inner_cone_angle), angleOfDeviation);
 
-	o_fragment_color = texture(u_albedo, v_tex_coord) * vec4(lightInfluence, 1.0);
+		o_fragment_color = texture(u_albedo, v_tex_coord) * vec4(lightInfluence, 1.0);
 	}
 	else
 	{

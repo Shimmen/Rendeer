@@ -42,6 +42,6 @@ vec3 decodeNormal(in vec3 encodedNormal)
 float attenuation(in float lightToFragDistance)
 {
 	return 1.0 / (ATTENUATION_CONSTANT +
-					ATTENUATION_LINEAR   * lightToFragDistance +
-								ATTENUATION_EXPONENT * lightToFragDistance * lightToFragDistance);
+	              ATTENUATION_LINEAR * lightToFragDistance +
+	              ATTENUATION_EXPONENT * lightToFragDistance * lightToFragDistance);
 }
