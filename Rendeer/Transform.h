@@ -95,7 +95,7 @@ public:
 	glm::vec3 GetForward() const;
 	glm::vec3 GetUp() const;
 
-
+    Transform GetInverse() const;
 
 
 private:

@@ -12,9 +12,7 @@ void DiffuseMaterial::UpdateUniforms(const DeferredRenderer& renderer,
 	diffuseTexture->Bind(0);
 	shader->SetUniform("u_diffuse", 0);
 
-	glm::mat4 modelMatrix = transform.GetModelMatrix();
-	glm::mat4 viewProjectionMatrix = camera.GetProjectionMatrix() * camera.GetViewMatrix();
-	
-	shader->SetUniform("u_model_matrix", modelMatrix);
-	shader->SetUniform("u_view_projection_matrix", viewProjectionMatrix);
+    shader->SetUniform("u_model_matrix", transform.GetModelMatrix());
+    shader->SetUniform("u_view_matrix", camera.GetViewMatrix());
+	shader->SetUniform("u_projection_matrix", camera.GetProjectionMatrix());
 }

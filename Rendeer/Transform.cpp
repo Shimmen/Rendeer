@@ -55,3 +55,11 @@ glm::vec3 Transform::GetUp() const
 {
 	return glm::normalize(RotateVector(glm::vec4(0, 1, 0, 0)));
 }
+
+Transform Transform::GetInverse() const
+{
+    auto inversePosition = -this->position;
+    auto conjugateOrientation = glm::conjugate(this->orientation);
+    auto inverseScale = 1.0f / this->scale;
+    return Transform(inversePosition, conjugateOrientation, inverseScale);
+}

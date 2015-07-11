@@ -28,18 +28,18 @@ void main()
 	vec3 encodedNormal = texture(u_normals, v_tex_coord).xyz;
 	vec3 normal = normalize(decodeNormal(encodedNormal));
 
-   // Get fragment view space position
+    // Get fragment view space position
 	/*
-   float nonLinearDepth = texture(u_depth, v_tex_coord).r;
-   float linearDepth = linearDepth(nonLinearDepth, u_projection_matrix);
-   vec3 viewSpacePos = viewSpacePosition(v_tex_coord, linearDepth, u_inverse_projection_matrix);
+    float nonLinearDepth = texture(u_depth, v_tex_coord).r;
+    float linearDepth = linearDepth(nonLinearDepth, u_projection_matrix);
+    vec3 viewSpacePos = viewSpacePosition(v_tex_coord, linearDepth, u_inverse_projection_matrix);
 	*/
 
 	// TODO: Only for debugging, position will be calculated from depth
 	vec3 fragPos = texture(u_position, v_tex_coord).xyz;
 
-  // Get vector (and distance) from light to fragment
-   vec3 lightToFrag = fragPos - u_light_position;
+  	// Get vector (and distance) from light to fragment
+  	vec3 lightToFrag = fragPos - u_light_position;
 	float lightToFragDistance = length(lightToFrag);
 
 	// "Discard" fragment if it's too far away for the light
@@ -50,7 +50,7 @@ void main()
 		return;
 	}
 
-   vec3 lightDirection = normalize(lightToFrag);
+	vec3 lightDirection = normalize(lightToFrag);
 
 	// Calculate the lambertian factor for the fragment
 	float lambertianFactor = dot(-lightDirection, normal);
