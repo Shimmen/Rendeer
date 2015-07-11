@@ -17,4 +17,3 @@ public:
 	std::vector<glm::vec2> texCoords;
 	std::vector<unsigned int> indices;
 };
-

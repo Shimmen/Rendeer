@@ -37,4 +37,3 @@ private:
 	Texture position;
 	Texture depth;
 };
-

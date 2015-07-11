@@ -7,8 +7,8 @@ class DiffuseMaterial : public IMaterial
 public:
 	DiffuseMaterial()
 		: IMaterial(new Shader("Materials/Diffuse.vsh",
-		                       "Materials/Diffuse.fsh")) {}
-	
+							   "Materials/Diffuse.fsh")) {}
+
 	virtual void UpdateUniforms(const DeferredRenderer& renderer,
 		const Transform& transform, const PerspectiveCamera& camera);
 

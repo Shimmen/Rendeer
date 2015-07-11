@@ -32,7 +32,7 @@ public:
 		GetFramebufferSize(&width, NULL);
 		return width;
 	}
-	
+
 	inline int GetFramebufferHeight() const
 	{
 		int height;
@@ -40,10 +40,10 @@ public:
 		return height;
 	}
 
-    inline void SetWindowPosition(int xPos, int yPos) const
-    {
-        glfwSetWindowPos(windowHandle, xPos, yPos);
-    }
+	inline void SetWindowPosition(int xPos, int yPos) const
+	{
+		glfwSetWindowPos(windowHandle, xPos, yPos);
+	}
 
 	inline float GetAspectRatio() const
 	{
@@ -90,7 +90,7 @@ public:
 	{
 		return this->cursorIsHidden;
 	}
-	
+
 	inline const Keyboard& GetKeyboard() const
 	{
 		return *keyboard;
@@ -100,9 +100,9 @@ public:
 	{
 		return *mouse;
 	}
-	
+
 	void PollEvents() const;
-	
+
 private:
 	GLFWwindow *windowHandle;
 
@@ -121,4 +121,3 @@ private:
 	Mouse *mouse;
 
 };
-

@@ -58,8 +58,8 @@ glm::vec3 Transform::GetUp() const
 
 Transform Transform::GetInverse() const
 {
-    auto inversePosition = -this->position;
-    auto conjugateOrientation = glm::conjugate(this->orientation);
-    auto inverseScale = 1.0f / this->scale;
-    return Transform(inversePosition, conjugateOrientation, inverseScale);
+	auto inversePosition = -this->position;
+	auto conjugateOrientation = glm::conjugate(this->orientation);
+	auto inverseScale = 1.0f / this->scale;
+	return Transform(inversePosition, conjugateOrientation, inverseScale);
 }

@@ -27,7 +27,7 @@ public:
 	{
 		return position;
 	}
-	
+
 	inline glm::quat GetOrientation() const
 	{
 		return orientation;
@@ -43,7 +43,7 @@ public:
 		this->position = newPosition;
 		return this;
 	}
-	
+
 	inline Transform* SetOrientation(const glm::vec3 axis, float angle)
 	{
 		SetOrientation(glm::angleAxis(angle, glm::normalize(axis)));
@@ -55,7 +55,7 @@ public:
 		this->orientation = glm::normalize(newRotation);
 		return this;
 	}
-	
+
 	inline Transform* SetScale(float newScale)
 	{
 		this->scale = newScale;
@@ -95,7 +95,7 @@ public:
 	glm::vec3 GetForward() const;
 	glm::vec3 GetUp() const;
 
-    Transform GetInverse() const;
+	Transform GetInverse() const;
 
 
 private:

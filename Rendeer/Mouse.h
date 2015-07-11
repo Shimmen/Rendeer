@@ -22,7 +22,7 @@ public:
 	inline bool IsButtonDown(int key) const { return isButtonDown[key]; }
 	inline bool WasButtonPressed(int key) const { return wasButtonPressed[key]; }
 	inline bool WasButtonReleased(int key) const { return wasButtonReleased[key]; }
-	
+
 	inline glm::vec2 GetMousePosition() const
 	{
 		return glm::vec2((float)currentXPosition, (float)currentYPosition);

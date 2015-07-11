@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
 	Entity table(tableMesh, tableMaterial);
 	table.GetTransform().SetScale(60.0f);
 	table.GetTransform().SetOrientation(glm::angleAxis(glm::radians(90.0f), glm::vec3(1, 0, 0)));
-	
+
 	// PANEL
 	Model floorModel("models/floor.obj");
 	Mesh floorMesh(floorModel);
@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
 	PointLight pointLight(glm::vec3(0, 0.25f, 0), glm::vec3(1.0f, 0.1f, 0.15f), 1.0f);
 
 	// SPOT LIGHT
-    SpotLight spotLight(glm::vec3(0, -0.65f, 4), glm::quat(glm::normalize(glm::vec3(1, -3, 0))), glm::vec3(0, 0, 1), 1.0f, glm::radians(20.0f), glm::radians(15.5f));
+	SpotLight spotLight(glm::vec3(0, -0.65f, 4), glm::quat(glm::normalize(glm::vec3(1, -3, 0))), glm::vec3(0, 0, 1), 1.0f, glm::radians(20.0f), glm::radians(15.5f));
 
 	// LIGHTS
 	std::vector<ILight *> lights;
@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
 	// LOOP //
 	//////////
 
-    // Will set up the renderer for rendering
+	// Will set up the renderer for rendering
 	deferredRenderer.BindForUsage();
 
 	float timer = 0.0f;
@@ -110,7 +110,7 @@ int main(int argc, char *argv[])
 		}
 
 
-		
+
 		// Move the camera (for now in this very temporary solution)
 		glm::vec3 translation = glm::vec3();
 		const float speed = 0.08f;
@@ -162,11 +162,11 @@ int main(int argc, char *argv[])
 		table.GetTransform().SetPosition(glm::vec3(0, 0, sinf(timer) * 1.0f + 0.85f));
 
 #if 0
-        auto cameraPosition = camera.GetTransform().GetPosition();
+		auto cameraPosition = camera.GetTransform().GetPosition();
 		auto cameraOrientation = camera.GetTransform().GetOrientation();
 		spotLight.GetTransform()->SetPosition(cameraPosition)->SetOrientation(cameraOrientation);
 #else
-	    spotLight.GetTransform()->Rotate(glm::quat(glm::vec3(0.0f, 0.01f, 0.0f)));
+		spotLight.GetTransform()->Rotate(glm::quat(glm::vec3(0.0f, 0.01f, 0.0f)));
 #endif
 
 		deferredRenderer.Render(entities, lights, camera);

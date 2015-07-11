@@ -10,12 +10,12 @@
 void DirectionalLight::SetUniforms(const DeferredRenderer& renderer, PerspectiveCamera& camera)
 {
 	shader->Bind();
-	
+
 	shader->SetUniform("u_albedo", 10);
 	shader->SetUniform("u_normals", 11);
 
-    auto lightForward = this->transform.GetForward();
-    auto viewSpaceLightForward = camera.GetTransform().GetInverse().RotateVector(lightForward);
+	auto lightForward = this->transform.GetForward();
+	auto viewSpaceLightForward = camera.GetTransform().GetInverse().RotateVector(lightForward);
 
 	shader->SetUniform("u_light_direction", viewSpaceLightForward);
 	shader->SetUniform("u_light_color", this->color);
@@ -31,7 +31,7 @@ void PointLight::SetUniforms(const DeferredRenderer& renderer, PerspectiveCamera
 	//shader->SetUniform("u_depth", 12); // TODO
 	shader->SetUniform("u_position", 13); // TODO
 
-    auto viewSpaceLightPosition = glm::vec3(camera.GetViewMatrix() * glm::vec4(this->transform.GetPosition(), 1.0f));
+	auto viewSpaceLightPosition = glm::vec3(camera.GetViewMatrix() * glm::vec4(this->transform.GetPosition(), 1.0f));
 
 	shader->SetUniform("u_light_position", viewSpaceLightPosition);
 	shader->SetUniform("u_light_color", this->color);
@@ -50,15 +50,15 @@ void SpotLight::SetUniforms(const DeferredRenderer& renderer, PerspectiveCamera&
 	//shader->SetUniform("u_depth", 12); // TODO
 	shader->SetUniform("u_position", 13); // TODO
 
-    auto viewSpaceLightPosition = glm::vec3(camera.GetViewMatrix() * glm::vec4(this->transform.GetPosition(), 1.0f));
+	auto viewSpaceLightPosition = glm::vec3(camera.GetViewMatrix() * glm::vec4(this->transform.GetPosition(), 1.0f));
 
-    auto lightForward = this->transform.GetForward();
-    auto viewSpaceLightForward = camera.GetTransform().GetInverse().RotateVector(lightForward);
+	auto lightForward = this->transform.GetForward();
+	auto viewSpaceLightForward = camera.GetTransform().GetInverse().RotateVector(lightForward);
 
 	shader->SetUniform("u_light_position", viewSpaceLightPosition/*this->transform.GetPosition()*/);
-    shader->SetUniform("u_light_direction", viewSpaceLightForward/*this->transform.GetForward()*/);
+	shader->SetUniform("u_light_direction", viewSpaceLightForward/*this->transform.GetForward()*/);
 	shader->SetUniform("u_light_outer_cone_angle", this->outerConeAngle);
-    shader->SetUniform("u_light_inner_cone_angle", this->innerConeAngle);
+	shader->SetUniform("u_light_inner_cone_angle", this->innerConeAngle);
 	shader->SetUniform("u_light_color", this->color);
 	shader->SetUniform("u_light_intensity", this->intensity);
 

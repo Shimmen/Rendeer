@@ -27,14 +27,14 @@ public:
 	{
 		glUseProgram(shaderProgram);
 	}
-	
+
 	inline void Unbind() const
 	{
 		glUseProgram(0);
 	}
-	
+
 	bool HasUniformWithName(const std::string& uniformName);
-	
+
 	// It is your own responsibility to keep track of the types of the uniforms
 	void SetUniform(const std::string& uniformName, int intValue);
 	void SetUniform(const std::string& uniformName, float floatValue);
@@ -59,4 +59,3 @@ private:
 	void CheckShaderErrors(GLuint shader, int isProgram, GLuint stageFlag,
 		const std::string& customMessage);
 };
-

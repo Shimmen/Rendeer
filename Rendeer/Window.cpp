@@ -18,7 +18,7 @@ Window::Window(int width, int height, const std::string& title, bool fullResolut
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
 	glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE);
-    glfwWindowHint(GLFW_SRGB_CAPABLE, GL_TRUE);
+	glfwWindowHint(GLFW_SRGB_CAPABLE, GL_TRUE);
 	glfwWindowHint(GLFW_RED_BITS, 8);
 	glfwWindowHint(GLFW_GREEN_BITS, 8);
 	glfwWindowHint(GLFW_BLUE_BITS, 8);
@@ -67,7 +67,7 @@ Window::~Window()
 
 
 	glfwDestroyWindow(windowHandle);
-	
+
 	// Only one window is "allowed" at the moment.
 	glfwTerminate();
 }
