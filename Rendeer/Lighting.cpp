@@ -59,8 +59,8 @@ void SpotLight::SetUniforms(const DeferredRenderer& renderer, PerspectiveCamera&
 
 	shader->SetUniform("u_light_position", viewSpaceLightPosition);
 	shader->SetUniform("u_light_direction", viewSpaceLightForward);
-	shader->SetUniform("u_light_outer_cone_angle", this->outerConeAngle);
-	shader->SetUniform("u_light_inner_cone_angle", this->innerConeAngle);
+	shader->SetUniform("u_light_outer_cone_angle", cosf(this->outerConeAngle));
+	shader->SetUniform("u_light_inner_cone_angle", cosf(this->innerConeAngle));
 	shader->SetUniform("u_light_color", this->color);
 	shader->SetUniform("u_light_intensity", this->intensity);
 

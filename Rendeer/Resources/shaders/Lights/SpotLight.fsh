@@ -46,7 +46,7 @@ void main()
 		vec3 actualLightDirection = normalize(lightToFrag);
 		float angleOfDeviation = dot(normalize(u_light_direction), actualLightDirection);
 
-		if(angleOfDeviation > cos(u_light_outer_cone_angle))
+		if(angleOfDeviation > u_light_outer_cone_angle)
 		{
 			vec3 normal = getViewSpaceNormal(u_normals, v_tex_coord);
 			float attenuationFactor = attenuation(lightToFragDistance);
@@ -54,7 +54,7 @@ void main()
 			// Calculate diffuse light
 			vec4 albedoColor = texture(u_albedo, v_tex_coord);
 			float diffuseIntensity = u_light_intensity * lambertianFactor(normal, actualLightDirection) * attenuationFactor;
-			diffuseIntensity *= smoothstep(u_light_outer_cone_angle, u_light_inner_cone_angle, acos(angleOfDeviation));
+			diffuseIntensity *= smoothstep(u_light_outer_cone_angle, u_light_inner_cone_angle, angleOfDeviation);
 			vec4 diffuseColor = albedoColor * vec4(u_light_color, 1.0) * diffuseIntensity;
 
 			// Calculate specular light

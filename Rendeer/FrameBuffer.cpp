@@ -2,7 +2,7 @@
 
 #include "Texture.h"
 
-FrameBuffer::FrameBuffer(bool attachDefaultDepthStencilRenderBuffer)
+FrameBuffer::FrameBuffer()
 {
 	glGenFramebuffers(1, &frameBufferHandle);
 }

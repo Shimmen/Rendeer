@@ -7,7 +7,7 @@ class DebugGBuffer : public FrameBuffer
 {
 public:
 	DebugGBuffer(int renderWidth, int renderHeight)
-		: FrameBuffer(false)
+		: FrameBuffer()
 		, albedo(renderWidth, renderHeight, GL_RGB, GL_RGB8, GL_CLAMP_TO_BORDER, GL_LINEAR, GL_LINEAR)
 		, normal(renderWidth, renderHeight, GL_RGB, GL_RGB16, GL_CLAMP_TO_BORDER, GL_NEAREST, GL_NEAREST)
 		, position(renderWidth, renderHeight, GL_RGB, GL_RGB32F, GL_REPEAT, GL_LINEAR, GL_LINEAR)

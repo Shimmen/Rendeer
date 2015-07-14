@@ -16,8 +16,7 @@ glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2
 class FrameBuffer
 {
 public:
-	// TODO: Implement/make use of the bool flag!
-	FrameBuffer(bool attachDefaultDepthStencilRenderBuffer = false);
+	FrameBuffer();
 	virtual ~FrameBuffer();
 
 	void AttachTexture(const Texture& texture, GLenum attatchment) const;
