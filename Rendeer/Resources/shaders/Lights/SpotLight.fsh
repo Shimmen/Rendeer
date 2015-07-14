@@ -1,6 +1,7 @@
 #version 420 core
 
 #include "functions.glsl"
+#include "convenience.glsl"
 
 layout(location=0) out vec4 o_fragment_color;
 
@@ -14,13 +15,12 @@ uniform sampler2D u_normals;
 uniform sampler2D u_depth;
 uniform sampler2D u_position; // TODO
 
-
 uniform vec3  u_light_position;
 uniform vec3  u_light_direction;
 uniform float u_light_outer_cone_angle;
 uniform float u_light_inner_cone_angle;
-uniform vec3  u_light_color = vec3(1.0, 1.0, 1.0);
-uniform float u_light_intensity = 1.0;
+uniform vec3  u_light_color;
+uniform float u_light_intensity;
 
 uniform mat4  u_projection_matrix;
 uniform mat4  u_inverse_projection_matrix;

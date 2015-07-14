@@ -16,8 +16,8 @@ uniform sampler2D u_depth;
 uniform sampler2D u_position; // TODO
 
 uniform vec3  u_light_direction;
-uniform vec3  u_light_color = vec3(1.0, 1.0, 1.0);
-uniform float u_light_intensity = 1.0;
+uniform vec3  u_light_color;
+uniform float u_light_intensity;
 
 void main()
 {
