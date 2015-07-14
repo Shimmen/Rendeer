@@ -1,4 +1,14 @@
 
+//
+// This file only contains purely functional functions. The functions are simply
+// helper functions that performs some calculation that should be consistent
+// between different shaders. For convenience functions that interact with
+// samplers and perform multiple steps and calculations, look in convenience.glsl.
+//
+
+#ifndef _FUNCTIONS_GLSL
+#define _FUNCTIONS_GLSL
+
 float linearDepth(in float nonLinearDepth, in mat4 projectionMatrix)
 {
 	return projectionMatrix[3][2] / (nonLinearDepth - projectionMatrix[2][2]);
@@ -27,6 +37,10 @@ vec3 decodeNormal(in vec3 encodedNormal)
 	return encodedNormal * 2.0 - 1.0;
 }
 
+float lambertianFactor(in vec3 surfaceNormal, in vec3 lightDirection)
+{
+	return max(dot(normalize(surfaceNormal), normalize(-lightDirection)), 0.0);
+}
 
 #define ATTENUATION_CONSTANT 1.0
 #define ATTENUATION_LINEAR 0.0
@@ -45,3 +59,5 @@ float attenuation(in float lightToFragDistance)
 	              ATTENUATION_LINEAR * lightToFragDistance +
 	              ATTENUATION_EXPONENT * lightToFragDistance * lightToFragDistance);
 }
+
+#endif // _FUNCTIONS_GLSL

@@ -13,6 +13,8 @@ void DirectionalLight::SetUniforms(const DeferredRenderer& renderer, Perspective
 
 	shader->SetUniform("u_albedo", 10);
 	shader->SetUniform("u_normals", 11);
+	//shader->SetUniform("u_depth", 12); // TODO
+	shader->SetUniform("u_position", 13); // TODO
 
 	auto lightForward = this->transform.GetForward();
 	auto viewSpaceLightForward = camera.GetTransform().GetInverse().RotateVector(lightForward);
