@@ -27,55 +27,48 @@ uniform mat4  u_inverse_projection_matrix;
 
 void main()
 {
-	// Get surface normal (in world space)
-	vec3 encodedNormal = texture(u_normals, v_tex_coord).xyz;
-	vec3 normal = normalize(decodeNormal(encodedNormal));
-
 	// Get fragment view space position
-	/*
-	float nonLinearDepth = texture(u_depth, v_tex_coord).r;
-	float linearDepth = linearDepth(nonLinearDepth, u_projection_matrix);
-	vec3 viewSpacePos = viewSpacePosition(v_tex_coord, linearDepth, u_inverse_projection_matrix);
-	*/
+	vec3 fragmentPosition = texture(u_position, v_tex_coord).xyz;
+	//float nonLinearDepth = texture(u_depth, v_tex_coord).r;
+	//float linearDepth = linearDepth(nonLinearDepth, u_projection_matrix);
+	//vec3 viewSpacePos = viewSpacePosition(v_tex_coord, linearDepth, u_inverse_projection_matrix);
 
-	// TODO: Only for debugging, position will be calculated from depth
-	vec3 fragPos = texture(u_position, v_tex_coord).xyz;
-
-	// Get vector (and distance) from light to fragment
-	vec3 lightToFrag = fragPos - u_light_position;
+	vec3 lightToFrag = fragmentPosition - u_light_position;
 	float lightToFragDistance = length(lightToFrag);
 
-	// "Discard" fragment if it's too far away for the light
-	// TODO: Handle without branching in some way?
 	if(lightToFragDistance > ATTENUATION_MAX_LIGHT_RANGE)
 	{
-		o_fragment_color = vec4(0, 0, 0, 1);
-		return;
-	}
-
-	vec3 lightDirection = normalize(lightToFrag);
-
-	// Compare the angle direction of the light to the actual direct from the fragment and the light
-	float angleOfDeviation = dot(normalize(u_light_direction), normalize(lightDirection));
-
-	if(angleOfDeviation > cos(u_light_outer_cone_angle))
-	{
-		// Calculate the lambertian factor for the fragment
-		float lambertianFactor = dot(-lightDirection, normal);
-		lambertianFactor = max(lambertianFactor, 0.0);
-
-		float attenuationFactor = attenuation(lightToFragDistance);
-
-		// Calculate the the light's influence on the fragment's color
-		vec3 lightInfluence = u_light_color * u_light_intensity * lambertianFactor * attenuationFactor;
-
-		// Smooth the edge between the inner and outer cone angles
-		lightInfluence *= smoothstep(cos(u_light_outer_cone_angle), cos(u_light_inner_cone_angle), angleOfDeviation);
-
-		o_fragment_color = texture(u_albedo, v_tex_coord) * vec4(lightInfluence, 1.0);
+		o_fragment_color = vec4(0.0);
 	}
 	else
 	{
-		o_fragment_color = vec4(0.0);
+		// Compare the angle direction of the light to the actual direct from the fragment and the light
+		vec3 actualLightDirection = normalize(lightToFrag);
+		float angleOfDeviation = dot(normalize(u_light_direction), actualLightDirection);
+
+		if(angleOfDeviation > cos(u_light_outer_cone_angle))
+		{
+			vec3 normal = getViewSpaceNormal(u_normals, v_tex_coord);
+			float attenuationFactor = attenuation(lightToFragDistance);
+
+			// Calculate diffuse light
+			vec4 albedoColor = texture(u_albedo, v_tex_coord);
+			float diffuseIntensity = u_light_intensity * lambertianFactor(normal, actualLightDirection) * attenuationFactor;
+			diffuseIntensity *= smoothstep(u_light_outer_cone_angle, u_light_inner_cone_angle, acos(angleOfDeviation));
+			vec4 diffuseColor = albedoColor * vec4(u_light_color, 1.0) * diffuseIntensity;
+
+			// Calculate specular light
+			vec3 fragToCamera = normalize(-fragmentPosition);
+			vec3 reflectedLight = normalize(reflect(actualLightDirection, normal));
+			float specularFactor = max(dot(reflectedLight, fragToCamera), 0.0);
+			specularFactor = pow(specularFactor, 100);
+			vec4 specularColor =  vec4(u_light_color, 1.0) * specularFactor * attenuationFactor;
+
+			o_fragment_color = diffuseColor + specularColor;
+		}
+		else
+		{
+			o_fragment_color = vec4(0.0);
+		}
 	}
 }
