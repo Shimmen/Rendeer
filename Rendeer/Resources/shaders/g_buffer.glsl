@@ -11,11 +11,6 @@ struct GBuffer
 	vec3 albedo;
 	vec3 normal;
 	vec3 position;
-
-#ifdef LIGHT_SHADER
-	// In light shaders the depth can also be relevant to know/use
-	float linearDepth;
-#endif
 };
 
 
@@ -44,18 +39,8 @@ uniform sampler2D u_albedo;
 uniform sampler2D u_normals;
 uniform sampler2D u_depth;
 
+// Required for getting position from depth
 uniform mat4  u_inverse_projection_matrix;
-
-vec3 getPositionFromLinearDepth(in vec2 texCoord, in float linearDepth, in mat4 inverseProjection)
-{
-	vec2 screenSpacePosition = texCoord * 2.0 - 1.0;
-	vec4 projectedPosition = vec4(screenSpacePosition, linearDepth, 1.0);
-
-	vec4 viewSpacePosition = inverseProjection * projectedPosition;
-	viewSpacePosition /= viewSpacePosition.w;
-
-	return viewSpacePosition.xyz;
-}
 
 GBuffer extractGBufferData(in vec2 texCoord)
 {
@@ -64,19 +49,19 @@ GBuffer extractGBufferData(in vec2 texCoord)
 	vec4 encodedNormal = texture(u_normals, texCoord);
 	vec3 normal = normalize(decodeNormal(encodedNormal.xyz));
 
+	// Get view space position of fragment by un-projecting the sceen-space position
+	// and the depth from the depth buffer into the linear view space.
 	float nonLinearDepth = texture(u_depth, texCoord).x;
 	float normalizedNonLinearDepth = nonLinearDepth * 2.0 - 1.0;
-	//float near = 1.0;
-	//float far  = 1000.0;
-	//float linearDepth = 2.0 * near * far / (far + near - normalizedNonLinearDepth * (far - near));
-
-	vec3 position = getPositionFromLinearDepth(texCoord, normalizedNonLinearDepth, u_inverse_projection_matrix);
+	vec2 screenSpacePosition = texCoord * 2.0 - 1.0;
+	vec4 projectedPosition = vec4(screenSpacePosition, normalizedNonLinearDepth, 1.0);
+	vec4 viewSpacePosition = u_inverse_projection_matrix * projectedPosition;
+	viewSpacePosition /= viewSpacePosition.w;
 
 	GBuffer gBuffer;
 	gBuffer.albedo = albedo.xyz;
 	gBuffer.normal = normal;
-	gBuffer.position = position;
-	//gBuffer.linearDepth = linearDepth;
+	gBuffer.position = viewSpacePosition.xyz;
 	return gBuffer;
 }
 

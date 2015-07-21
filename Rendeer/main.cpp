@@ -21,7 +21,7 @@
 #include "DeferredRenderer.h"
 #include "PerspectiveCamera.h"
 
-#define WINDOW_WIDTH 1960
+#define WINDOW_WIDTH 1920
 #define WINDOW_HEIGHT 1080
 
 int main(int argc, char *argv[])

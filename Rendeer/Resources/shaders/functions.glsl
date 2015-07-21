@@ -2,8 +2,7 @@
 //
 // This file only contains purely functional functions. The functions are simply
 // helper functions that performs some calculation that should be consistent
-// between different shaders. For convenience functions that interact with
-// samplers and perform multiple steps and calculations, look in convenience.glsl.
+// between different shaders.
 //
 
 #ifndef _FUNCTIONS_GLSL

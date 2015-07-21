@@ -39,7 +39,6 @@ void PointLight::SetUniforms(const DeferredRenderer& renderer, PerspectiveCamera
 	shader->SetUniform("u_light_color", this->color);
 	shader->SetUniform("u_light_intensity", this->intensity);
 
-	//shader->SetUniform("u_projection_matrix", camera.GetProjectionMatrix()); // TODO
 	shader->SetUniform("u_inverse_projection_matrix", glm::inverse((camera.GetProjectionMatrix())));
 }
 
@@ -63,6 +62,5 @@ void SpotLight::SetUniforms(const DeferredRenderer& renderer, PerspectiveCamera&
 	shader->SetUniform("u_light_color", this->color);
 	shader->SetUniform("u_light_intensity", this->intensity);
 
-	//shader->SetUniform("u_projection_matrix", camera.GetProjectionMatrix()); // TODO
-	shader->SetUniform("u_inverse_projection_matrix", glm::inverse((camera.GetProjectionMatrix()))); // TODO
+	shader->SetUniform("u_inverse_projection_matrix", glm::inverse((camera.GetProjectionMatrix())));
 }
