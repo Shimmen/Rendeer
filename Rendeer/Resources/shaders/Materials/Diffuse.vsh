@@ -19,8 +19,5 @@ void main()
 	// Only uniform scaling (i.e. same for x, y, and z) is supported for now.
 	v_normal = mat3(u_view_matrix * u_model_matrix) * a_normal;
 
-	// TODO: Only for debugging, position will be calculated from depth
-	v_position = (u_view_matrix * u_model_matrix * vec4(a_position, 1.0)).xyz;
-
 	gl_Position = u_projection_matrix * u_view_matrix * u_model_matrix * vec4(a_position, 1.0);
 }

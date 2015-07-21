@@ -10,10 +10,6 @@
 
 #include "functions.glsl"
 
-vec3 getViewSpaceNormal(in sampler2D normalMap, in vec2 textureCoordinate)
-{
-	vec3 encodedNormal = texture(normalMap, textureCoordinate).xyz;
-	return normalize(decodeNormal(encodedNormal));
-}
+
 
 #endif // _CONVENIENCE_GLSL

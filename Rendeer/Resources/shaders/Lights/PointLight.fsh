@@ -14,9 +14,6 @@ uniform vec3  u_light_position;
 uniform vec3  u_light_color;
 uniform float u_light_intensity;
 
-uniform mat4  u_projection_matrix;
-uniform mat4  u_inverse_projection_matrix;
-
 void main()
 {
 	GBuffer gBuffer = extractGBufferData(v_tex_coord);

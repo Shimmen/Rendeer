@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
 	entities.push_back(&floor);
 
 	// DIRECTIONAL LIGHT
-	DirectionalLight directionalLight(glm::quat(1, 1, 0, 1), glm::vec3(0.92f, 0.95f, 0.88f), 0.35f);
+	DirectionalLight directionalLight(glm::quat(1, 1, 0, 1), glm::vec3(0.92f, 0.95f, 0.88f), 0.15f);
 
 	// POINT LIGHT
 	PointLight pointLight(glm::vec3(0, 0.25f, 0), glm::vec3(1.0f, 0.1f, 0.15f), 1.0f);

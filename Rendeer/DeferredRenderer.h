@@ -25,9 +25,8 @@ private:
 	void RenderGeometryPass(const std::vector<Entity *>& entities, PerspectiveCamera& camera);
 	void RenderLightPass(const std::vector<ILight *>& lights, PerspectiveCamera& camera);
 
-
-	//GBuffer gBuffer;
-	DebugGBuffer gBuffer;
+	
+	GBuffer gBuffer;
 	ScreenAlignedQuad quad;
 
 	Window& window;

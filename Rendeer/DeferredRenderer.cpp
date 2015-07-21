@@ -95,7 +95,6 @@ void DeferredRenderer::RenderLightPass(const std::vector<ILight *>& lights, Pers
 	gBuffer.GetAlbedoTexture().Bind(10);
 	gBuffer.GetNormalTexture().Bind(11);
 	gBuffer.GetDepthTexture().Bind(12);
-	gBuffer.GetPositionTexture().Bind(13); // TODO
 
 	for (auto it = lights.begin(); it != lights.end(); ++it)
 	{
