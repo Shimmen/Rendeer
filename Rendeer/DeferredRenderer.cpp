@@ -91,14 +91,14 @@ void DeferredRenderer::RenderLightPass(const std::vector<ILight *>& lights, Pers
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glDisable(GL_CULL_FACE);
-
-	gBuffer.GetAlbedoTexture().Bind(10);
-	gBuffer.GetNormalTexture().Bind(11);
-	gBuffer.GetDepthTexture().Bind(12);
-
+	
 	for (auto it = lights.begin(); it != lights.end(); ++it)
 	{
 		ILight *light = (*it);
+		Shader *lightShader = light->GetShader();
+
+		// Bind the gBuffer related uniforms
+		gBuffer.BindForLightShader(*lightShader);
 
 		// Ask the light to sets its shader's uniforms
 		light->SetUniforms(*this, camera);

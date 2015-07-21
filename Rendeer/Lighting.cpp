@@ -11,10 +11,6 @@ void DirectionalLight::SetUniforms(const DeferredRenderer& renderer, Perspective
 {
 	shader->Bind();
 
-	shader->SetUniform("u_albedo", 10);
-	shader->SetUniform("u_normals", 11);
-	shader->SetUniform("u_depth", 12);
-
 	auto lightForward = this->transform.GetForward();
 	auto viewSpaceLightForward = camera.GetTransform().GetInverse().RotateVector(lightForward);
 
@@ -29,10 +25,6 @@ void PointLight::SetUniforms(const DeferredRenderer& renderer, PerspectiveCamera
 {
 	shader->Bind();
 
-	shader->SetUniform("u_albedo", 10);
-	shader->SetUniform("u_normals", 11);
-	shader->SetUniform("u_depth", 12);
-
 	auto viewSpaceLightPosition = glm::vec3(camera.GetViewMatrix() * glm::vec4(this->transform.GetPosition(), 1.0f));
 
 	shader->SetUniform("u_light_position", viewSpaceLightPosition);
@@ -45,10 +37,6 @@ void PointLight::SetUniforms(const DeferredRenderer& renderer, PerspectiveCamera
 void SpotLight::SetUniforms(const DeferredRenderer& renderer, PerspectiveCamera& camera)
 {
 	shader->Bind();
-
-	shader->SetUniform("u_albedo", 10);
-	shader->SetUniform("u_normals", 11);
-	shader->SetUniform("u_depth", 12);
 
 	auto viewSpaceLightPosition = glm::vec3(camera.GetViewMatrix() * glm::vec4(this->transform.GetPosition(), 1.0f));
 
