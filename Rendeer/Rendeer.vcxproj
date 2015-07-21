@@ -105,7 +105,6 @@
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DebugGBuffer.h" />
     <ClInclude Include="DeferredRenderer.h" />
     <ClInclude Include="DiffuseMaterial.h" />
     <ClInclude Include="FrameBuffer.h" />

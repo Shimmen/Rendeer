@@ -5,7 +5,6 @@
 #include "Shader.h"
 #include "Entity.h"
 #include "GBuffer.h"
-#include "DebugGBuffer.h"
 #include "ScreenAlignedQuad.h"
 
 class Window;
