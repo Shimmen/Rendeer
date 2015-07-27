@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 #include <glad/glad.h>
 
 class Texture;
@@ -16,10 +18,12 @@ glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2
 class FrameBuffer
 {
 public:
+
 	FrameBuffer();
 	virtual ~FrameBuffer();
 
 	void AttachTexture(const Texture& texture, GLenum attatchment) const;
+	void SetDrawBuffers(const std::vector<GLenum> drawBuffers) const;
 
 	bool IsComplete(GLenum *statusIfNotComplete = nullptr) const;
 
@@ -34,8 +38,7 @@ public:
 	}
 
 protected:
+
 	GLuint frameBufferHandle;
 
-	// TODO:Maybe do some RAM store of the components attatched to the GPU memory framebuffer.
-	// Just to keep track of everything.
 };

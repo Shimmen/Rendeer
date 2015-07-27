@@ -1,5 +1,7 @@
 #include "FrameBuffer.h"
 
+#include "glad/glad.h"
+
 #include "Texture.h"
 
 FrameBuffer::FrameBuffer()
@@ -18,6 +20,11 @@ void FrameBuffer::AttachTexture(const Texture& texture, GLenum attatchment) cons
 
 	// TODO: Will the last variable, the 0, that is the mipmap level ever be used?
 	glFramebufferTexture2D(GL_FRAMEBUFFER, attatchment, GL_TEXTURE_2D, texture.GetHandle(), 0);
+}
+
+void FrameBuffer::SetDrawBuffers(const std::vector<GLenum> drawBuffers) const
+{
+	glNamedFramebufferDrawBuffers(frameBufferHandle, drawBuffers.size(), &drawBuffers[0]);
 }
 
 bool FrameBuffer::IsComplete(GLenum *statusIfNotComplete) const

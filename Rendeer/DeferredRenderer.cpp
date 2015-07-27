@@ -11,14 +11,6 @@ DeferredRenderer::DeferredRenderer(Window& window)
 	: window(window)
 	, gBuffer(window.GetFramebufferWidth(), window.GetFramebufferHeight())
 {
-	// This really shouldn't need to be here,
-	// since the GBuffer is its own class now
-	GLenum reason = 0;
-	if (!gBuffer.IsComplete(&reason))
-	{
-		std::cout << "Error: G Buffer is incomplete!\nReason: " << reason << std::endl;
-	}
-
 	renderTextureShader = new Shader("postprocess.vsh", "render_texture.fsh");
 }
 
@@ -60,7 +52,7 @@ void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::
 void DeferredRenderer::RenderGeometryPass(const std::vector<Entity *>& entities, PerspectiveCamera& camera)
 {
 	// Set state for geometry rendering
-	gBuffer.BindAsDrawFrameBuffer();
+	gBuffer.BindAsRenderTarget();
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
@@ -98,7 +90,7 @@ void DeferredRenderer::RenderLightPass(const std::vector<ILight *>& lights, Pers
 		Shader *lightShader = light->GetShader();
 
 		// Bind the gBuffer related uniforms
-		gBuffer.BindForLightShader(*lightShader);
+		gBuffer.BindAsUniform(*lightShader);
 
 		// Ask the light to sets its shader's uniforms
 		light->SetUniforms(*this, camera);

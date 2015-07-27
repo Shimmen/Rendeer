@@ -90,6 +90,7 @@
     <ClCompile Include="Buffer.cpp" />
     <ClCompile Include="DeferredRenderer.cpp" />
     <ClCompile Include="DiffuseMaterial.cpp" />
+    <ClCompile Include="GBuffer.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="Lighting.cpp" />
