@@ -87,6 +87,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Buffer.cpp" />
     <ClCompile Include="DeferredRenderer.cpp" />
     <ClCompile Include="DiffuseMaterial.cpp" />
     <ClCompile Include="glad.c" />
@@ -105,6 +106,7 @@
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Buffer.h" />
     <ClInclude Include="DeferredRenderer.h" />
     <ClInclude Include="DiffuseMaterial.h" />
     <ClInclude Include="FrameBuffer.h" />
