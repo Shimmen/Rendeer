@@ -43,8 +43,7 @@ void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::
 	RenderGeometryPass(entities, camera);
 
 	RenderLightPass(lights, camera);
-	//RenderTextureToScreen(gBuffer.GetAlbedoTexture());
-	//RenderTextureToScreen(gBuffer.GetPositionTexture());
+	//RenderTextureToScreen(gBuffer.material);
 
 	window.SwapBuffers();
 }

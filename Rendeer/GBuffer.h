@@ -20,6 +20,7 @@ private:
 	FrameBuffer frameBuffer;
 	Texture albedo;
 	Texture normal;
+	Texture material;
 	Texture depth;
 
 };

@@ -29,8 +29,8 @@ void main()
 	vec3 lightToFrag = normalize(u_light_direction);
 	vec3 reflectedLight = normalize(reflect(lightToFrag, gBuffer.normal));
 	float specularFactor = max(dot(reflectedLight, fragToCamera), 0.0);
-	specularFactor = pow(specularFactor, 100);
-	vec4 specularColor =  vec4(u_light_color, 1.0) * specularFactor;
+	specularFactor = pow(specularFactor, gBuffer.shininess);
+	vec4 specularColor =  vec4(u_light_color, 1.0) * specularFactor * gBuffer.specularIntensity;
 
 	// Calculate the final fragment color
 	o_fragment_color = diffuseColor + specularColor;

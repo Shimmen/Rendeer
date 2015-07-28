@@ -16,5 +16,6 @@ public:
 	//Texture *normalMap;
 	//Texture *specularMap;
 
-	//float specularPower:
+	float specularIntensity{1.0f};
+	float shininess{0.0f};
 };

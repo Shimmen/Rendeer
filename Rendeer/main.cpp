@@ -40,6 +40,8 @@ int main(int argc, char *argv[])
 	Texture teapotTexture("textures/default.png");
 	DiffuseMaterial teapotMaterial;
 	teapotMaterial.diffuseTexture = &teapotTexture;
+	teapotMaterial.specularIntensity = 1.0f;
+	teapotMaterial.shininess = 100.0f;
 	Entity teapot(teapotMesh, teapotMaterial);
 	teapot.GetTransform().SetScale(0.01f);
 	teapot.GetTransform().SetPosition(glm::vec3(0, 0, 1));
@@ -50,6 +52,8 @@ int main(int argc, char *argv[])
 	Texture tableTexture("textures/default.png");
 	DiffuseMaterial tableMaterial;
 	tableMaterial.diffuseTexture = &tableTexture;
+	tableMaterial.specularIntensity = 0.4f;
+	tableMaterial.shininess = 50.0f;
 	Entity table(tableMesh, tableMaterial);
 	table.GetTransform().SetScale(60.0f);
 	table.GetTransform().SetOrientation(glm::angleAxis(glm::radians(90.0f), glm::vec3(1, 0, 0)));
@@ -57,9 +61,10 @@ int main(int argc, char *argv[])
 	// PANEL
 	Model floorModel("models/floor.obj");
 	Mesh floorMesh(floorModel);
-	Texture floorTexture("textures/wood1.diffuse.png");
 	DiffuseMaterial floorMaterial;
-	floorMaterial.diffuseTexture = &tableTexture;// &floorTexture;
+	floorMaterial.diffuseTexture = &tableTexture;
+	floorMaterial.specularIntensity = 0.1f;
+	floorMaterial.shininess = 10.0f;
 	Entity floor(floorMesh, floorMaterial);
 	floor.GetTransform().SetScale(1.0f);
 	floor.GetTransform().SetPosition(glm::vec3(0, -1, 10.0f));
