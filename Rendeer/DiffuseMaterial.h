@@ -5,8 +5,10 @@
 class DiffuseMaterial : public IMaterial
 {
 public:
+
 	DiffuseMaterial()
-		: IMaterial(new Shader("Materials/Diffuse.vsh", "Materials/Diffuse.fsh")) {}
+		: IMaterial(new Shader("Materials/Diffuse.vsh", "Materials/Diffuse.fsh"))
+	{}
 
 	virtual void UpdateUniforms(const DeferredRenderer& renderer,
 		const Transform& transform, const PerspectiveCamera& camera);
@@ -18,4 +20,5 @@ public:
 
 	float specularIntensity{1.0f};
 	float shininess{0.0f};
+
 };

@@ -49,7 +49,7 @@ Buffer::~Buffer()
 	}
 }
 
-void Buffer::Bind(GLenum target) const
+const Buffer& Buffer::Bind(GLenum target) const
 {
 	assert(target == GL_ARRAY_BUFFER ||
 		   target == GL_ATOMIC_COUNTER_BUFFER ||
@@ -70,6 +70,8 @@ void Buffer::Bind(GLenum target) const
 
 	lastBoundTarget = target;
 	currentlyBoundBufferHandle = this->bufferHandle;
+
+	return *this;
 }
 
 void Buffer::SetData(const void *data, size_t dataSize, GLenum dataUsage) const

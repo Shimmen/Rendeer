@@ -7,10 +7,23 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+#include "Buffer.h"
+
 Mesh::Mesh(const Model& model)
 {
-	indexCount = (unsigned int)model.indices.size();
-	vertexArray = CreateMesh(model);
+	this->indexCount = model.indices.size();
+	this->vertexArray = CreateMesh(model);
+}
+
+Mesh::~Mesh()
+{
+	glDeleteVertexArrays(1, &vertexArray);
+}
+
+void Mesh::Render()
+{
+	glBindVertexArray(vertexArray);
+	glDrawElements(GL_TRIANGLES, (GLsizei)indexCount, GL_UNSIGNED_INT, 0);
 }
 
 GLuint Mesh::CreateMesh(const Model& model)
@@ -19,56 +32,39 @@ GLuint Mesh::CreateMesh(const Model& model)
 	glGenVertexArrays(1, &vertexArray);
 	glBindVertexArray(vertexArray);
 
-	glGenBuffers(MESH_BUFFER_COUNT, buffers);
+	auto buffers = Buffer::GenerateBuffers(MESH_BUFFER_COUNT);
 
-	int stride = 0; //sizeof(glm::vec3) + sizeof(glm::vec2) + sizeof(glm::vec3);
+	// TODO: Use stride and offset!
+	int stride = 0;
+	int offset = 0;
 
-	///////////////////////
-	///////////////////////
-
-	glBindBuffer(GL_ARRAY_BUFFER, buffers[POSITION_BUFFER]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * model.positions.size(), &model.positions[0], GL_STATIC_DRAW);
+	// Positions
+	buffers[POSITION_BUFFER].Bind(GL_ARRAY_BUFFER).SetData(model.positions, GL_STATIC_DRAW);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, 0); // stride and offset is 0 for now
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void *)offset);
 
-	///////////////////////
-
-	glBindBuffer(GL_ARRAY_BUFFER, buffers[TEXCOORD_BUFFER]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * model.texCoords.size(), &model.texCoords[0], GL_STATIC_DRAW);
+	// Normals
+	buffers[NORMAL_BUFFER].Bind(GL_ARRAY_BUFFER).SetData(model.normals, GL_STATIC_DRAW);
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, 0); // stride and offset is 0 for now
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride, (void *)offset);
 
-	///////////////////////
-
-	glBindBuffer(GL_ARRAY_BUFFER, buffers[NORMAL_BUFFER]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * model.normals.size(), &model.normals[0], GL_STATIC_DRAW);
+	// Tangents
+	buffers[TANGENT_BUFFER].Bind(GL_ARRAY_BUFFER).SetData(model.tangents, GL_STATIC_DRAW);
 	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, stride, 0); // stride and offset is 0 for now
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, stride, (void *)offset);
 
-	///////////////////////
+	// Texture coordinates
+	buffers[TEXCOORD_BUFFER].Bind(GL_ARRAY_BUFFER).SetData(model.texCoords, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(3);
+	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, stride, (void *)offset);
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers[INDEX_BUFFER]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * indexCount, &model.indices[0], GL_STATIC_DRAW);
+	// Indices
+	buffers[INDEX_BUFFER].Bind(GL_ELEMENT_ARRAY_BUFFER).SetData(model.indices, GL_STATIC_DRAW);
 
-	///////////////////////
-	///////////////////////
-
-	// Unbind this just as a security precaution
-	// (so nothing regarding the vertex array get changed)
+	// Unbind this so the buffers can be deleted. The vertex array is a container type
+	// so everything applied when it's bound will persist.
 	glBindVertexArray(0);
 
 	return vertexArray;
 }
 
-Mesh::~Mesh()
-{
-	glDeleteBuffers(MESH_BUFFER_COUNT, buffers);
-	glDeleteVertexArrays(1, &vertexArray);
-}
-
-void Mesh::Render()
-{
-	glBindVertexArray(vertexArray);
-	glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-}

@@ -16,8 +16,20 @@ public:
 
 	~Buffer();
 
-	void Bind(GLenum target) const;
+	const Buffer& Bind(GLenum target) const;
 	
+	template <typename T>
+	void SetData(const std::vector<T>& data, GLenum dataUsage) const
+	{
+		this->SetData(&data[0], data.size() * sizeof(T), dataUsage);
+	}
+
+	template <typename T>
+	void UpdateData(const std::vector<T>& data, size_t offset = 0) const
+	{
+		this->UpdateData(&data[0], data.size() * sizeof(T), offset);
+	}
+
 	void SetData(const void *data, size_t dataSize, GLenum dataUsage) const;
 	void UpdateData(const void *data, size_t dataSize, size_t offset = 0) const;
 

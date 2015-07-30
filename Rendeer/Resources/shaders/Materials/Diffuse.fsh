@@ -6,6 +6,7 @@
 
 smooth in vec2 v_tex_coord;
 smooth in vec3 v_normal;
+smooth in vec3 v_tangent;
 
 uniform sampler2D u_diffuse;
 uniform float u_specular_intensity;
@@ -18,7 +19,10 @@ void main()
 	gBuffer.albedo = texture(u_diffuse, v_tex_coord).rgb;
 
 	// Must normalize after vertex->fragment lerp
-	gBuffer.normal = normalize(v_normal);
+	vec3 normal = normalize(v_normal);
+	vec3 tangent = normalize(v_tangent);
+
+	gBuffer.normal = normal;
 
 	gBuffer.specularIntensity = u_specular_intensity;
 	gBuffer.shininess = u_shininess;

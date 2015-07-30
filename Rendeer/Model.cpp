@@ -10,14 +10,12 @@ Model::Model(const std::string& fileName)
 {
 	unsigned int importerFlags = 0;
 	importerFlags |= aiProcess_Triangulate;
+	importerFlags |= aiProcess_GenSmoothNormals;
 	importerFlags |= aiProcess_CalcTangentSpace;
 	importerFlags |= aiProcess_FlipUVs;
-	importerFlags |= aiProcess_GenSmoothNormals;
 
 	Assimp::Importer importer;
-
 	const aiScene* scene = importer.ReadFile(fileName, importerFlags);
-
 	if (scene == nullptr)
 	{
 		std::cerr << "Error: could not load Model with file name: " << fileName << std::endl;
@@ -37,8 +35,7 @@ Model::Model(const std::string& fileName)
 		const aiVector3D tangent = model->mTangents[i];
 
 		// (there can be more than one tex-coord per vertex, but we want the first one (0))
-		const aiVector3D texCoord = model->HasTextureCoords(0) ? model->mTextureCoords[0][i]
-			: zeroVector;
+		const aiVector3D texCoord = model->HasTextureCoords(0) ? model->mTextureCoords[0][i] : zeroVector;
 
 		positions.push_back(glm::vec3(position.x, position.y, position.z));
 		normals.push_back(glm::vec3(normal.x, normal.y, normal.z));
