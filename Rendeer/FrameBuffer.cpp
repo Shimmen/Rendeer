@@ -24,7 +24,7 @@ void FrameBuffer::AttachTexture(const Texture& texture, GLenum attatchment) cons
 
 void FrameBuffer::SetDrawBuffers(const std::vector<GLenum> drawBuffers) const
 {
-	glNamedFramebufferDrawBuffers(frameBufferHandle, drawBuffers.size(), &drawBuffers[0]);
+	glNamedFramebufferDrawBuffers(frameBufferHandle, (GLsizei)drawBuffers.size(), &drawBuffers[0]);
 }
 
 bool FrameBuffer::IsComplete(GLenum *statusIfNotComplete) const

@@ -31,10 +31,8 @@ void DeferredRenderer::BindForUsage() const
 	glCullFace(GL_BACK);
 
 	glDepthFunc(GL_LEQUAL);
-
-/*
+	
 	glEnable(GL_FRAMEBUFFER_SRGB);
-*/
 }
 
 

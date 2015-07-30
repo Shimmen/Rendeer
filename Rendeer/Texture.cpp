@@ -20,23 +20,25 @@ Texture::Texture(const std::string& filename, GLint magFilter, GLint wrapMode, b
 	{
 		// Mirror image on the y-axis, since stbi loads the image so the first pixel is the top left one.
 		// OpenGL expects the lower left pixel to be the first.
+		/*
 		float halfHeight = this->height / 2.0f;
 		for (int y = 0; y < halfHeight; ++y)
 		{
 			for (int x = 0; x < this->width; ++x)
 			{
-				//std::swap(pixels[x + y * width], pixels[x + (height - 1 - y) * width]);
+				std::swap(pixels[x + y * width], pixels[x + (height - 1 - y) * width]);
 			}
 		}
+		*/
 
 		internalFormat = (componentCount == 3) ? GL_RGB : GL_RGBA;
 
-/*
 		if (srgb)
 		{
 			internalFormat = (internalFormat == GL_RGB) ? GL_SRGB8 : GL_SRGB8_ALPHA8;
 		}
-*/
+
+		GLenum format = (componentCount == 3) ? GL_RGB : GL_RGBA;
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
@@ -44,7 +46,7 @@ Texture::Texture(const std::string& filename, GLint magFilter, GLint wrapMode, b
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapMode);
 
 		glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0,
-			internalFormat, GL_UNSIGNED_BYTE, pixels);
+					 format, GL_UNSIGNED_BYTE, pixels);
 
 		glGenerateMipmap(GL_TEXTURE_2D);
 
