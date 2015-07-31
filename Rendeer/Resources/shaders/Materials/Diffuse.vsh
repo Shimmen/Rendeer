@@ -18,6 +18,7 @@ void main()
 
 	// Only uniform scaling (i.e. same for x, y, and z) is supported for now.
 	v_normal = mat3(u_model_view_matrix) * a_normal;
+	v_tangent = mat3(u_model_view_matrix) * a_tangent;
 
 	gl_Position = u_projection_matrix * u_model_view_matrix * vec4(a_position, 1.0);
 }
