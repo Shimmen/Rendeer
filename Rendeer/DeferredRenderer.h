@@ -13,11 +13,15 @@ class ILight;
 class DeferredRenderer
 {
 public:
+	
 	DeferredRenderer(Window& display);
 	~DeferredRenderer();
 
 	void BindForUsage() const;
 	void Render(const std::vector<Entity *>& entities, const std::vector<ILight *>& lights, PerspectiveCamera& camera);
+
+	// Default textures etc.
+	Texture defaultNormalMap;
 
 private:
 	
@@ -30,10 +34,9 @@ private:
 
 	Window& window;
 
-
-
 	// Debug stuff etc.
 	void RenderTextureToScreen(const Texture& texture);
 	Shader *renderTextureShader;
+
 };
 

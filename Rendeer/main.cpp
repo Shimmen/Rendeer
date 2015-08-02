@@ -50,10 +50,12 @@ int main(int argc, char *argv[])
 	Model panelModel("models/plane.obj");
 	Mesh panelMesh(panelModel);
 	Texture panelTexture("textures/bricks.jpg");
+	Texture panelNormalMap("textures/bricks_normal.jpg", false);
 	DiffuseMaterial panelMaterial;
 	panelMaterial.diffuseTexture = &panelTexture;
+	panelMaterial.normalMap = &panelNormalMap;
 	panelMaterial.specularIntensity = 0.1f;
-	panelMaterial.shininess = 50.0f;
+	panelMaterial.shininess = 20.0f;
 	Entity panel(panelMesh, panelMaterial);
 	panel.GetTransform().SetScale(1.5f);
 	
@@ -63,7 +65,7 @@ int main(int argc, char *argv[])
 	Texture floorTexture("textures/default.png");
 	DiffuseMaterial floorMaterial;
 	floorMaterial.diffuseTexture = &floorTexture;
-	floorMaterial.specularIntensity = 0.1f;
+	floorMaterial.specularIntensity = 0.05f;
 	floorMaterial.shininess = 10.0f;
 	Entity floor(floorMesh, floorMaterial);
 	floor.GetTransform().SetScale(1.0f);
@@ -76,7 +78,7 @@ int main(int argc, char *argv[])
 	entities.push_back(&floor);
 
 	// DIRECTIONAL LIGHT
-	DirectionalLight directionalLight(glm::quat(1, 1, 0, 1), glm::vec3(0.92f, 0.95f, 0.88f), 0.15f);
+	DirectionalLight directionalLight(glm::quat(1, 1, 0, 1), glm::vec3(0.92f, 0.95f, 0.88f), 0.05f);
 
 	// POINT LIGHT
 	PointLight pointLight(glm::vec3(0, 0.25f, 0), glm::vec3(1.0f, 0.1f, 0.15f), 1.0f);

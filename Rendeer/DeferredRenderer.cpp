@@ -10,6 +10,7 @@
 DeferredRenderer::DeferredRenderer(Window& window)
 	: window(window)
 	, gBuffer(window.GetFramebufferWidth(), window.GetFramebufferHeight())
+	, defaultNormalMap("textures/default_normal.jpg", false)
 {
 	renderTextureShader = new Shader("postprocess.vsh", "render_texture.fsh");
 }

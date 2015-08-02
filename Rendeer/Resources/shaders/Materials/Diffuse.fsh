@@ -9,6 +9,7 @@ smooth in vec3 v_normal;
 smooth in vec3 v_tangent;
 
 uniform sampler2D u_diffuse;
+uniform sampler2D u_normal_map;
 uniform float u_specular_intensity;
 uniform float u_shininess;
 
@@ -22,21 +23,9 @@ void main()
 	vec3 normal = normalize(v_normal);
 	vec3 tangent = normalize(v_tangent);
 
-	//
-	// 1. Generate TBN-matrix (in a separate function)
-	//   - 1. Perform Gram-Schmidt's re-ortogonalization (in a separate function)
-	//   - 2. Assemble TBN-matrix
-	//   - 3. Return TBN-matrix
-	// 2. Encode normal from normal map sampler.
-	//   - 1. Read swizzled xyz value from sampler
-	//   - 2. Transform from [0, 1] to [-1, 1]
-	// 3. Rotate normal map normal with TBN-matrix
-	//   - 1. vec3 rotatedNormal = tbnMatrix * normalMapNormal;
-	// 4. Assign rotated normal map normal into gBuffer.normal
-	//   - gBuffer.normal = rotatedNormal;
-	//
-
-	gBuffer.normal = normal;
+	// Rotate normal from normal map with TBN-matrix into view-space
+	vec3 normalMapNormal = decodeNormal(texture(u_normal_map, v_tex_coord).rgb);
+	gBuffer.normal = normalize(makeTbnMatrix(normal, tangent) * normalMapNormal);
 
 	gBuffer.specularIntensity = u_specular_intensity;
 	gBuffer.shininess = u_shininess;

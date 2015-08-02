@@ -6,7 +6,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
-Texture::Texture(const std::string& filename, GLint magFilter, GLint wrapMode, bool srgb)
+Texture::Texture(const std::string& filename, bool srgb, GLint magFilter, GLint wrapMode)
 {
 	glGenTextures(1, &textureHandle);
 	glBindTexture(GL_TEXTURE_2D, textureHandle);

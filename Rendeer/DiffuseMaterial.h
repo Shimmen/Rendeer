@@ -6,16 +6,16 @@ class DiffuseMaterial : public IMaterial
 {
 public:
 
-	DiffuseMaterial()
-		: IMaterial(new Shader("Materials/Diffuse.vsh", "Materials/Diffuse.fsh"))
-	{}
+	DiffuseMaterial();
 
 	virtual void UpdateUniforms(const DeferredRenderer& renderer,
-		const Transform& transform, const PerspectiveCamera& camera);
+	                            const Transform& transform,
+	                            const PerspectiveCamera& camera);
 
 	// No real need to restrict access to these:
+
 	Texture *diffuseTexture;
-	//Texture *normalMap;
+	Texture *normalMap;
 	//Texture *specularMap;
 
 	float specularIntensity{1.0f};
