@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
 		glm::radians(70.0f), 1.0f, 1000.0f, window.GetAspectRatio());
 
 	// TEAPOT
-	Model teapotModel("models/teapot/teapot.obj");
+	Model teapotModel("models/teapot.obj");
 	Mesh teapotMesh(teapotModel);
 	Texture teapotTexture("textures/default.png");
 	DiffuseMaterial teapotMaterial;
@@ -46,23 +46,23 @@ int main(int argc, char *argv[])
 	teapot.GetTransform().SetScale(0.01f);
 	teapot.GetTransform().SetPosition(glm::vec3(0, 0, 1));
 
-	// TABLE
-	Model tableModel("models/table/table.3ds");
-	Mesh tableMesh(tableModel);
-	Texture tableTexture("textures/default.png");
-	DiffuseMaterial tableMaterial;
-	tableMaterial.diffuseTexture = &tableTexture;
-	tableMaterial.specularIntensity = 0.4f;
-	tableMaterial.shininess = 50.0f;
-	Entity table(tableMesh, tableMaterial);
-	table.GetTransform().SetScale(60.0f);
-	table.GetTransform().SetOrientation(glm::angleAxis(glm::radians(90.0f), glm::vec3(1, 0, 0)));
-
 	// PANEL
-	Model floorModel("models/floor.obj");
+	Model panelModel("models/plane.obj");
+	Mesh panelMesh(panelModel);
+	Texture panelTexture("textures/bricks.jpg");
+	DiffuseMaterial panelMaterial;
+	panelMaterial.diffuseTexture = &panelTexture;
+	panelMaterial.specularIntensity = 0.1f;
+	panelMaterial.shininess = 50.0f;
+	Entity panel(panelMesh, panelMaterial);
+	panel.GetTransform().SetScale(1.5f);
+	
+	// FLOOR
+	Model floorModel("models/curved_plane.obj");
 	Mesh floorMesh(floorModel);
+	Texture floorTexture("textures/default.png");
 	DiffuseMaterial floorMaterial;
-	floorMaterial.diffuseTexture = &tableTexture;
+	floorMaterial.diffuseTexture = &floorTexture;
 	floorMaterial.specularIntensity = 0.1f;
 	floorMaterial.shininess = 10.0f;
 	Entity floor(floorMesh, floorMaterial);
@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
 	// ENTITIES
 	std::vector<Entity *> entities;
 	entities.push_back(&teapot);
-	entities.push_back(&table);
+	entities.push_back(&panel);
 	entities.push_back(&floor);
 
 	// DIRECTIONAL LIGHT
@@ -164,7 +164,7 @@ int main(int argc, char *argv[])
 		timer += 0.03f;
 
 		teapot.GetTransform().SetOrientation(glm::vec3(0, 1, 0), timer);
-		table.GetTransform().SetPosition(glm::vec3(0, 0, sinf(timer) * 1.0f + 0.85f));
+		panel.GetTransform().SetPosition(glm::vec3(0, 0, sinf(timer) * 1.0f + 0.85f));
 
 #if 0
 		auto cameraPosition = camera.GetTransform().GetPosition();
