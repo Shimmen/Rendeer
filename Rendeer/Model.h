@@ -9,7 +9,7 @@ class Model
 {
 public:
 
-	Model(const std::string& fileName);
+	Model(const std::string& fileName, bool genSmoothNormals = true);
 	Model() {} // for manually inserting values
 
 	std::vector<glm::vec3> positions;

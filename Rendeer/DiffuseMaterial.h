@@ -12,11 +12,10 @@ public:
 	                            const Transform& transform,
 	                            const PerspectiveCamera& camera);
 
-	// No real need to restrict access to these:
+	// No real need to restrict access to these
 
 	Texture *diffuseTexture;
 	Texture *normalMap;
-	//Texture *specularMap;
 
 	float specularIntensity{1.0f};
 	float shininess{0.0f};

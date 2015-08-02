@@ -1,71 +1,44 @@
 #include "Texture.h"
 
-#include <iostream>
 #include <cassert>
 
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
+#include "Bitmap.h"
 
 Texture::Texture(const std::string& filename, bool srgb, GLint magFilter, GLint wrapMode)
+	: Texture(Bitmap(filename), srgb, magFilter, wrapMode)
 {
+}
+
+Texture::Texture(const Bitmap& image, bool srgb, GLint magFilter, GLint wrapMode)
+{
+	if (image.GetData().size() <= 0)
+	{
+		// TODO: Do proper error handling
+		exit(EXIT_FAILURE);
+	}
+
+	this->width = image.GetWidth();
+	this->height = image.GetHeight();
+
+	GLint externalFormat = CalculateExternalFormat(image.GetComponentsPerPixel());
+	GLint internalFormat = CalculateInternalFormat(externalFormat, srgb);
+
 	glGenTextures(1, &textureHandle);
 	glBindTexture(GL_TEXTURE_2D, textureHandle);
 
-	int componentCount = 0;
-	unsigned char *pixels =
-		stbi_load(filename.c_str(), &this->width, &this->height, &componentCount, MIN_COMPONENT_COUNT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapMode);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapMode);
 
-	// If image was loaded properly
-	if (pixels != NULL && componentCount != 0)
-	{
-		// Mirror image on the y-axis, since stbi loads the image so the first pixel is the top left one.
-		// OpenGL expects the lower left pixel to be the first.
-		/*
-		float halfHeight = this->height / 2.0f;
-		for (int y = 0; y < halfHeight; ++y)
-		{
-			for (int x = 0; x < this->width; ++x)
-			{
-				std::swap(pixels[x + y * width], pixels[x + (height - 1 - y) * width]);
-			}
-		}
-		*/
+	const unsigned char *imageData = &image.GetData()[0];
+	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, externalFormat, GL_UNSIGNED_BYTE, imageData);
 
-		internalFormat = (componentCount == 3) ? GL_RGB : GL_RGBA;
-
-		if (srgb)
-		{
-			internalFormat = (internalFormat == GL_RGB) ? GL_SRGB8 : GL_SRGB8_ALPHA8;
-		}
-
-		GLenum format = (componentCount == 3) ? GL_RGB : GL_RGBA;
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapMode);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapMode);
-
-		glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0,
-					 format, GL_UNSIGNED_BYTE, pixels);
-
-		glGenerateMipmap(GL_TEXTURE_2D);
-
-		// Set the maximum anisotropic filtering to the highest possible value that the
-		// hardware and the drivers can use.
-		GLfloat maxAnisotropy;
-		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAnisotropy);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAnisotropy);
-
-		stbi_image_free(pixels);
-	}
-	else
-	{
-		std::cerr << "Error: could not load texture with name: " << filename << std::endl;
-	}
+	GenerateMipmaps(GL_LINEAR_MIPMAP_LINEAR);
+	SetMaxAnisotropy();
 }
 
-Texture::Texture(int width, int height, GLenum format, GLenum internalFormat,
-	GLint wrapMode, GLint magFilter, GLint minFilter, unsigned char* pixels)
+Texture::Texture(int width, int height, GLenum format, GLenum internalFormat, GLint wrapMode, GLint magFilter, GLint minFilter)
 {
 	glGenTextures(1, &textureHandle);
 	glBindTexture(GL_TEXTURE_2D, textureHandle);
@@ -75,26 +48,15 @@ Texture::Texture(int width, int height, GLenum format, GLenum internalFormat,
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapMode);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapMode);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0,
-		format, GL_UNSIGNED_BYTE, (void *)pixels);
+	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, nullptr);
 
-	// If minFilter is mipmap compatible, make mipmaps!
-	if (minFilter == GL_LINEAR_MIPMAP_LINEAR || minFilter == GL_LINEAR_MIPMAP_NEAREST ||
-		minFilter == GL_NEAREST_MIPMAP_LINEAR || minFilter == GL_NEAREST_MIPMAP_NEAREST)
-	{
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
+	GenerateMipmaps(minFilter);
+	SetMaxAnisotropy();
 }
 
 Texture::~Texture()
 {
 	glDeleteTextures(1, &textureHandle);
-}
-
-void Texture::Bind() const
-{
-	// Bind this texture as GL_TEXTURE0
-	Bind(0);
 }
 
 void Texture::Bind(int textureTarget) const
@@ -104,4 +66,52 @@ void Texture::Bind(int textureTarget) const
 
 	glActiveTexture(GL_TEXTURE0 + textureTarget);
 	glBindTexture(GL_TEXTURE_2D, textureHandle);
+}
+
+GLint Texture::CalculateExternalFormat(int componentCount) const
+{
+	assert(componentCount > 0 && componentCount <= 4);
+	if (componentCount == 1) return GL_RED;
+	if (componentCount == 2) return GL_RG;
+	if (componentCount == 3) return GL_RGB;
+	if (componentCount == 4) return GL_RGBA;
+	else return 0;
+}
+
+GLint Texture::CalculateInternalFormat(GLint externalFormat, bool srgb) const
+{
+	assert(externalFormat == GL_RED || externalFormat == GL_RG ||
+	       externalFormat == GL_RGB || externalFormat == GL_RGBA);
+
+	if (srgb)
+	{
+		// For sRGB color space in OpenGL no format under 3 components exists.
+		if (externalFormat == GL_RGBA) return GL_SRGB8_ALPHA8;
+		else                           return GL_SRGB8;
+	}
+	else
+	{
+		if (externalFormat == GL_RED)  return GL_R8;
+		if (externalFormat == GL_RG)   return GL_RG8;
+		if (externalFormat == GL_RGB)  return GL_RGB8;
+		if (externalFormat == GL_RGBA) return GL_RGBA8;
+		else return 0;
+	}
+}
+
+void Texture::GenerateMipmaps(GLint minFilter) const
+{
+	// If minFilter is mipmap compatible, generate mipmaps
+	if (minFilter == GL_LINEAR_MIPMAP_LINEAR  || minFilter == GL_LINEAR_MIPMAP_NEAREST ||
+		minFilter == GL_NEAREST_MIPMAP_LINEAR || minFilter == GL_NEAREST_MIPMAP_NEAREST)
+	{
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+}
+
+void Texture::SetMaxAnisotropy() const
+{
+	GLfloat maxAnisotropy;
+	glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAnisotropy);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAnisotropy);
 }

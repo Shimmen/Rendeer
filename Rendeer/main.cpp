@@ -35,9 +35,8 @@ int main(int argc, char *argv[])
 		glm::radians(70.0f), 1.0f, 1000.0f, window.GetAspectRatio());
 
 	// TEAPOT
-	Model teapotModel("models/teapot.obj");
-	Mesh teapotMesh(teapotModel);
-	Texture teapotTexture("textures/default.png");
+	Mesh teapotMesh("models/teapot.obj");
+	Texture teapotTexture("textures/default.png", true);
 	DiffuseMaterial teapotMaterial;
 	teapotMaterial.diffuseTexture = &teapotTexture;
 	teapotMaterial.specularIntensity = 1.0f;
@@ -47,29 +46,26 @@ int main(int argc, char *argv[])
 	teapot.GetTransform().SetPosition(glm::vec3(0, 0, 1));
 
 	// PANEL
-	Model panelModel("models/plane.obj");
-	Mesh panelMesh(panelModel);
-	Texture panelTexture("textures/bricks.jpg");
+	Mesh panelMesh("models/plane.obj", false);
+	Texture panelTexture("textures/bricks.jpg", true);
 	Texture panelNormalMap("textures/bricks_normal.jpg", false);
 	DiffuseMaterial panelMaterial;
 	panelMaterial.diffuseTexture = &panelTexture;
 	panelMaterial.normalMap = &panelNormalMap;
-	panelMaterial.specularIntensity = 0.1f;
+	panelMaterial.specularIntensity = 0.05f;
 	panelMaterial.shininess = 20.0f;
 	Entity panel(panelMesh, panelMaterial);
 	panel.GetTransform().SetScale(1.5f);
 	
 	// FLOOR
-	Model floorModel("models/curved_plane.obj");
-	Mesh floorMesh(floorModel);
-	Texture floorTexture("textures/default.png");
+	Mesh floorMesh("models/curved_plane.obj");
+	Texture floorTexture("textures/default.png", true);
 	DiffuseMaterial floorMaterial;
 	floorMaterial.diffuseTexture = &floorTexture;
 	floorMaterial.specularIntensity = 0.05f;
 	floorMaterial.shininess = 10.0f;
 	Entity floor(floorMesh, floorMaterial);
-	floor.GetTransform().SetScale(1.0f);
-	floor.GetTransform().SetPosition(glm::vec3(0, -1, 10.0f));
+	floor.GetTransform().SetPosition(glm::vec3(0, -0.5f, 4));
 
 	// ENTITIES
 	std::vector<Entity *> entities;
@@ -116,8 +112,6 @@ int main(int argc, char *argv[])
 			window.SetCursorHidden(true);
 		}
 
-
-
 		// Move the camera (for now in this very temporary solution)
 		glm::vec3 translation = glm::vec3();
 		const float speed = 0.08f;
@@ -155,18 +149,17 @@ int main(int argc, char *argv[])
 		// If cursor is hidden, rotate camera
 		if (window.IsCursorHidden())
 		{
-			const float mouseSensitivity = 0.0006f;
-			const glm::vec2 mouseDelta = window.GetMouse().GetMouseDelta();
+			float mouseSensitivity = 0.0005f;
+			glm::vec2 mouseDelta = window.GetMouse().GetMouseDelta();
 
 			camera.GetTransform().Rotate(glm::vec3(0, 1, 0), mouseDelta.x * mouseSensitivity);
 			camera.GetTransform().Rotate(camera.GetTransform().GetRight(), mouseDelta.y * mouseSensitivity);
 		}
 
-
 		timer += 0.03f;
 
 		teapot.GetTransform().SetOrientation(glm::vec3(0, 1, 0), timer);
-		panel.GetTransform().SetPosition(glm::vec3(0, 0, sinf(timer) * 1.0f + 0.85f));
+		panel.GetTransform().SetPosition(glm::vec3(0, 0, sinf(timer) * 0.9f + 0.9f));
 
 #if 0
 		auto cameraPosition = camera.GetTransform().GetPosition();

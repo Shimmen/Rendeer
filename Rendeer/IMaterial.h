@@ -9,8 +9,11 @@ class PerspectiveCamera;
 class IMaterial
 {
 public:
+
 	IMaterial(Shader *shader)
-		: shader(shader) {}
+		: shader(shader)
+	{
+	}
 
 	virtual ~IMaterial()
 	{
@@ -18,8 +21,11 @@ public:
 	}
 
 	virtual void UpdateUniforms(const DeferredRenderer& renderer,
-		const Transform& transform, const PerspectiveCamera& camera) = 0;
+	                            const Transform& transform,
+	                            const PerspectiveCamera& camera) = 0;
 
 protected:
+
 	Shader *shader;
+
 };

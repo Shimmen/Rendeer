@@ -12,10 +12,8 @@ class Mesh
 {
 public:
 
+	Mesh(const std::string& filePath, bool genSmoothNormals = true);
 	Mesh(const Model& model);
-	// Should just serve a shortcut through the Model class
-	//Mesh(const std::string& fileName, bool genSmoothNormals);
-
 	~Mesh();
 
 	void Render();

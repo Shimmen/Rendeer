@@ -6,13 +6,21 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-Model::Model(const std::string& fileName)
+Model::Model(const std::string& fileName, bool genSmoothNormals)
 {
 	unsigned int importerFlags = 0;
 	importerFlags |= aiProcess_Triangulate;
-	importerFlags |= aiProcess_GenSmoothNormals;
 	importerFlags |= aiProcess_CalcTangentSpace;
 	importerFlags |= aiProcess_FlipUVs;
+
+	if (genSmoothNormals)
+	{
+		importerFlags |= aiProcess_GenSmoothNormals;
+	}
+	else
+	{
+		importerFlags |= aiProcess_GenNormals;
+	}
 
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile(fileName, importerFlags);

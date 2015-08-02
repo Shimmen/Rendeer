@@ -9,6 +9,11 @@
 
 #include "Buffer.h"
 
+Mesh::Mesh(const std::string& filePath, bool genSmoothNormals)
+	: Mesh(Model(filePath, genSmoothNormals))
+{
+}
+
 Mesh::Mesh(const Model& model)
 {
 	this->indexCount = model.indices.size();

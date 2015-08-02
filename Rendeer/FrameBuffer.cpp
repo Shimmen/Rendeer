@@ -16,10 +16,13 @@ FrameBuffer::~FrameBuffer()
 
 void FrameBuffer::AttachTexture(const Texture& texture, GLenum attatchment) const
 {
-	glBindFramebuffer(GL_FRAMEBUFFER, frameBufferHandle);
+	GLint lastBoundFramebuffer;
+	glGetIntegeri_v(GL_FRAMEBUFFER_BINDING, 0, &lastBoundFramebuffer);
 
-	// TODO: Will the last variable, the 0, that is the mipmap level ever be used?
+	glBindFramebuffer(GL_FRAMEBUFFER, frameBufferHandle);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, attatchment, GL_TEXTURE_2D, texture.GetHandle(), 0);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, lastBoundFramebuffer);
 }
 
 void FrameBuffer::SetDrawBuffers(const std::vector<GLenum> drawBuffers) const
@@ -30,7 +33,7 @@ void FrameBuffer::SetDrawBuffers(const std::vector<GLenum> drawBuffers) const
 bool FrameBuffer::IsComplete(GLenum *statusIfNotComplete) const
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, frameBufferHandle);
-
+	
 	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 	if (status != GL_FRAMEBUFFER_COMPLETE)
 	{
