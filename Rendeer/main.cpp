@@ -4,8 +4,6 @@
 
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
-#include <glm/gtx/quaternion.hpp>
-#include <glm/gtc/quaternion.hpp>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -32,7 +30,7 @@ int main(int argc, char *argv[])
 
 	// CAMERA
 	PerspectiveCamera camera(glm::vec3(0, 1.5f, -2.8f), glm::angleAxis(0.5f, glm::vec3(1, 0, 0)),
-		glm::radians(70.0f), 1.0f, 1000.0f, window.GetAspectRatio());
+		glm::radians(75.0f), 1.0f, 1000.0f, window.GetAspectRatio());
 
 	// TEAPOT
 	Mesh teapotMesh("models/teapot.obj");
@@ -80,11 +78,11 @@ int main(int argc, char *argv[])
 	PointLight pointLight(glm::vec3(0, 0.25f, 0), glm::vec3(1.0f, 0.1f, 0.15f), 1.0f);
 
 	// SPOT LIGHT
-	SpotLight spotLight(glm::vec3(0, -0.65f, 4), glm::quat(glm::normalize(glm::vec3(1, -3, 0))), glm::vec3(0, 0, 1), 1.0f, glm::radians(20.0f), glm::radians(15.5f));
+	SpotLight spotLight(glm::vec3(0, -0.65f, 4), glm::quat(glm::normalize(glm::vec3(1, -3, 0))), glm::vec3(0, 0, 1), 2.0f, glm::radians(20.0f), glm::radians(15.5f));
 
 	// LIGHTS
 	std::vector<ILight *> lights;
-	lights.push_back(&directionalLight);
+	//lights.push_back(&directionalLight);
 	lights.push_back(&pointLight);
 	lights.push_back(&spotLight);
 
@@ -96,6 +94,7 @@ int main(int argc, char *argv[])
 	deferredRenderer.BindForUsage();
 
 	float timer = 0.0f;
+	bool stickDirectionalLightToCamera = true;
 
 	while (!window.IsCloseRequested())
 	{
@@ -160,16 +159,21 @@ int main(int argc, char *argv[])
 
 		teapot.GetTransform().SetOrientation(glm::vec3(0, 1, 0), timer);
 		panel.GetTransform().SetPosition(glm::vec3(0, 0, sinf(timer) * 0.9f + 0.9f));
+		
+		if (keyboard.WasKeyPressed(GLFW_KEY_LEFT_CONTROL))
+		{
+			stickDirectionalLightToCamera = !stickDirectionalLightToCamera;
+		}
 
-#if 0
-		auto cameraPosition = camera.GetTransform().GetPosition();
-		auto cameraOrientation = camera.GetTransform().GetOrientation();
-		spotLight.GetTransform()->SetPosition(cameraPosition)->SetOrientation(cameraOrientation);
-#else
-		spotLight.GetTransform()->Rotate(glm::quat(glm::vec3(0.0f, 0.01f, 0.0f)));
-#endif
+		if (stickDirectionalLightToCamera)
+		{
+			auto cameraPosition = camera.GetTransform().GetPosition();
+			auto cameraOrientation = camera.GetTransform().GetOrientation();
+			spotLight.GetTransform()->SetPosition(cameraPosition)->SetOrientation(cameraOrientation);
+		}
 
 		deferredRenderer.Render(entities, lights, camera);
+
 	}
 
 	return 0;
