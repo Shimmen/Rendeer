@@ -4,24 +4,17 @@
 
 #include "Transform.h"
 
-/*
-A perspective camera looking down the +Z axis.
-*/
-
-class PerspectiveCamera
+class Camera
 {
 public:
 
-	PerspectiveCamera(const glm::vec3& position, const glm::quat& rotation,
-		float fov, float near, float far, float aspectRatio);
+	Camera(const glm::vec3& position, const glm::quat& rotation, float fov,
+	       float near, float far, float aspectRatio, bool perspective = true);
 
 	inline Transform& GetTransform() { return transform; }
 
 	glm::mat4 GetViewMatrix() const;
 	glm::mat4 GetProjectionMatrix() const;
-
-	float GetFov() const { return fov; }
-	void SetFov(float fov) { this->fov = fov; }
 
 private:
 
@@ -31,5 +24,7 @@ private:
 	float nearClippingPlane;
 	float farClippingPlane;
 	float aspectRatio;
+
+	bool isPerspective;
 
 };

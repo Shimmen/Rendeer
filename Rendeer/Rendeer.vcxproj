@@ -98,7 +98,7 @@
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Mouse.cpp" />
-    <ClCompile Include="PerspectiveCamera.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="ScreenAlignedQuad.cpp" />
@@ -119,7 +119,7 @@
     <ClInclude Include="IMaterial.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="Mouse.h" />
-    <ClInclude Include="PerspectiveCamera.h" />
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="ScreenAlignedQuad.h" />

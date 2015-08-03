@@ -5,7 +5,7 @@
 #include "Shader.h"
 #include "Entity.h"
 #include "GBuffer.h"
-#include "PerspectiveCamera.h"
+#include "Camera.h"
 #include "ScreenAlignedQuad.h"
 
 class Window;
@@ -19,7 +19,7 @@ public:
 	~DeferredRenderer();
 
 	void BindForUsage() const;
-	void Render(const std::vector<Entity *>& entities, const std::vector<ILight *>& lights, PerspectiveCamera& camera);
+	void Render(const std::vector<Entity *>& entities, const std::vector<ILight *>& lights, Camera& camera);
 
 	// Default textures etc.
 	Texture defaultNormalMap{"textures/default_normal.jpg", false};

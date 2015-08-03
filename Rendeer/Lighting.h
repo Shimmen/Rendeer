@@ -8,7 +8,7 @@
 #include "FrameBuffer.h"
 
 class DeferredRenderer;
-class PerspectiveCamera;
+class Camera;
 
 class ILight
 {
@@ -27,8 +27,8 @@ public:
 		delete shader;
 	}
 
-	virtual void SetUniforms(const DeferredRenderer& renderer, PerspectiveCamera& camera) const = 0;
-	virtual PerspectiveCamera GetLightCamera() const = 0;
+	virtual void SetUniforms(const DeferredRenderer& renderer, Camera& camera) const = 0;
+	virtual Camera GetLightCamera() const = 0;
 
 	const Shader& GetShader() const { return *shader; }
 	
@@ -62,8 +62,8 @@ public:
 
 	virtual ~DirectionalLight() {}
 
-	void SetUniforms(const DeferredRenderer& renderer, PerspectiveCamera& camera) const;
-	PerspectiveCamera GetLightCamera() const;
+	void SetUniforms(const DeferredRenderer& renderer, Camera& camera) const;
+	Camera GetLightCamera() const;
 
 };
 
@@ -80,8 +80,8 @@ public:
 
 	virtual ~PointLight() {}
 
-	void SetUniforms(const DeferredRenderer& renderer, PerspectiveCamera& camera) const;
-	PerspectiveCamera GetLightCamera() const;
+	void SetUniforms(const DeferredRenderer& renderer, Camera& camera) const;
+	Camera GetLightCamera() const;
 
 };
 
@@ -103,8 +103,8 @@ public:
 
 	virtual ~SpotLight() {}
 
-	void SetUniforms(const DeferredRenderer& renderer, PerspectiveCamera& camera) const;
-	PerspectiveCamera GetLightCamera() const;
+	void SetUniforms(const DeferredRenderer& renderer, Camera& camera) const;
+	Camera GetLightCamera() const;
 
 private:
 

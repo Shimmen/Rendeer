@@ -32,7 +32,7 @@ void DeferredRenderer::BindForUsage() const
 }
 
 
-void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::vector<ILight *>& lights, PerspectiveCamera& camera)
+void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::vector<ILight *>& lights, Camera& camera)
 {
 	// 
 	// Render geometry

@@ -17,7 +17,7 @@
 #include "Lighting.h"
 #include "DiffuseMaterial.h"
 #include "DeferredRenderer.h"
-#include "PerspectiveCamera.h"
+#include "Camera.h"
 
 #define WINDOW_WIDTH 1920
 #define WINDOW_HEIGHT 1080
@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
 	DeferredRenderer deferredRenderer(window);
 
 	// CAMERA
-	PerspectiveCamera camera(glm::vec3(0, 1.5f, -2.8f), glm::angleAxis(0.5f, glm::vec3(1, 0, 0)),
+	Camera camera(glm::vec3(0, 1.5f, -2.8f), glm::angleAxis(0.5f, glm::vec3(1, 0, 0)),
 		glm::radians(75.0f), 1.0f, 1000.0f, window.GetAspectRatio());
 
 	// TEAPOT

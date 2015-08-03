@@ -3,7 +3,7 @@
 #include "Texture.h"
 #include "Transform.h"
 #include "DeferredRenderer.h"
-#include "PerspectiveCamera.h"
+#include "Camera.h"
 
 DiffuseMaterial::DiffuseMaterial()
 	: IMaterial(new Shader("Materials/Diffuse.vsh", "Materials/Diffuse.fsh"))
@@ -12,7 +12,7 @@ DiffuseMaterial::DiffuseMaterial()
 
 void DiffuseMaterial::UpdateUniforms(const DeferredRenderer& renderer,
                                      const Transform& transform,
-                                     const PerspectiveCamera& camera)
+                                     const Camera& camera)
 {
 	shader->Bind();
 

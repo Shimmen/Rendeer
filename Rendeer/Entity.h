@@ -8,7 +8,7 @@
 
 class Shader;
 class DeferredRenderer;
-class PerspectiveCamera;
+class Camera;
 
 class Entity
 {

@@ -10,7 +10,7 @@ public:
 
 	virtual void UpdateUniforms(const DeferredRenderer& renderer,
 	                            const Transform& transform,
-	                            const PerspectiveCamera& camera);
+	                            const Camera& camera);
 
 	// No real need to restrict access to these
 
