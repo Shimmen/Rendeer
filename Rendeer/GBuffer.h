@@ -13,7 +13,7 @@ public:
 	virtual ~GBuffer();
 
 	void BindAsRenderTarget() const;
-	void BindAsUniform(Shader& lightShader) const;
+	void BindAsUniform(const Shader& lightShader) const;
 
 private:
 

@@ -169,7 +169,7 @@ int main(int argc, char *argv[])
 		{
 			auto cameraPosition = camera.GetTransform().GetPosition();
 			auto cameraOrientation = camera.GetTransform().GetOrientation();
-			spotLight.GetTransform()->SetPosition(cameraPosition)->SetOrientation(cameraOrientation);
+			spotLight.GetTransform().SetPosition(cameraPosition).SetOrientation(cameraOrientation);
 		}
 
 		deferredRenderer.Render(entities, lights, camera);

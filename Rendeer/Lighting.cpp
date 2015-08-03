@@ -7,7 +7,7 @@
 #include "DeferredRenderer.h"
 #include "PerspectiveCamera.h"
 
-void DirectionalLight::SetUniforms(const DeferredRenderer& renderer, PerspectiveCamera& camera)
+void DirectionalLight::SetUniforms(const DeferredRenderer& renderer, PerspectiveCamera& camera) const
 {
 	shader->Bind();
 
@@ -21,7 +21,13 @@ void DirectionalLight::SetUniforms(const DeferredRenderer& renderer, Perspective
 	shader->SetUniform("u_inverse_projection_matrix", glm::inverse((camera.GetProjectionMatrix())));
 }
 
-void PointLight::SetUniforms(const DeferredRenderer& renderer, PerspectiveCamera& camera)
+PerspectiveCamera DirectionalLight::GetLightCamera() const
+{
+	// TODO: This is incorrect! Should be orthographic!
+	return PerspectiveCamera(glm::vec3(), glm::quat(), 90.0f, 1.0f, 1000.0f, 1.0f);
+}
+
+void PointLight::SetUniforms(const DeferredRenderer& renderer, PerspectiveCamera& camera) const
 {
 	shader->Bind();
 
@@ -34,7 +40,15 @@ void PointLight::SetUniforms(const DeferredRenderer& renderer, PerspectiveCamera
 	shader->SetUniform("u_inverse_projection_matrix", glm::inverse((camera.GetProjectionMatrix())));
 }
 
-void SpotLight::SetUniforms(const DeferredRenderer& renderer, PerspectiveCamera& camera)
+PerspectiveCamera PointLight::GetLightCamera() const
+{
+	// TODO: This doesn't make sense since it's omnidirectional
+	return PerspectiveCamera(this->GetTransform().GetPosition(),
+	                         this->GetTransform().GetOrientation(),
+	                         glm::radians(90.0f), 1.0f, 1000.0f, 1.0f);
+}
+
+void SpotLight::SetUniforms(const DeferredRenderer& renderer, PerspectiveCamera& camera) const
 {
 	shader->Bind();
 
@@ -51,4 +65,11 @@ void SpotLight::SetUniforms(const DeferredRenderer& renderer, PerspectiveCamera&
 	shader->SetUniform("u_light_intensity", this->intensity);
 
 	shader->SetUniform("u_inverse_projection_matrix", glm::inverse((camera.GetProjectionMatrix())));
+}
+
+PerspectiveCamera SpotLight::GetLightCamera() const
+{
+	return PerspectiveCamera(this->GetTransform().GetPosition(),
+	                         this->GetTransform().GetOrientation(),
+	                         outerConeAngle, 1.0f, 1000.0f, 1.0f);
 }

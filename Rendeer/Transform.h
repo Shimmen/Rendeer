@@ -1,24 +1,17 @@
 #pragma once
 
-#include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/quaternion.hpp>
 
 class Shader;
 
-/*
-Defines a left-handed coordinate system.
-*/
-
 class Transform
 {
 public:
 
-	Transform(
-		glm::vec3 position = glm::vec3(0.0, 0.0, 0.0),
-		glm::quat orientation = glm::angleAxis(1.0f, glm::vec3(0.0)),
-		float scale = 1.0f
-	);
+	Transform(glm::vec3 position = glm::vec3(0.0, 0.0, 0.0),
+	          glm::quat orientation = glm::angleAxis(1.0f, glm::vec3(0.0)),
+	          float scale = 1.0f);
 
 	glm::mat4 GetModelMatrix() const;
 
@@ -38,55 +31,53 @@ public:
 		return scale;
 	}
 
-	inline Transform* SetPosition(const glm::vec3& newPosition)
+	inline Transform& SetPosition(const glm::vec3& newPosition)
 	{
 		this->position = newPosition;
-		return this;
+		return *this;
 	}
 
-	inline Transform* SetOrientation(const glm::vec3 axis, float angle)
+	inline Transform& SetOrientation(const glm::vec3 axis, float angle)
 	{
 		SetOrientation(glm::angleAxis(angle, glm::normalize(axis)));
-		return this;
+		return *this;
 	}
 
-	inline Transform* SetOrientation(const glm::quat newRotation)
+	inline Transform& SetOrientation(const glm::quat newRotation)
 	{
 		this->orientation = glm::normalize(newRotation);
-		return this;
+		return *this;
 	}
 
-	inline Transform* SetScale(float newScale)
+	inline Transform& SetScale(float newScale)
 	{
 		this->scale = newScale;
-		return this;
+		return *this;
 	}
 
-	inline Transform* Translate(const glm::vec3& translation)
+	inline Transform& Translate(const glm::vec3& translation)
 	{
 		this->position += translation;
-		return this;
+		return *this;
 	}
 
-	inline Transform* Scale(float scaleFactor)
+	inline Transform& Scale(float scaleFactor)
 	{
 		this->scale *= scaleFactor;
-		return this;
+		return *this;
 	}
 
-	inline Transform* Rotate(const glm::vec3 axis, float angle)
+	inline Transform& Rotate(const glm::vec3 axis, float angle)
 	{
 		glm::quat quaternionRotation = glm::angleAxis(angle, glm::normalize(axis));
 		return Rotate(quaternionRotation);
 	}
 
-	inline Transform* Rotate(const glm::quat rotation)
+	inline Transform& Rotate(const glm::quat rotation)
 	{
 		this->orientation = glm::normalize(rotation * this->orientation);
-		return this;
+		return *this;
 	}
-
-
 
 	glm::vec3 RotateVector(const glm::vec3& vector3) const;
 	glm::vec3 RotateVector(const glm::vec4& vector) const;
@@ -97,9 +88,10 @@ public:
 
 	Transform GetInverse() const;
 
-
 private:
+
 	glm::vec3 position;
 	glm::quat orientation;
 	float scale;
+
 };

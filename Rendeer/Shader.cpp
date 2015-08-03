@@ -45,42 +45,42 @@ void Shader::Bind() const
 	glUseProgram(shaderProgram);
 }
 
-bool Shader::HasUniformWithName(const std::string& uniformName)
+bool Shader::HasUniformWithName(const std::string& uniformName) const
 {
-	return uniformExists[uniformName];
+	return uniformExists.at(uniformName);
 }
 
-void Shader::SetUniform(const std::string& uniformName, int intValue)
+void Shader::SetUniform(const std::string& uniformName, int intValue) const
 {
-	glUniform1i(uniformLocations[uniformName], intValue);
+	glUniform1i(uniformLocations.at(uniformName), intValue);
 }
 
-void Shader::SetUniform(const std::string& uniformName, float floatValue)
+void Shader::SetUniform(const std::string& uniformName, float floatValue) const
 {
-	glUniform1f(uniformLocations[uniformName], floatValue);
+	glUniform1f(uniformLocations.at(uniformName), floatValue);
 }
 
-void Shader::SetUniform(const std::string& uniformName, const glm::vec2& vector2)
+void Shader::SetUniform(const std::string& uniformName, const glm::vec2& vector2) const
 {
-	glUniform2fv(uniformLocations[uniformName], 1, glm::value_ptr(vector2));
+	glUniform2fv(uniformLocations.at(uniformName), 1, glm::value_ptr(vector2));
 }
 
-void Shader::SetUniform(const std::string& uniformName, const glm::vec3& vector3)
+void Shader::SetUniform(const std::string& uniformName, const glm::vec3& vector3) const
 {
-	glUniform3fv(uniformLocations[uniformName], 1, glm::value_ptr(vector3));
+	glUniform3fv(uniformLocations.at(uniformName), 1, glm::value_ptr(vector3));
 }
 
-void Shader::SetUniform(const std::string& uniformName, const glm::mat3& matrix3)
+void Shader::SetUniform(const std::string& uniformName, const glm::mat3& matrix3) const
 {
-	glUniformMatrix3fv(uniformLocations[uniformName], 1, GL_FALSE, glm::value_ptr(matrix3));
+	glUniformMatrix3fv(uniformLocations.at(uniformName), 1, GL_FALSE, glm::value_ptr(matrix3));
 }
 
-void Shader::SetUniform(const std::string& uniformName, const glm::mat4& matrix4)
+void Shader::SetUniform(const std::string& uniformName, const glm::mat4& matrix4) const
 {
-	glUniformMatrix4fv(uniformLocations[uniformName], 1, GL_FALSE, glm::value_ptr(matrix4));
+	glUniformMatrix4fv(uniformLocations.at(uniformName), 1, GL_FALSE, glm::value_ptr(matrix4));
 }
 
-void Shader::SetUniformBlock(const std::string& uniformBlockName, const Buffer& buffer)
+void Shader::SetUniformBlock(const std::string& uniformBlockName, const Buffer& buffer) const
 {
 	buffer.Bind(GL_UNIFORM_BUFFER);
 
@@ -90,7 +90,7 @@ void Shader::SetUniformBlock(const std::string& uniformBlockName, const Buffer& 
 	glBindBufferBase(GL_UNIFORM_BUFFER, binding, buffer.GetBufferHandle());
 
 	// Connect the shader's uniform block index to the binding
-	glUniformBlockBinding(shaderProgram, uniformBlockIndicies[uniformBlockName], binding);
+	glUniformBlockBinding(shaderProgram, uniformBlockIndicies.at(uniformBlockName), binding);
 
 	// Calculate next uniform binding
 	nextUniformBlockBinding = (nextUniformBlockBinding + 1) % GL_MAX_UNIFORM_BUFFER_BINDINGS;

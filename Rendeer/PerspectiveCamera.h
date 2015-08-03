@@ -11,6 +11,7 @@ A perspective camera looking down the +Z axis.
 class PerspectiveCamera
 {
 public:
+
 	PerspectiveCamera(const glm::vec3& position, const glm::quat& rotation,
 		float fov, float near, float far, float aspectRatio);
 
@@ -19,10 +20,16 @@ public:
 	glm::mat4 GetViewMatrix() const;
 	glm::mat4 GetProjectionMatrix() const;
 
+	float GetFov() const { return fov; }
+	void SetFov(float fov) { this->fov = fov; }
+
 private:
+
 	Transform transform;
 
 	float fov;
-	float nearClippingPlane, farClippingPlane;
+	float nearClippingPlane;
+	float farClippingPlane;
 	float aspectRatio;
+
 };

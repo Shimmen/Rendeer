@@ -5,19 +5,17 @@
 #include "Texture.h"
 #include "Lighting.h"
 #include "DiffuseMaterial.h"
-#include "PerspectiveCamera.h"
 
 DeferredRenderer::DeferredRenderer(Window& window)
 	: window(window)
 	, gBuffer(window.GetFramebufferWidth(), window.GetFramebufferHeight())
-	, defaultNormalMap("textures/default_normal.jpg", false)
 {
-	renderTextureShader = new Shader("postprocess.vsh", "render_texture.fsh");
+	shadowMapFramebuffer.AttachTexture(shadowMap, GL_DEPTH_ATTACHMENT);
+	assert(shadowMapFramebuffer.IsComplete());
 }
 
 DeferredRenderer::~DeferredRenderer()
 {
-	delete renderTextureShader;
 }
 
 void DeferredRenderer::BindForUsage() const
@@ -39,17 +37,10 @@ void DeferredRenderer::BindForUsage() const
 
 void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::vector<ILight *>& lights, PerspectiveCamera& camera)
 {
-	RenderGeometryPass(entities, camera);
-
-	RenderLightPass(lights, camera);
-	//RenderTextureToScreen(gBuffer.material);
-
-	window.SwapBuffers();
-}
-
-void DeferredRenderer::RenderGeometryPass(const std::vector<Entity *>& entities, PerspectiveCamera& camera)
-{
+	// 
 	// Set state for geometry rendering
+	// 
+
 	gBuffer.BindAsRenderTarget();
 
 	glEnable(GL_DEPTH_TEST);
@@ -59,16 +50,15 @@ void DeferredRenderer::RenderGeometryPass(const std::vector<Entity *>& entities,
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_CULL_FACE);
 
-	for (auto it = entities.begin(); it != entities.end(); ++it)
+	for (auto entity = entities.begin(); entity != entities.end(); ++entity)
 	{
-		Entity *entity = (*it);
-		entity->Render(*this, camera);
+		(*entity)->Render(*this, camera);
 	}
-}
 
-void DeferredRenderer::RenderLightPass(const std::vector<ILight *>& lights, PerspectiveCamera& camera)
-{
+	// 
 	// Set up the gl state to render the light pass
+	// 
+
 	window.BindAsDrawFramebuffer();
 
 	glEnable(GL_BLEND);
@@ -81,31 +71,36 @@ void DeferredRenderer::RenderLightPass(const std::vector<ILight *>& lights, Pers
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glDisable(GL_CULL_FACE);
-	
-	for (auto it = lights.begin(); it != lights.end(); ++it)
+
+	for (auto light = lights.begin(); light != lights.end(); ++light)
 	{
-		ILight *light = (*it);
-		Shader *lightShader = light->GetShader();
+		const Shader& lightShader = (*light)->GetShader();
 
 		// Bind the gBuffer related uniforms
-		gBuffer.BindAsUniform(*lightShader);
+		gBuffer.BindAsUniform(lightShader);
 
 		// Ask the light to sets its shader's uniforms
-		light->SetUniforms(*this, camera);
+		(*light)->SetUniforms(*this, camera);
 
 		quad.Render();
 	}
 
 	glDisable(GL_BLEND);
+
+#if 0
+	RenderTextureToScreen(gBuffer.material);
+#endif
+
+	window.SwapBuffers();
 }
 
 void DeferredRenderer::RenderTextureToScreen(const Texture& texture)
 {
 	window.BindAsDrawFramebuffer();
-	renderTextureShader->Bind();
+	renderTextureShader.Bind();
 
 	texture.Bind(0);
-	renderTextureShader->SetUniform("u_texture", 0);
+	renderTextureShader.SetUniform("u_texture", 0);
 
 	glDisable(GL_CULL_FACE);
 	glDisable(GL_DEPTH_TEST);

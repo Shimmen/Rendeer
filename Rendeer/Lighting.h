@@ -3,7 +3,9 @@
 #include <glm/fwd.hpp>
 
 #include "Shader.h"
+#include "Texture.h"
 #include "Transform.h"
+#include "FrameBuffer.h"
 
 class DeferredRenderer;
 class PerspectiveCamera;
@@ -25,16 +27,22 @@ public:
 		delete shader;
 	}
 
-	// this->shader should already be set when function is called
-	virtual void SetUniforms(const DeferredRenderer& renderer, PerspectiveCamera& camera) = 0;
+	virtual void SetUniforms(const DeferredRenderer& renderer, PerspectiveCamera& camera) const = 0;
+	virtual PerspectiveCamera GetLightCamera() const = 0;
 
-	Shader* GetShader() const { return shader; }
-	Transform* GetTransform() { return &transform; }
+	const Shader& GetShader() const { return *shader; }
+	
+	Transform& GetTransform() { return transform; }
+	const Transform& GetTransform() const { return transform; }
 
+	bool CastsShadows() const { return castsShadows; }
+	
 protected:
 
-	Shader *shader;
+	const Shader *shader;
 	Transform transform;
+
+	bool castsShadows{false};
 
 	glm::vec3 color;
 	float intensity;
@@ -49,11 +57,13 @@ public:
 		: ILight(new Shader("postprocess.vsh", "Lights/DirectionalLight.fsh")
 		, Transform(glm::vec3(0, 0, 0), glm::normalize(directionRotation), 1.0f), color, intensity)
 	{
+		castsShadows = false;
 	}
 
 	virtual ~DirectionalLight() {}
 
-	void SetUniforms(const DeferredRenderer& renderer, PerspectiveCamera& camera);
+	void SetUniforms(const DeferredRenderer& renderer, PerspectiveCamera& camera) const;
+	PerspectiveCamera GetLightCamera() const;
 
 };
 
@@ -65,11 +75,13 @@ public:
 		: ILight(new Shader("postprocess.vsh", "Lights/PointLight.fsh")
 		, Transform(position, glm::quat(0, 0, 0, 1), 1.0f), color, intensity)
 	{
+		castsShadows = false;
 	}
 
 	virtual ~PointLight() {}
 
-	void SetUniforms(const DeferredRenderer& renderer, PerspectiveCamera& camera);
+	void SetUniforms(const DeferredRenderer& renderer, PerspectiveCamera& camera) const;
+	PerspectiveCamera GetLightCamera() const;
 
 };
 
@@ -85,11 +97,14 @@ public:
 		assert(outerConeAngle >= innerConeAngle);
 		assert(outerConeAngle >= 0);
 		assert(innerConeAngle >= 0);
+
+		castsShadows = true;
 	}
 
 	virtual ~SpotLight() {}
 
-	void SetUniforms(const DeferredRenderer& renderer, PerspectiveCamera& camera);
+	void SetUniforms(const DeferredRenderer& renderer, PerspectiveCamera& camera) const;
+	PerspectiveCamera GetLightCamera() const;
 
 private:
 

@@ -31,7 +31,7 @@ void GBuffer::BindAsRenderTarget() const
 	frameBuffer.BindAsDrawFrameBuffer();
 }
 
-void GBuffer::BindAsUniform(Shader& lightShader) const
+void GBuffer::BindAsUniform(const Shader& lightShader) const
 {
 	lightShader.Bind();
 
