@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
 	PointLight pointLight(glm::vec3(0, 0.25f, 0), glm::vec3(1.0f, 0.1f, 0.15f), 0.35f);
 
 	// SPOT LIGHT
-	SpotLight spotLight(glm::vec3(0, -0.65f, 4), glm::quat(glm::normalize(glm::vec3(1, -3, 0))), glm::vec3(0, 0, 1), 2.0f, glm::radians(20.0f), glm::radians(15.5f));
+	SpotLight spotLight(glm::vec3(0, -0.65f, 4), glm::quat(glm::normalize(glm::vec3(1, -3, 0))), glm::vec3(0, 0, 1), 2.0f, glm::radians(40.0f), glm::radians(30.0f));
 
 	// LIGHTS
 	std::vector<ILight *> lights;
