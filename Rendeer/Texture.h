@@ -1,5 +1,7 @@
 #pragma once
 
+#include "glm/fwd.hpp"
+
 #include <string>
 #include <glad/glad.h>
 
@@ -17,6 +19,8 @@ public:
 	~Texture();
 	
 	void Bind(int textureTarget) const;
+
+	void SetBorderColor(const glm::vec4& color);
 
 	inline GLuint GetHandle() const { return textureHandle; }
 	inline int GetWidth() const { return width; }

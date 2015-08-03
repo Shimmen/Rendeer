@@ -2,6 +2,8 @@
 
 #include <cassert>
 
+#include <glm/gtc/type_ptr.hpp>
+
 #include "Bitmap.h"
 
 Texture::Texture(const std::string& filename, bool srgb, GLint magFilter, GLint wrapMode)
@@ -69,6 +71,12 @@ void Texture::Bind(int textureTarget) const
 
 	glActiveTexture(GL_TEXTURE0 + textureTarget);
 	glBindTexture(GL_TEXTURE_2D, textureHandle);
+}
+
+void Texture::SetBorderColor(const glm::vec4& color)
+{
+	Bind(31);
+	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, glm::value_ptr(color));
 }
 
 GLint Texture::CalculateExternalFormat(int componentCount) const
