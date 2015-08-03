@@ -62,12 +62,14 @@ void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::
 
 	for (auto light = lights.begin(); light != lights.end(); ++light)
 	{
+		shadowMapFramebuffer.BindAsDrawFrameBuffer();
+		glClearDepth(1.0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 		if ((*light)->CastsShadows())
 		{
-			shadowMapFramebuffer.BindAsDrawFrameBuffer();
 			glEnable(GL_DEPTH_TEST);
 			glDepthMask(GL_TRUE);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			glEnable(GL_CULL_FACE);
 
 			shadowMapGenerator.Bind();
