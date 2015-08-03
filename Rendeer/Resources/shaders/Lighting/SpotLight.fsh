@@ -11,10 +11,14 @@ noperspective in vec2 v_tex_coord;
 
 uniform vec3  u_light_position;
 uniform vec3  u_light_direction;
-uniform float u_light_outer_cone_angle;
-uniform float u_light_inner_cone_angle;
+uniform float u_light_outer_cone_angle_cos;
+uniform float u_light_inner_cone_angle_cos;
 uniform vec3  u_light_color;
 uniform float u_light_intensity;
+
+uniform sampler2D u_shadow_map;
+uniform mat4 u_inverse_view_matrix;
+uniform mat4 u_light_view_projection;
 
 void main()
 {
@@ -33,13 +37,13 @@ void main()
 		vec3 actualLightDirection = normalize(lightToFrag);
 		float angleOfDeviation = dot(normalize(u_light_direction), actualLightDirection);
 
-		if(angleOfDeviation > u_light_outer_cone_angle)
+		if(angleOfDeviation > u_light_outer_cone_angle_cos)
 		{
 			float attenuationFactor = attenuation(lightToFragDistance);
 
 			// Calculate diffuse light
 			float diffuseIntensity = u_light_intensity * lambertianFactor(gBuffer.normal, actualLightDirection) * attenuationFactor;
-			diffuseIntensity *= smoothstep(u_light_outer_cone_angle, u_light_inner_cone_angle, angleOfDeviation);
+			diffuseIntensity *= smoothstep(u_light_outer_cone_angle_cos, u_light_inner_cone_angle_cos, angleOfDeviation);
 			vec4 diffuseColor = vec4(gBuffer.albedo, 1.0) * vec4(u_light_color, 1.0) * diffuseIntensity;
 
 			// Calculate specular light
@@ -49,7 +53,10 @@ void main()
 			specularFactor = pow(specularFactor, gBuffer.shininess);
 			vec4 specularColor =  vec4(u_light_color, 1.0) * specularFactor * attenuationFactor * gBuffer.specularIntensity;
 
-			o_fragment_color = diffuseColor + specularColor;
+			float shadowMapInfluence = calculateShadowMapInfluence(gBuffer.position, u_inverse_view_matrix,
+			                                                       u_light_view_projection, u_shadow_map);
+
+			o_fragment_color = (diffuseColor + specularColor) * shadowMapInfluence;
 		}
 		else
 		{

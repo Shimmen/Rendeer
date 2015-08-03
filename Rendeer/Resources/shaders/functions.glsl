@@ -39,6 +39,29 @@ mat3 makeTbnMatrix(in vec3 normal, in vec3 tangent)
 	return mat3(tangent, biTangent, normal);
 }
 
+#define SHADOW_MAP_BIAS 0.006
+
+float calculateShadowMapInfluence(in vec3 viewSpacePosition,
+                                  in mat4 inverseViewSpace,
+                                  in mat4 lightViewProjection,
+                                  in sampler2D shadowMap)
+{
+	// Transform view-space to world-space
+	vec4 worldSpacePosition = inverseViewSpace * vec4(viewSpacePosition, 1.0);
+
+	// Transform world-space to light-space
+	vec4 lightSpacePosition = lightViewProjection * worldSpacePosition;
+	lightSpacePosition.xyz /= lightSpacePosition.w;
+
+	// Transform to light-space to screen-space
+	vec4 screenSpace = lightSpacePosition * 0.5 + 0.5;
+
+	float currentFragmentDepth = screenSpace.z;
+	float shadowMapDepth = texture(shadowMap, screenSpace.xy).r;
+
+	return step(currentFragmentDepth, shadowMapDepth + SHADOW_MAP_BIAS);
+}
+
 // Since we use 8-bit color depth, a value lower that 1/256 is not visible. Therefore
 // we can find the max light range by solving x for:
 // (1 / x*x) < (1.0 / 256.0) => +-16
