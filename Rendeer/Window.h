@@ -19,8 +19,6 @@ public:
 		return *static_cast<Window *>(glfwGetWindowUserPointer(glfwWindowPointer));
 	}
 
-
-	// Returns the size of the framebuffer in pixels
 	inline void GetFramebufferSize(int *widthPixels, int * heightPixels) const
 	{
 		glfwGetFramebufferSize(windowHandle, widthPixels, heightPixels);
@@ -55,7 +53,10 @@ public:
 
 	inline void BindAsDrawFramebuffer() const
 	{
+		int width, height;
+		GetFramebufferSize(&width, &height);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+		glViewport(0, 0, width, height);
 	}
 
 	inline void SetVsyncEnabled(bool enabled) const

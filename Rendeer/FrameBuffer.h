@@ -18,18 +18,15 @@ public:
 
 	bool IsComplete(GLenum *statusIfNotComplete = nullptr) const;
 
-	inline void BindAsDrawFrameBuffer() const
-	{
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, frameBufferHandle);
-	}
-
-	inline void BindAsReadFrameBuffer() const
-	{
-		glBindFramebuffer(GL_READ_FRAMEBUFFER, frameBufferHandle);
-	}
+	void BindAsDrawFrameBuffer() const;
+	void BindAsReadFrameBuffer() const;
 
 protected:
 
 	GLuint frameBufferHandle;
+
+	mutable int attachedTexturesCount{0};
+	mutable int attachedTextureWidth{0};
+	mutable int attachedTextureHeight{0};
 
 };

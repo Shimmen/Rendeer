@@ -1,5 +1,7 @@
 #include "FrameBuffer.h"
 
+#include <cassert>
+
 #include "glad/glad.h"
 
 #include "Texture.h"
@@ -16,6 +18,17 @@ FrameBuffer::~FrameBuffer()
 
 void FrameBuffer::AttachTexture(const Texture& texture, GLenum attatchment) const
 {
+	if (attachedTexturesCount == 0)
+	{
+		attachedTextureWidth = texture.GetWidth();
+		attachedTextureHeight = texture.GetHeight();
+	}
+	else
+	{
+		assert(texture.GetWidth() == attachedTextureWidth);
+		assert(texture.GetHeight() == attachedTextureHeight);
+	}
+
 	GLint lastBoundFramebuffer;
 	glGetIntegeri_v(GL_FRAMEBUFFER_BINDING, 0, &lastBoundFramebuffer);
 
@@ -23,6 +36,8 @@ void FrameBuffer::AttachTexture(const Texture& texture, GLenum attatchment) cons
 	glFramebufferTexture2D(GL_FRAMEBUFFER, attatchment, GL_TEXTURE_2D, texture.GetHandle(), 0);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, lastBoundFramebuffer);
+
+	attachedTexturesCount++;
 }
 
 void FrameBuffer::SetDrawBuffers(const std::vector<GLenum> drawBuffers) const
@@ -46,4 +61,16 @@ bool FrameBuffer::IsComplete(GLenum *statusIfNotComplete) const
 	}
 
 	return true;
+}
+
+void FrameBuffer::BindAsDrawFrameBuffer() const
+{
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, frameBufferHandle);
+	glViewport(0, 0, attachedTextureWidth, attachedTextureHeight);
+}
+
+void FrameBuffer::BindAsReadFrameBuffer() const
+{
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, frameBufferHandle);
+	glViewport(0, 0, attachedTextureWidth, attachedTextureHeight);
 }

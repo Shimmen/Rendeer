@@ -19,6 +19,8 @@ public:
 	void Bind(int textureTarget) const;
 
 	inline GLuint GetHandle() const { return textureHandle; }
+	inline int GetWidth() const { return width; }
+	inline int GetHeight() const { return height; }
 
 private:
 

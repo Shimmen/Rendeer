@@ -40,6 +40,9 @@ Texture::Texture(const Bitmap& image, bool srgb, GLint magFilter, GLint wrapMode
 
 Texture::Texture(int width, int height, GLenum format, GLenum internalFormat, GLint wrapMode, GLint magFilter, GLint minFilter)
 {
+	this->width = width;
+	this->height = height;
+
 	glGenTextures(1, &textureHandle);
 	glBindTexture(GL_TEXTURE_2D, textureHandle);
 
