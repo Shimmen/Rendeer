@@ -13,5 +13,6 @@ uniform sampler2D u_texture;
 
 void main()
 {
-	o_fragment_color = texture(u_texture, v_tex_coord);
+	vec4 fragment = texture(u_texture, v_tex_coord);
+	o_fragment_color = vec4(fragment);
 }

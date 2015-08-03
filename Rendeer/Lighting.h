@@ -54,7 +54,7 @@ class DirectionalLight : public ILight
 public:
 
 	DirectionalLight(const glm::quat& directionRotation, glm::vec3 color, float intensity)
-		: ILight(new Shader("postprocess.vsh", "Lights/DirectionalLight.fsh")
+		: ILight(new Shader("postprocess.vsh", "Lighting/DirectionalLight.fsh")
 		, Transform(glm::vec3(0, 0, 0), glm::normalize(directionRotation), 1.0f), color, intensity)
 	{
 		castsShadows = false;
@@ -72,7 +72,7 @@ class PointLight : public ILight
 public:
 
 	PointLight(const glm::vec3 position, glm::vec3 color, float intensity)
-		: ILight(new Shader("postprocess.vsh", "Lights/PointLight.fsh")
+		: ILight(new Shader("postprocess.vsh", "Lighting/PointLight.fsh")
 		, Transform(position, glm::quat(0, 0, 0, 1), 1.0f), color, intensity)
 	{
 		castsShadows = false;
@@ -90,7 +90,7 @@ class SpotLight : public ILight
 public:
 
 	SpotLight(const glm::vec3 position, const glm::quat orientation, glm::vec3 color, float intensity, float outerConeAngle, float innerConeAngle)
-		: ILight(new Shader("postprocess.vsh", "Lights/SpotLight.fsh")
+		: ILight(new Shader("postprocess.vsh", "Lighting/SpotLight.fsh")
 		, Transform(position, orientation, 1.0f), color, intensity)
 		, outerConeAngle(outerConeAngle), innerConeAngle(innerConeAngle)
 	{

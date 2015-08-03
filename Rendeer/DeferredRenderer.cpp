@@ -45,8 +45,6 @@ void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
-
-	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_CULL_FACE);
 
@@ -60,20 +58,39 @@ void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::
 	// 
 
 	window.BindAsDrawFramebuffer();
-
-	glEnable(GL_BLEND);
-	glBlendEquation(GL_FUNC_ADD);
-	glBlendFunc(GL_ONE, GL_ONE);
-
-	glDisable(GL_DEPTH_TEST);
-	glDepthMask(GL_FALSE);
-
-	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	glClear(GL_COLOR_BUFFER_BIT);
-	glDisable(GL_CULL_FACE);
 
 	for (auto light = lights.begin(); light != lights.end(); ++light)
 	{
+		if ((*light)->CastsShadows())
+		{
+			shadowMapFramebuffer.BindAsDrawFrameBuffer();
+			glEnable(GL_DEPTH_TEST);
+			glDepthMask(GL_TRUE);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			glEnable(GL_CULL_FACE);
+
+			shadowMapGenerator.Bind();
+
+			auto lightCamera = (*light)->GetLightCamera();
+			auto viewProjectionMatrix = lightCamera.GetProjectionMatrix() * lightCamera.GetViewMatrix();
+			shadowMapGenerator.SetUniform("u_view_projecion_matrix", viewProjectionMatrix);
+
+			for (auto entity = entities.begin(); entity != entities.end(); ++entity)
+			{
+				shadowMapGenerator.SetUniform("u_model_matrix", (*entity)->GetTransform().GetModelMatrix());
+				(*entity)->GetMesh()->Render();
+			}
+		}
+		
+		window.BindAsDrawFramebuffer();
+		glEnable(GL_BLEND);
+		glBlendEquation(GL_FUNC_ADD);
+		glBlendFunc(GL_ONE, GL_ONE);
+		glDisable(GL_DEPTH_TEST);
+		glDepthMask(GL_FALSE);
+		glDisable(GL_CULL_FACE);
+
 		const Shader& lightShader = (*light)->GetShader();
 
 		// Bind the gBuffer related uniforms
@@ -88,7 +105,7 @@ void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::
 	glDisable(GL_BLEND);
 
 #if 0
-	RenderTextureToScreen(gBuffer.material);
+	RenderTextureToScreen(shadowMap);
 #endif
 
 	window.SwapBuffers();
