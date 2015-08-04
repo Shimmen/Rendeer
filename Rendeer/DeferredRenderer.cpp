@@ -76,7 +76,7 @@ void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::
 
 		bool TEMP_usingShadowMap = false;
 		auto lightCamera = (*light)->GetLightCamera();
-		glm::mat4 lightViewProjection = lightCamera.GetProjectionMatrix() * lightCamera.GetViewMatrix();
+		glm::mat4 lightViewProjection = lightCamera->GetProjectionMatrix() * lightCamera->GetViewMatrix();
 
 		if ((*light)->CastsShadows())
 		{
