@@ -21,10 +21,10 @@ void DirectionalLight::SetUniforms(const DeferredRenderer& renderer, Camera& cam
 	shader->SetUniform("u_inverse_projection_matrix", glm::inverse((camera.GetProjectionMatrix())));
 }
 
-std::shared_ptr<Camera> DirectionalLight::GetLightCamera() const
+Camera DirectionalLight::GetLightCamera() const
 {
 	// TODO: This is incorrect! Should be orthographic!
-	return std::shared_ptr<Camera>(new PerspectiveCamera(glm::vec3(), glm::quat(), 1.0f, 1.0f, 1000.0f, glm::radians(90.0f)));
+	return Camera(glm::vec3(), glm::quat(), 90.0f, 1.0f, 1000.0f, 1.0f);
 }
 
 void PointLight::SetUniforms(const DeferredRenderer& renderer, Camera& camera) const
@@ -40,12 +40,12 @@ void PointLight::SetUniforms(const DeferredRenderer& renderer, Camera& camera) c
 	shader->SetUniform("u_inverse_projection_matrix", glm::inverse((camera.GetProjectionMatrix())));
 }
 
-std::shared_ptr<Camera> PointLight::GetLightCamera() const
+Camera PointLight::GetLightCamera() const
 {
 	// TODO: This doesn't make sense since it's omnidirectional
-	return std::shared_ptr<Camera>(new PerspectiveCamera(this->GetTransform().GetPosition(),
-	                                                     this->GetTransform().GetOrientation(),
-	                                                     1.0f, 1.0f, 1000.0f, glm::radians(90.0f)));
+	return Camera(this->GetTransform().GetPosition(),
+	                         this->GetTransform().GetOrientation(),
+	                         glm::radians(90.0f), 1.0f, 1000.0f, 1.0f);
 }
 
 void SpotLight::SetUniforms(const DeferredRenderer& renderer, Camera& camera) const
@@ -67,9 +67,9 @@ void SpotLight::SetUniforms(const DeferredRenderer& renderer, Camera& camera) co
 	shader->SetUniform("u_inverse_projection_matrix", glm::inverse((camera.GetProjectionMatrix())));
 }
 
-std::shared_ptr<Camera> SpotLight::GetLightCamera() const
+Camera SpotLight::GetLightCamera() const
 {
-	return std::shared_ptr<Camera>(new PerspectiveCamera(this->GetTransform().GetPosition(),
-	                                                     this->GetTransform().GetOrientation(),
-	                                                     1.0f, 1.0f, 100.0f, outerConeAngle));
+	return Camera(this->GetTransform().GetPosition(),
+	                         this->GetTransform().GetOrientation(),
+	                         outerConeAngle, 1.0f, 100.0f, 1.0f);
 }

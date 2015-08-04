@@ -8,51 +8,23 @@ class Camera
 {
 public:
 
-	Camera(const glm::vec3& position, const glm::quat& orientation, float aspectRatio, float nearPlane, float farPlane);
+	Camera(const glm::vec3& position, const glm::quat& rotation, float fov,
+	       float near, float far, float aspectRatio, bool perspective = true);
 
 	inline Transform& GetTransform() { return transform; }
+
 	glm::mat4 GetViewMatrix() const;
+	glm::mat4 GetProjectionMatrix() const;
 
-	// Will be different for different camera types
-	virtual glm::mat4 GetProjectionMatrix() const = 0;
-
-protected:
+private:
 
 	Transform transform;
-	
-	float aspectRatio;
-	float nearClippingPlane;
-	float farClippingPlane;
-
-};
-
-class PerspectiveCamera : public Camera
-{
-public:
-
-	PerspectiveCamera(const glm::vec3& position, const glm::quat& orientation,
-					  float aspectRatio, float nearPlane, float farPlane, float fov);
-
-	glm::mat4 GetProjectionMatrix() const;
-
-private:
 
 	float fov;
+	float nearClippingPlane;
+	float farClippingPlane;
+	float aspectRatio;
 
-};
-
-class OrthographicCamera : public Camera
-{
-public:
-
-	OrthographicCamera(const glm::vec3& position, const glm::quat& orientation,
-					   float aspectRatio, float nearPlane, float farPlane, float size);
-
-	glm::mat4 GetProjectionMatrix() const;
-
-private:
-
-	// Half of the vertical size of the viewing volume.
-	float projectionSize;
+	bool isPerspective;
 
 };

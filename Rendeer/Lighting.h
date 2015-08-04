@@ -1,7 +1,5 @@
 #pragma once
 
-#include <memory>
-
 #include <glm/fwd.hpp>
 
 #include "Shader.h"
@@ -30,7 +28,7 @@ public:
 	}
 
 	virtual void SetUniforms(const DeferredRenderer& renderer, Camera& camera) const = 0;
-	virtual std::shared_ptr<Camera> GetLightCamera() const = 0;
+	virtual Camera GetLightCamera() const = 0;
 
 	const Shader& GetShader() const { return *shader; }
 	
@@ -65,7 +63,7 @@ public:
 	virtual ~DirectionalLight() {}
 
 	void SetUniforms(const DeferredRenderer& renderer, Camera& camera) const;
-	std::shared_ptr<Camera> GetLightCamera() const;
+	Camera GetLightCamera() const;
 
 };
 
@@ -83,7 +81,7 @@ public:
 	virtual ~PointLight() {}
 
 	void SetUniforms(const DeferredRenderer& renderer, Camera& camera) const;
-	std::shared_ptr<Camera> GetLightCamera() const;
+	Camera GetLightCamera() const;
 
 };
 
@@ -106,7 +104,7 @@ public:
 	virtual ~SpotLight() {}
 
 	void SetUniforms(const DeferredRenderer& renderer, Camera& camera) const;
-	std::shared_ptr<Camera> GetLightCamera() const;
+	Camera GetLightCamera() const;
 
 private:
 
