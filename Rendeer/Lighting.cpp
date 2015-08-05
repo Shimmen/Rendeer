@@ -23,8 +23,8 @@ void DirectionalLight::SetUniforms(const DeferredRenderer& renderer, Camera& cam
 
 Camera DirectionalLight::GetLightCamera() const
 {
-	// TODO: This is incorrect! Should be orthographic!
-	return Camera(glm::vec3(), glm::quat(), 90.0f, 1.0f, 1000.0f, 1.0f);
+	// TODO: Omptimize the near & far & size parameters
+	return Camera(glm::vec3(), glm::quat(), 1.0f, -40.0f, 40.0f, 40.0f, Camera::ORTHOGRAPHIC);
 }
 
 void PointLight::SetUniforms(const DeferredRenderer& renderer, Camera& camera) const
@@ -45,7 +45,7 @@ Camera PointLight::GetLightCamera() const
 	// TODO: This doesn't make sense since it's omnidirectional
 	return Camera(this->GetTransform().GetPosition(),
 	                         this->GetTransform().GetOrientation(),
-	                         glm::radians(90.0f), 1.0f, 1000.0f, 1.0f);
+	                         1.0f, 1.0f, 100.0f, glm::radians(90.0f), Camera::PERSPECTIVE);
 }
 
 void SpotLight::SetUniforms(const DeferredRenderer& renderer, Camera& camera) const
@@ -71,5 +71,5 @@ Camera SpotLight::GetLightCamera() const
 {
 	return Camera(this->GetTransform().GetPosition(),
 	                         this->GetTransform().GetOrientation(),
-	                         outerConeAngle, 1.0f, 100.0f, 1.0f);
+	                         1.0f, 1.0f, 100.0f, outerConeAngle, Camera::PERSPECTIVE);
 }

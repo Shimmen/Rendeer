@@ -1,6 +1,6 @@
 #pragma once
 
-#include <glm/glm.hpp>
+#include <glm/fwd.hpp>
 
 #include "Transform.h"
 
@@ -8,8 +8,16 @@ class Camera
 {
 public:
 
-	Camera(const glm::vec3& position, const glm::quat& rotation, float fov,
-	       float near, float far, float aspectRatio, bool perspective = true);
+	enum CameraType
+	{
+		PERSPECTIVE,
+		ORTHOGRAPHIC
+	};
+
+public:
+
+	Camera(const glm::vec3& position, const glm::quat& rotation, float aspectRatio,
+		   float nearPlane, float farPlane, float fovOrSize, CameraType type = PERSPECTIVE);
 
 	inline Transform& GetTransform() { return transform; }
 
@@ -20,11 +28,12 @@ private:
 
 	Transform transform;
 
-	float fov;
+	float aspectRatio;
+	
 	float nearClippingPlane;
 	float farClippingPlane;
-	float aspectRatio;
-
-	bool isPerspective;
+	
+	CameraType type;
+	float fovOrSize;
 
 };

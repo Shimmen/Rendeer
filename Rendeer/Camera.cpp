@@ -7,17 +7,17 @@
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-Camera::Camera(const glm::vec3& position, const glm::quat& rotation, float fov,
-	           float near, float far, float aspectRatio, bool perspective)
+Camera::Camera(const glm::vec3& position, const glm::quat& rotation, float aspectRatio,
+			   float nearPlane, float farPlane, float fovOrSize, Camera::CameraType type)
 	: transform(position, rotation, 1)
-	, fov(fov)
-	, nearClippingPlane(near)
-	, farClippingPlane(far)
 	, aspectRatio(aspectRatio)
-	, isPerspective(perspective)
+	, nearClippingPlane(nearPlane)
+	, farClippingPlane(farPlane)
+	, fovOrSize(fovOrSize)
+	, type(type)
 {
 	assert(farClippingPlane > nearClippingPlane);
-	assert(fov > 0.0f);
+	assert(fovOrSize > 0.0f);
 }
 
 glm::mat4 Camera::GetViewMatrix() const
@@ -31,31 +31,42 @@ glm::mat4 Camera::GetViewMatrix() const
 glm::mat4 Camera::GetProjectionMatrix() const
 {
 	glm::mat4 projection = glm::mat4(0.0);
-	float const tanHalfFovY = tan(fov / 2.0f);
 
-	if (isPerspective)
+	switch (this->type)
 	{
-		// glm::perspective uses a right handed coordinate system
-		// which I don't want, so below is my own version in
-		// a left handed coordinate system.
+		case PERSPECTIVE:
+		{
+			// glm::perspective uses a right handed coordinate system
+			// which I don't want, so below is my own version in
+			// a left handed coordinate system.
 
-		projection[0][0] = 1.0f / (aspectRatio * tanHalfFovY);
-		projection[1][1] = 1.0f / (tanHalfFovY);
-		projection[2][2] = (nearClippingPlane + farClippingPlane) / (farClippingPlane - nearClippingPlane);
-		projection[2][3] = 1.0f;
-		projection[3][2] = -(2.0f * farClippingPlane * nearClippingPlane) / (farClippingPlane - nearClippingPlane);
-	}
-	else // orthographic
-	{
-		float width  = tanHalfFovY * farClippingPlane * aspectRatio * 2.0f;
-		float height = tanHalfFovY * farClippingPlane * 2.0f;
-		float depth  = farClippingPlane - nearClippingPlane;
+			float const tanHalfFovY = tan(fovOrSize / 2.0f);
 
-		projection[0][0] = 2.0f / width;
-		projection[1][1] = 2.0f / height;
-		projection[2][2] = 1.0f / depth;
-		projection[3][2] = -nearClippingPlane / depth;
-		projection[3][3] = 1.0f;
+			projection[0][0] = 1.0f / (aspectRatio * tanHalfFovY);
+			projection[1][1] = 1.0f / (tanHalfFovY);
+			projection[2][2] = (nearClippingPlane + farClippingPlane) / (farClippingPlane - nearClippingPlane);
+			projection[2][3] = 1.0f;
+			projection[3][2] = -(2.0f * farClippingPlane * nearClippingPlane) / (farClippingPlane - nearClippingPlane);
+			
+		} break;
+
+		case ORTHOGRAPHIC:
+		{
+			float halfVerticalSize = fovOrSize;
+			float halfDepth = (farClippingPlane - nearClippingPlane) * 0.5f;
+
+			projection[0][0] = 1.0f / halfVerticalSize * aspectRatio;
+			projection[1][1] = 1.0f / halfVerticalSize;
+			projection[2][2] = 1.0f / halfDepth;
+			projection[3][3] = 1.0f;
+
+		} break;
+
+		default:
+		{
+			assert(false);
+			break;
+		}
 	}
 
 	return projection;
