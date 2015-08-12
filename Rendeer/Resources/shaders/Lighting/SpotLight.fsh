@@ -40,10 +40,10 @@ void main()
 		if(angleOfDeviation > u_light_outer_cone_angle_cos)
 		{
 			float attenuationFactor = attenuation(lightToFragDistance);
+			float coneDeviationFactor = smoothstep(u_light_outer_cone_angle_cos, u_light_inner_cone_angle_cos, angleOfDeviation);
 
 			// Calculate diffuse light
-			float diffuseIntensity = u_light_intensity * lambertianFactor(gBuffer.normal, actualLightDirection) * attenuationFactor;
-			diffuseIntensity *= smoothstep(u_light_outer_cone_angle_cos, u_light_inner_cone_angle_cos, angleOfDeviation);
+			float diffuseIntensity = u_light_intensity * lambertianFactor(gBuffer.normal, actualLightDirection) * attenuationFactor * coneDeviationFactor;
 			vec4 diffuseColor = vec4(gBuffer.albedo, 1.0) * vec4(u_light_color, 1.0) * diffuseIntensity;
 
 			// Calculate specular light
@@ -51,7 +51,7 @@ void main()
 			vec3 reflectedLight = normalize(reflect(actualLightDirection, gBuffer.normal));
 			float specularFactor = max(dot(reflectedLight, fragToCamera), 0.0);
 			specularFactor = pow(specularFactor, gBuffer.shininess);
-			vec4 specularColor =  vec4(u_light_color, 1.0) * specularFactor * attenuationFactor * gBuffer.specularIntensity;
+			vec4 specularColor =  vec4(u_light_color, 1.0) * specularFactor * attenuationFactor * coneDeviationFactor * gBuffer.specularIntensity;
 
 			float shadowMapInfluence = calculateShadowMapInfluence(gBuffer.position, u_inverse_view_matrix,
 			                                                       u_light_view_projection, u_shadow_map);

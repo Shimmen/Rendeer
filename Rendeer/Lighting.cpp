@@ -23,9 +23,9 @@ void DirectionalLight::SetUniforms(const DeferredRenderer& renderer, Camera& cam
 
 Camera DirectionalLight::GetLightCamera() const
 {
-	// TODO: Omptimize the near & far & size parameters
+	// TODO: Optimize the near & far & size parameters
 	return Camera(glm::vec3(), this->GetTransform().GetOrientation(),
-	              1.0f, -10.0f, 10.0f, 10.0f, Camera::ORTHOGRAPHIC);
+	              1.0f, -15.0f, 15.0f, 15.0f, Camera::ORTHOGRAPHIC);
 }
 
 void PointLight::SetUniforms(const DeferredRenderer& renderer, Camera& camera) const
