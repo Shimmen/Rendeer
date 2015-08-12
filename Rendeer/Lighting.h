@@ -57,7 +57,7 @@ public:
 		: ILight(new Shader("postprocess.vsh", "Lighting/DirectionalLight.fsh")
 		, Transform(glm::vec3(0, 0, 0), glm::normalize(directionRotation), 1.0f), color, intensity)
 	{
-		castsShadows = false;
+		castsShadows = true;
 	}
 
 	virtual ~DirectionalLight() {}

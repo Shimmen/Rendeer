@@ -13,6 +13,10 @@ uniform vec3  u_light_direction;
 uniform vec3  u_light_color;
 uniform float u_light_intensity;
 
+uniform sampler2D u_shadow_map;
+uniform mat4 u_inverse_view_matrix;
+uniform mat4 u_light_view_projection;
+
 void main()
 {
 	GBuffer gBuffer = extractGBufferData(v_tex_coord);
@@ -32,6 +36,9 @@ void main()
 	specularFactor = pow(specularFactor, gBuffer.shininess);
 	vec4 specularColor =  vec4(u_light_color, 1.0) * specularFactor * gBuffer.specularIntensity;
 
+	float shadowMapInfluence = calculateShadowMapInfluence(gBuffer.position, u_inverse_view_matrix,
+	                                                       u_light_view_projection, u_shadow_map);
+
 	// Calculate the final fragment color
-	o_fragment_color = diffuseColor + specularColor;
+	o_fragment_color = (diffuseColor + specularColor) * shadowMapInfluence;
 }
