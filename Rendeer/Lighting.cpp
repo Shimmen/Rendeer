@@ -21,10 +21,10 @@ void DirectionalLight::SetUniforms(const DeferredRenderer& renderer, Camera& cam
 	shader->SetUniform("u_inverse_projection_matrix", glm::inverse((camera.GetProjectionMatrix())));
 }
 
-Camera DirectionalLight::GetLightCamera() const
+Camera DirectionalLight::GetLightCamera(const Camera& mainCamera) const
 {
 	// TODO: Optimize the near & far & size parameters
-	return Camera(glm::vec3(), this->GetTransform().GetOrientation(),
+	return Camera(mainCamera.GetTransform().GetPosition(), this->GetTransform().GetOrientation(),
 	              1.0f, -15.0f, 15.0f, 15.0f, Camera::ORTHOGRAPHIC);
 }
 
@@ -41,12 +41,12 @@ void PointLight::SetUniforms(const DeferredRenderer& renderer, Camera& camera) c
 	shader->SetUniform("u_inverse_projection_matrix", glm::inverse((camera.GetProjectionMatrix())));
 }
 
-Camera PointLight::GetLightCamera() const
+Camera PointLight::GetLightCamera(const Camera& mainCamera) const
 {
 	// TODO: This doesn't make sense since it's omnidirectional
 	return Camera(this->GetTransform().GetPosition(),
-	                         this->GetTransform().GetOrientation(),
-	                         1.0f, 1.0f, 100.0f, glm::radians(90.0f), Camera::PERSPECTIVE);
+	              this->GetTransform().GetOrientation(),
+	              1.0f, 1.0f, 100.0f, glm::radians(90.0f), Camera::PERSPECTIVE);
 }
 
 void SpotLight::SetUniforms(const DeferredRenderer& renderer, Camera& camera) const
@@ -68,9 +68,9 @@ void SpotLight::SetUniforms(const DeferredRenderer& renderer, Camera& camera) co
 	shader->SetUniform("u_inverse_projection_matrix", glm::inverse((camera.GetProjectionMatrix())));
 }
 
-Camera SpotLight::GetLightCamera() const
+Camera SpotLight::GetLightCamera(const Camera& mainCamera) const
 {
 	return Camera(this->GetTransform().GetPosition(),
-	                         this->GetTransform().GetOrientation(),
-	                         1.0f, 1.0f, 100.0f, outerConeAngle, Camera::PERSPECTIVE);
+	              this->GetTransform().GetOrientation(),
+	              1.0f, 1.0f, 100.0f, outerConeAngle, Camera::PERSPECTIVE);
 }

@@ -39,7 +39,7 @@ mat3 makeTbnMatrix(in vec3 normal, in vec3 tangent)
 	return mat3(tangent, biTangent, normal);
 }
 
-#define SHADOW_MAP_BIAS 0.006
+#define SHADOW_MAP_BIAS 0.0025
 
 float calculateShadowMapInfluence(in vec3 viewSpacePosition,
                                   in mat4 inverseViewSpace,
@@ -56,7 +56,11 @@ float calculateShadowMapInfluence(in vec3 viewSpacePosition,
 	// Transform to light-space to screen-space
 	vec4 screenSpace = lightSpacePosition * 0.5 + 0.5;
 
-	float currentFragmentDepth = screenSpace.z;
+	// Clamp projected depth, since if a fragment is outside the light camera area
+	// it should not be in shadow: i.e. projecteddepth <= shadow map depth. For it
+	// to be that, it can't be outside the shadow map range.
+	// This has the same effect as "if(screenSpace.z > 1.0) return 0.0;"
+	float currentFragmentDepth = min(screenSpace.z, 1.0);
 	float shadowMapDepth = texture(shadowMap, screenSpace.xy).r;
 
 	return step(currentFragmentDepth, shadowMapDepth + SHADOW_MAP_BIAS);

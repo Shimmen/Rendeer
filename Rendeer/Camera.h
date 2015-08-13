@@ -20,6 +20,7 @@ public:
 		   float nearPlane, float farPlane, float fovOrSize, CameraType type = PERSPECTIVE);
 
 	inline Transform& GetTransform() { return transform; }
+	inline const Transform& GetTransform() const { return transform; }
 
 	glm::mat4 GetViewMatrix() const;
 	glm::mat4 GetProjectionMatrix() const;

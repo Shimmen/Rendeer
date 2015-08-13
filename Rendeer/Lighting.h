@@ -28,7 +28,7 @@ public:
 	}
 
 	virtual void SetUniforms(const DeferredRenderer& renderer, Camera& camera) const = 0;
-	virtual Camera GetLightCamera() const = 0;
+	virtual Camera GetLightCamera(const Camera& mainCamera) const = 0;
 
 	const Shader& GetShader() const { return *shader; }
 	
@@ -63,7 +63,7 @@ public:
 	virtual ~DirectionalLight() {}
 
 	void SetUniforms(const DeferredRenderer& renderer, Camera& camera) const;
-	Camera GetLightCamera() const;
+	Camera GetLightCamera(const Camera& mainCamera) const;
 
 };
 
@@ -81,7 +81,7 @@ public:
 	virtual ~PointLight() {}
 
 	void SetUniforms(const DeferredRenderer& renderer, Camera& camera) const;
-	Camera GetLightCamera() const;
+	Camera GetLightCamera(const Camera& mainCamera) const;
 
 };
 
@@ -104,7 +104,7 @@ public:
 	virtual ~SpotLight() {}
 
 	void SetUniforms(const DeferredRenderer& renderer, Camera& camera) const;
-	Camera GetLightCamera() const;
+	Camera GetLightCamera(const Camera& mainCamera) const;
 
 private:
 
