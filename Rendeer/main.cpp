@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
 	teapotMaterial.specularIntensity = 1.0f;
 	teapotMaterial.shininess = 100.0f;
 	Entity teapot(teapotMesh, teapotMaterial);
-	teapot.GetTransform().SetScale(0.01f);
+	teapot.GetTransform().SetScale(0.01f).Scale(glm::vec3(0.5f, 1, 1));
 	teapot.GetTransform().SetPosition(glm::vec3(0, 0, 1));
 
 	// PANEL

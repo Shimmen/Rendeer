@@ -12,7 +12,7 @@ Transform::Transform(glm::vec3 position, glm::vec3 rotation, float scale)
 }
 */
 
-Transform::Transform(glm::vec3 position, glm::quat orientation, float scale)
+Transform::Transform(glm::vec3 position, glm::quat orientation, glm::vec3 scale)
 	: position(position)
 	, orientation(orientation)
 	, scale(scale)
@@ -21,8 +21,8 @@ Transform::Transform(glm::vec3 position, glm::quat orientation, float scale)
 
 glm::mat4 Transform::GetModelMatrix() const
 {
-	glm::mat4 scaleMatrix = glm::mat4(scale);
-	scaleMatrix[3][3] = 1.0f;
+	glm::mat4 scaleMatrix = glm::scale(glm::mat4(1.0f), this->scale);
+	//scaleMatrix[3][3] = 1.0f;
 
 	glm::mat4 rotationMatrix = glm::toMat4(glm::normalize(orientation));
 

@@ -9,7 +9,7 @@
 
 Camera::Camera(const glm::vec3& position, const glm::quat& rotation, float aspectRatio,
 			   float nearPlane, float farPlane, float fovOrSize, Camera::CameraType type)
-	: transform(position, rotation, 1)
+	: transform(position, rotation)
 	, aspectRatio(aspectRatio)
 	, nearClippingPlane(nearPlane)
 	, farClippingPlane(farPlane)

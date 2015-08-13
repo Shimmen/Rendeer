@@ -11,7 +11,7 @@ public:
 
 	Transform(glm::vec3 position = glm::vec3(0.0, 0.0, 0.0),
 	          glm::quat orientation = glm::angleAxis(1.0f, glm::vec3(0.0)),
-	          float scale = 1.0f);
+	          glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f));
 
 	glm::mat4 GetModelMatrix() const;
 
@@ -26,7 +26,7 @@ public:
 		return orientation;
 	}
 
-	inline float GetScale() const
+	inline glm::vec3 GetScale() const
 	{
 		return scale;
 	}
@@ -51,6 +51,12 @@ public:
 
 	inline Transform& SetScale(float newScale)
 	{
+		this->scale = glm::vec3(newScale);
+		return *this;
+	}
+
+	inline Transform& SetScale(const glm::vec3& newScale)
+	{
 		this->scale = newScale;
 		return *this;
 	}
@@ -62,6 +68,12 @@ public:
 	}
 
 	inline Transform& Scale(float scaleFactor)
+	{
+		this->scale *= scaleFactor;
+		return *this;
+	}
+
+	inline Transform& Scale(const glm::vec3& scaleFactor)
 	{
 		this->scale *= scaleFactor;
 		return *this;
@@ -92,6 +104,6 @@ private:
 
 	glm::vec3 position;
 	glm::quat orientation;
-	float scale;
+	glm::vec3 scale;
 
 };

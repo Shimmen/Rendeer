@@ -25,6 +25,9 @@ void DiffuseMaterial::UpdateUniforms(const DeferredRenderer& renderer,
 	shader->SetUniform("u_specular_intensity", specularIntensity);
 	shader->SetUniform("u_shininess", shininess);
 
-	shader->SetUniform("u_model_view_matrix", camera.GetViewMatrix() * transform.GetModelMatrix());
+	glm::mat4 modelViewMatrix = camera.GetViewMatrix() * transform.GetModelMatrix();
+	glm::mat3 normalMatrix = glm::mat3(glm::transpose(glm::inverse(modelViewMatrix)));
+	shader->SetUniform("u_model_view_matrix", modelViewMatrix);
+	shader->SetUniform("u_normal_matrix", normalMatrix);
 	shader->SetUniform("u_projection_matrix", camera.GetProjectionMatrix());
 }
