@@ -85,7 +85,8 @@ void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::
 
 			glEnable(GL_DEPTH_TEST);
 			glEnable(GL_CULL_FACE);
-			
+			glCullFace(GL_FRONT);
+
 			shadowMapGenerator.Bind();
 			shadowMapGenerator.SetUniform("u_view_projecion_matrix", lightViewProjection);
 
@@ -94,6 +95,8 @@ void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::
 				shadowMapGenerator.SetUniform("u_model_matrix", (*entity)->GetTransform().GetModelMatrix());
 				(*entity)->GetMesh().Render();
 			}
+
+			glCullFace(GL_BACK);
 		}
 		
 		// 

@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
 	teapot.GetTransform().SetPosition(glm::vec3(0, 0, 1));
 
 	// PANEL
-	Mesh panelMesh("models/plane.obj", false);
+	Mesh panelMesh("models/cube.obj", false);
 	Texture panelTexture("textures/bricks.jpg", true);
 	Texture panelNormalMap("textures/bricks_normal.jpg", false);
 	DiffuseMaterial panelMaterial;
@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
 	panelMaterial.specularIntensity = 0.05f;
 	panelMaterial.shininess = 20.0f;
 	Entity panel(panelMesh, panelMaterial);
-	panel.GetTransform().SetScale(1.5f);
+	panel.GetTransform().SetScale(glm::vec3(3.0f, 0.008f, 1.5f));
 	
 	// FLOOR
 	Mesh floorMesh("models/curved_plane.obj");
