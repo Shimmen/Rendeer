@@ -21,11 +21,31 @@ void DirectionalLight::SetUniforms(const DeferredRenderer& renderer, Camera& cam
 	shader->SetUniform("u_inverse_projection_matrix", glm::inverse((camera.GetProjectionMatrix())));
 }
 
-Camera DirectionalLight::GetLightCamera(const Camera& mainCamera) const
+Camera DirectionalLight::GetLightCamera(const Camera& mainCamera, int shadowMapSize) const
 {
-	// TODO: Optimize the near & far & size parameters
-	return Camera(mainCamera.GetTransform().GetPosition(), this->GetTransform().GetOrientation(),
-	              1.0f, -15.0f, 15.0f, 15.0f, Camera::ORTHOGRAPHIC);
+	const float cameraNear = -25.0f;
+	const float cameraFar = 25.0f;
+	const float cameraScale = 25.0f;
+
+	glm::quat worldLightOrientation = this->GetTransform().GetOrientation();
+
+	// Place the directional light camera at the main camera position and offset it by the looking direction
+	// and the light camera near plane, so that the near plane essantially lies at the main camera.
+	glm::vec3 worldLightPosition = mainCamera.GetTransform().GetPosition() + mainCamera.GetTransform().GetForward() * -cameraNear;
+
+	// Rotate position into light space
+	glm::vec4 lightSpaceLightPosition = glm::rotate(glm::conjugate(worldLightOrientation), glm::vec4(worldLightPosition, 1.0f));
+
+	// Quantize position to a light space shadow map texel size
+	float lightSpaceTexelSize = (cameraScale * 2.0f) / float(shadowMapSize);
+	lightSpaceLightPosition.x = lightSpaceTexelSize * floorf(lightSpaceLightPosition.x / lightSpaceTexelSize);
+	lightSpaceLightPosition.y = lightSpaceTexelSize * floorf(lightSpaceLightPosition.y / lightSpaceTexelSize);
+
+	// Rotate back into world space
+	worldLightPosition = glm::vec3(glm::rotate(worldLightOrientation, lightSpaceLightPosition));
+
+	return Camera(worldLightPosition, worldLightOrientation,
+	              1.0f, cameraNear, cameraFar, cameraScale, Camera::ORTHOGRAPHIC);
 }
 
 void PointLight::SetUniforms(const DeferredRenderer& renderer, Camera& camera) const
@@ -41,7 +61,7 @@ void PointLight::SetUniforms(const DeferredRenderer& renderer, Camera& camera) c
 	shader->SetUniform("u_inverse_projection_matrix", glm::inverse((camera.GetProjectionMatrix())));
 }
 
-Camera PointLight::GetLightCamera(const Camera& mainCamera) const
+Camera PointLight::GetLightCamera(const Camera& mainCamera, int shadowMapSize) const
 {
 	// TODO: This doesn't make sense since it's omnidirectional
 	return Camera(this->GetTransform().GetPosition(),
@@ -68,7 +88,7 @@ void SpotLight::SetUniforms(const DeferredRenderer& renderer, Camera& camera) co
 	shader->SetUniform("u_inverse_projection_matrix", glm::inverse((camera.GetProjectionMatrix())));
 }
 
-Camera SpotLight::GetLightCamera(const Camera& mainCamera) const
+Camera SpotLight::GetLightCamera(const Camera& mainCamera, int shadowMapSize) const
 {
 	return Camera(this->GetTransform().GetPosition(),
 	              this->GetTransform().GetOrientation(),

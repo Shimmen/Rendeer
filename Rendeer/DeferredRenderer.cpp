@@ -75,7 +75,8 @@ void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::
 		glClear(GL_DEPTH_BUFFER_BIT);
 
 		bool TEMP_usingShadowMap = false;
-		auto lightCamera = (*light)->GetLightCamera(camera);
+		assert(shadowMap.GetWidth() == shadowMap.GetHeight());
+		auto lightCamera = (*light)->GetLightCamera(camera, shadowMap.GetWidth());
 		glm::mat4 lightViewProjection = lightCamera.GetProjectionMatrix() * lightCamera.GetViewMatrix();
 
 		if ((*light)->CastsShadows())
