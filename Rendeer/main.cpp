@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
 	teapotMaterial.shininess = 100.0f;
 	Entity teapot(teapotMesh, teapotMaterial);
 	teapot.GetTransform().SetScale(0.01f).Scale(glm::vec3(0.5f, 1, 1));
-	teapot.GetTransform().SetPosition(glm::vec3(0, 0, 1));
+	teapot.GetTransform().SetPosition(glm::vec3(0, 0.5f, 1));
 
 	// PANEL
 	Mesh panelMesh("models/cube.obj", false);
@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
 	DirectionalLight directionalLight(glm::quat(1, 1, 0, 1), glm::vec3(0.92f, 0.95f, 0.88f), 0.05f);
 
 	// POINT LIGHT
-	PointLight pointLight(glm::vec3(0, 0.25f, 0), glm::vec3(1.0f, 0.1f, 0.15f), 0.35f);
+	PointLight pointLight(glm::vec3(0, 0.5f, 0), glm::vec3(1.0f, 0.1f, 0.15f), 0.35f);
 
 	// SPOT LIGHT
 	SpotLight spotLight(glm::vec3(0, -0.65f, 4), glm::quat(glm::normalize(glm::vec3(1, -3, 0))), glm::vec3(0, 0, 1), 2.0f, glm::radians(40.0f), glm::radians(30.0f));

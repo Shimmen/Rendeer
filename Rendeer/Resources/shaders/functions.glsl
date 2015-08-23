@@ -40,6 +40,16 @@ mat3 makeTbnMatrix(in vec3 normal, in vec3 tangent)
 }
 
 #define SHADOW_MAP_BIAS 0.0025
+#define USE_PCF_SHADOWS 1
+#define PCF_SAMPLE_SIZE 4
+#define PCF_SAMPLE_COUNT (float(PCF_SAMPLE_SIZE * PCF_SAMPLE_SIZE))
+#define PCF_SAMPLE_LOOP_LIMIT ((float(PCF_SAMPLE_SIZE) - 1.0) / 2.0)
+
+float sampleShadowMap(in sampler2D shadowMap, in vec2 uv, in float comparisonDepth)
+{
+	float shadowMapDepth = texture(shadowMap, uv).r;
+	return step(comparisonDepth, shadowMapDepth + SHADOW_MAP_BIAS);
+}
 
 float calculateShadowMapInfluence(in vec3 viewSpacePosition,
                                   in mat4 inverseViewSpace,
@@ -61,9 +71,22 @@ float calculateShadowMapInfluence(in vec3 viewSpacePosition,
 	// to be that, it can't be outside the shadow map range.
 	// This has the same effect as "if(screenSpace.z > 1.0) return 0.0;"
 	float currentFragmentDepth = min(screenSpace.z, 1.0);
-	float shadowMapDepth = texture(shadowMap, screenSpace.xy).r;
 
-	return step(currentFragmentDepth, shadowMapDepth + SHADOW_MAP_BIAS);
+#if USE_PCF_SHADOWS
+	vec2 texelSize = vec2(1.0) / textureSize(shadowMap, 0);
+	float shadowInfluence = 0.0;
+	for(float y = -PCF_SAMPLE_LOOP_LIMIT; y <= PCF_SAMPLE_LOOP_LIMIT; y += 1.0)
+	{
+		for(float x = -PCF_SAMPLE_LOOP_LIMIT; x <= PCF_SAMPLE_LOOP_LIMIT; x += 1.0)
+		{
+			vec2 uvOffset = vec2(x, y) * texelSize;
+			shadowInfluence += sampleShadowMap(shadowMap, screenSpace.xy + uvOffset, currentFragmentDepth);
+		}
+	}
+	return shadowInfluence / PCF_SAMPLE_COUNT;
+#else
+	return sampleShadowMap(shadowMap, screenSpace.xy, currentFragmentDepth);
+#endif
 }
 
 // TODO: How should this be handled?
