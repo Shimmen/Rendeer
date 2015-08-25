@@ -12,6 +12,7 @@ public:
 public:
 
 	Bitmap(const std::string& filePath);
+	Bitmap(int width, int height, int componentsPerPixel, const std::vector<pixel_component_t>& data);
 
 	int GetWidth() const;
 	int GetHeight() const;
@@ -20,6 +21,7 @@ public:
 	int GetComponentsPerPixel() const;
 
 	const std::vector<pixel_component_t>& GetData() const;
+	void SetData(const std::vector<pixel_component_t>& data);
 
 private:
 

@@ -30,6 +30,15 @@ Bitmap::Bitmap(const std::string& filePath)
 	}
 }
 
+Bitmap::Bitmap(int width, int height, int componentsPerPixel, const std::vector<pixel_component_t>& data)
+	: width(width)
+	, height(height)
+	, componentsPerPixel(componentsPerPixel)
+	, pixelData(width * height * componentsPerPixel)
+{
+	SetData(data);
+}
+
 int Bitmap::GetWidth() const
 {
 	return width;
@@ -48,4 +57,11 @@ int Bitmap::GetComponentsPerPixel() const
 const std::vector<Bitmap::pixel_component_t>& Bitmap::GetData() const
 {
 	return pixelData;
+}
+
+void Bitmap::SetData(const std::vector<pixel_component_t>& data)
+{
+	// It could also be smaller, but this could possible avoid some bugs where you miss a row, or similar.
+	assert(data.size() == pixelData.size());
+	memcpy_s(&pixelData[0], pixelData.size(), &data[0], pixelData.size());
 }
