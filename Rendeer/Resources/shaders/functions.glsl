@@ -40,15 +40,42 @@ mat3 makeTbnMatrix(in vec3 normal, in vec3 tangent)
 }
 
 #define SHADOW_MAP_BIAS 0.0025
+#define SAMPLE_SHADOW_MAP_LINEAR 1
 #define USE_PCF_SHADOWS 1
 #define PCF_SAMPLE_SIZE 4
 #define PCF_SAMPLE_COUNT (float(PCF_SAMPLE_SIZE * PCF_SAMPLE_SIZE))
 #define PCF_SAMPLE_LOOP_LIMIT ((float(PCF_SAMPLE_SIZE) - 1.0) / 2.0)
 
-float sampleShadowMap(in sampler2D shadowMap, in vec2 uv, in float comparisonDepth)
+float sampleShadowMapNearest(in sampler2D shadowMap, in vec2 uv, in float comparisonDepth)
 {
 	float shadowMapDepth = texture(shadowMap, uv).r;
 	return step(comparisonDepth, shadowMapDepth + SHADOW_MAP_BIAS);
+}
+
+float sampleShadowMapLinear(in sampler2D shadowMap, in vec2 uv, in float comparisonDepth, in vec2 texelSize)
+{
+	vec2 pixelPosition = uv / texelSize + vec2(0.5);
+	vec2 fractionalPart = fract(pixelPosition);
+	vec2 startTexel = (pixelPosition - fractionalPart) * texelSize;
+
+	float blTexel = sampleShadowMapNearest(shadowMap, startTexel, comparisonDepth);
+	float brTexel = sampleShadowMapNearest(shadowMap, startTexel + vec2(texelSize.x, 0.0), comparisonDepth);
+	float tlTexel = sampleShadowMapNearest(shadowMap, startTexel + vec2(0.0, texelSize.y), comparisonDepth);
+	float trTexel = sampleShadowMapNearest(shadowMap, startTexel + texelSize, comparisonDepth);
+
+	float mixLeft = mix(blTexel, tlTexel, fractionalPart.y);
+	float mixRight = mix(brTexel, trTexel, fractionalPart.y);
+
+	return mix(mixLeft, mixRight, fractionalPart.x);
+}
+
+float sampleShadowMap(in sampler2D shadowMap, in vec2 uv, in float comparisonDepth, in vec2 texelSize)
+{
+#if SAMPLE_SHADOW_MAP_LINEAR
+	return sampleShadowMapLinear(shadowMap, uv, comparisonDepth, texelSize);
+#else
+	return sampleShadowMapNearest(shadowMap, uv, comparisonDepth);
+#endif
 }
 
 float calculateShadowMapInfluence(in vec3 viewSpacePosition,
@@ -72,20 +99,25 @@ float calculateShadowMapInfluence(in vec3 viewSpacePosition,
 	// This has the same effect as "if(screenSpace.z > 1.0) return 0.0;"
 	float currentFragmentDepth = min(screenSpace.z, 1.0);
 
-#if USE_PCF_SHADOWS
 	vec2 texelSize = vec2(1.0) / textureSize(shadowMap, 0);
+
+#if USE_PCF_SHADOWS
+
 	float shadowInfluence = 0.0;
 	for(float y = -PCF_SAMPLE_LOOP_LIMIT; y <= PCF_SAMPLE_LOOP_LIMIT; y += 1.0)
 	{
 		for(float x = -PCF_SAMPLE_LOOP_LIMIT; x <= PCF_SAMPLE_LOOP_LIMIT; x += 1.0)
 		{
 			vec2 uvOffset = vec2(x, y) * texelSize;
-			shadowInfluence += sampleShadowMap(shadowMap, screenSpace.xy + uvOffset, currentFragmentDepth);
+			shadowInfluence += sampleShadowMap(shadowMap, screenSpace.xy + uvOffset, currentFragmentDepth, texelSize);
 		}
 	}
 	return shadowInfluence / PCF_SAMPLE_COUNT;
+
 #else
-	return sampleShadowMap(shadowMap, screenSpace.xy, currentFragmentDepth);
+
+	return sampleShadowMap(shadowMap, screenSpace.xy, currentFragmentDepth, texelSize);
+
 #endif
 }
 
