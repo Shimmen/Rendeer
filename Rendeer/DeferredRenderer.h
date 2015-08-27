@@ -30,7 +30,7 @@ private:
 	ScreenAlignedQuad quad;
 	
 	Shader shadowMapGenerator{"Lighting/ShadowMapGenerator.vsh", "Lighting/ShadowMapGenerator.fsh"};
-	Texture shadowMap{1024, 1024, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT16, GL_CLAMP_TO_BORDER, GL_NEAREST, GL_NEAREST};
+	Texture shadowMap{2048, 2048, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT16, GL_CLAMP_TO_BORDER, GL_NEAREST, GL_NEAREST};
 	FrameBuffer shadowMapFramebuffer{};
 
 	const Window& window;

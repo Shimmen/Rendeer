@@ -42,7 +42,7 @@ mat3 makeTbnMatrix(in vec3 normal, in vec3 tangent)
 #define SHADOW_MAP_BIAS 0.0025
 #define SAMPLE_SHADOW_MAP_LINEAR 1
 #define USE_PCF_SHADOWS 1
-#define PCF_SAMPLE_SIZE 4
+#define PCF_SAMPLE_SIZE 3
 #define PCF_SAMPLE_COUNT (float(PCF_SAMPLE_SIZE * PCF_SAMPLE_SIZE))
 #define PCF_SAMPLE_LOOP_LIMIT ((float(PCF_SAMPLE_SIZE) - 1.0) / 2.0)
 
