@@ -1,7 +1,7 @@
 #pragma once
 
 #include "FrameBuffer.h"
-#include "Texture.h"
+#include "Texture2D.h"
 
 class Shader;
 
@@ -18,9 +18,9 @@ public:
 private:
 
 	FrameBuffer frameBuffer;
-	Texture albedo;
-	Texture normal;
-	Texture material;
-	Texture depth;
+	Texture2D albedo;
+	Texture2D normal;
+	Texture2D material;
+	Texture2D depth;
 
 };

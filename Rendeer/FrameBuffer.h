@@ -4,7 +4,7 @@
 
 #include <glad/glad.h>
 
-class Texture;
+class Texture2D;
 
 class FrameBuffer
 {
@@ -13,7 +13,7 @@ public:
 	FrameBuffer();
 	virtual ~FrameBuffer();
 
-	void AttachTexture(const Texture& texture, GLenum attatchment) const;
+	void AttachTexture(const Texture2D& texture, GLenum attatchment) const;
 	void SetDrawBuffers(const std::vector<GLenum> drawBuffers) const;
 
 	bool IsComplete(GLenum *statusIfNotComplete = nullptr) const;

@@ -13,7 +13,7 @@
 #include "Shader.h"
 #include "Entity.h"
 #include "Window.h"
-#include "Texture.h"
+#include "Texture2D.h"
 #include "Lighting.h"
 #include "DiffuseMaterial.h"
 #include "DeferredRenderer.h"
@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
 
 	// TEAPOT
 	Mesh teapotMesh("models/teapot.obj");
-	Texture teapotTexture("textures/default.png", true);
+	Texture2D teapotTexture("textures/default.png", true);
 	DiffuseMaterial teapotMaterial;
 	teapotMaterial.diffuseTexture = &teapotTexture;
 	teapotMaterial.specularIntensity = 1.0f;
@@ -45,8 +45,8 @@ int main(int argc, char *argv[])
 
 	// PANEL
 	Mesh panelMesh("models/cube.obj", false);
-	Texture panelTexture("textures/bricks.jpg", true);
-	Texture panelNormalMap("textures/bricks_normal.jpg", false);
+	Texture2D panelTexture("textures/bricks.jpg", true);
+	Texture2D panelNormalMap("textures/bricks_normal.jpg", false);
 	DiffuseMaterial panelMaterial;
 	panelMaterial.diffuseTexture = &panelTexture;
 	panelMaterial.normalMap = &panelNormalMap;
@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
 	
 	// FLOOR
 	Mesh floorMesh("models/curved_plane.obj");
-	Texture floorTexture("textures/default.png", true);
+	Texture2D floorTexture("textures/default.png", true);
 	DiffuseMaterial floorMaterial;
 	floorMaterial.diffuseTexture = &floorTexture;
 	floorMaterial.specularIntensity = 0.05f;

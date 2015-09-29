@@ -1,6 +1,6 @@
 #include "DiffuseMaterial.h"
 
-#include "Texture.h"
+#include "Texture2D.h"
 #include "Transform.h"
 #include "DeferredRenderer.h"
 #include "Camera.h"

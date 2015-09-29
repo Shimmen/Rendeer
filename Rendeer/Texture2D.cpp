@@ -1,4 +1,4 @@
-#include "Texture.h"
+#include "Texture2D.h"
 
 #include <cassert>
 
@@ -6,12 +6,12 @@
 
 #include "Bitmap.h"
 
-Texture::Texture(const std::string& filename, bool srgb, GLint magFilter, GLint wrapMode)
-	: Texture(Bitmap(filename), srgb, magFilter, wrapMode)
+Texture2D::Texture2D(const std::string& filename, bool srgb, GLint magFilter, GLint wrapMode)
+	: Texture2D(Bitmap(filename), srgb, magFilter, wrapMode)
 {
 }
 
-Texture::Texture(const Bitmap& image, bool srgb, GLint magFilter, GLint wrapMode)
+Texture2D::Texture2D(const Bitmap& image, bool srgb, GLint magFilter, GLint wrapMode)
 {
 	if (image.GetData().size() <= 0)
 	{
@@ -40,7 +40,7 @@ Texture::Texture(const Bitmap& image, bool srgb, GLint magFilter, GLint wrapMode
 	SetMaxAnisotropy();
 }
 
-Texture::Texture(int width, int height, GLenum format, GLenum internalFormat, GLint wrapMode, GLint magFilter, GLint minFilter)
+Texture2D::Texture2D(int width, int height, GLenum format, GLenum internalFormat, GLint wrapMode, GLint magFilter, GLint minFilter)
 {
 	this->width = width;
 	this->height = height;
@@ -59,12 +59,12 @@ Texture::Texture(int width, int height, GLenum format, GLenum internalFormat, GL
 	SetMaxAnisotropy();
 }
 
-Texture::~Texture()
+Texture2D::~Texture2D()
 {
 	glDeleteTextures(1, &textureHandle);
 }
 
-void Texture::Bind(int textureTarget) const
+void Texture2D::Bind(int textureTarget) const
 {
 	// 32 is the maximum active textures possible/allowed
 	assert(textureTarget >= 0 && textureTarget < 32);
@@ -73,13 +73,13 @@ void Texture::Bind(int textureTarget) const
 	glBindTexture(GL_TEXTURE_2D, textureHandle);
 }
 
-void Texture::SetBorderColor(const glm::vec4& color)
+void Texture2D::SetBorderColor(const glm::vec4& color)
 {
 	Bind(31);
 	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, glm::value_ptr(color));
 }
 
-GLint Texture::CalculateExternalFormat(int componentCount) const
+GLint Texture2D::CalculateExternalFormat(int componentCount) const
 {
 	assert(componentCount > 0 && componentCount <= 4);
 	if (componentCount == 1) return GL_RED;
@@ -89,7 +89,7 @@ GLint Texture::CalculateExternalFormat(int componentCount) const
 	else return 0;
 }
 
-GLint Texture::CalculateInternalFormat(GLint externalFormat, bool srgb) const
+GLint Texture2D::CalculateInternalFormat(GLint externalFormat, bool srgb) const
 {
 	assert(externalFormat == GL_RED || externalFormat == GL_RG ||
 	       externalFormat == GL_RGB || externalFormat == GL_RGBA);
@@ -110,7 +110,7 @@ GLint Texture::CalculateInternalFormat(GLint externalFormat, bool srgb) const
 	}
 }
 
-void Texture::GenerateMipmaps(GLint minFilter) const
+void Texture2D::GenerateMipmaps(GLint minFilter) const
 {
 	// If minFilter is mipmap compatible, generate mipmaps
 	if (minFilter == GL_LINEAR_MIPMAP_LINEAR  || minFilter == GL_LINEAR_MIPMAP_NEAREST ||
@@ -120,7 +120,7 @@ void Texture::GenerateMipmaps(GLint minFilter) const
 	}
 }
 
-void Texture::SetMaxAnisotropy() const
+void Texture2D::SetMaxAnisotropy() const
 {
 	GLfloat maxAnisotropy;
 	glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAnisotropy);

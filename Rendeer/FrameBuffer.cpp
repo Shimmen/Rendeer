@@ -4,7 +4,7 @@
 
 #include "glad/glad.h"
 
-#include "Texture.h"
+#include "Texture2D.h"
 
 FrameBuffer::FrameBuffer()
 {
@@ -16,7 +16,7 @@ FrameBuffer::~FrameBuffer()
 	glDeleteFramebuffers(1, &frameBufferHandle);
 }
 
-void FrameBuffer::AttachTexture(const Texture& texture, GLenum attatchment) const
+void FrameBuffer::AttachTexture(const Texture2D& texture, GLenum attatchment) const
 {
 	if (attachedTexturesCount == 0)
 	{

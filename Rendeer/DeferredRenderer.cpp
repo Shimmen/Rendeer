@@ -2,8 +2,8 @@
 
 #include "Window.h"
 #include "Entity.h"
-#include "Texture.h"
 #include "Lighting.h"
+#include "Texture2D.h"
 #include "DiffuseMaterial.h"
 
 DeferredRenderer::DeferredRenderer(Window& window)
@@ -139,7 +139,7 @@ void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::
 	window.SwapBuffers();
 }
 
-void DeferredRenderer::RenderTextureToScreen(const Texture& texture)
+void DeferredRenderer::RenderTextureToScreen(const Texture2D& texture)
 {
 	window.BindAsDrawFramebuffer();
 	renderTextureShader.Bind();

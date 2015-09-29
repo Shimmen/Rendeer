@@ -3,7 +3,7 @@
 #include <glm/fwd.hpp>
 
 #include "Shader.h"
-#include "Texture.h"
+#include "Texture2D.h"
 #include "Transform.h"
 #include "FrameBuffer.h"
 

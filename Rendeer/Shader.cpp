@@ -4,7 +4,7 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
-#include "Texture.h"
+#include "Texture2D.h"
 #include "Buffer.h"
 
 Shader::Shader(const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath)
