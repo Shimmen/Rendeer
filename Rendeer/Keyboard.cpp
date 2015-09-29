@@ -13,7 +13,7 @@ Keyboard::Keyboard(GLFWwindow *glfwWindow)
 
 /* static */ void Keyboard::KeyEventCallback(GLFWwindow *glfwWindow, int key, int scancode, int action, int mods)
 {
-	Window& window = Window::FromGlfwWindow(glfwWindow);
+	const Window& window = Window::FromGlfwWindow(glfwWindow);
 
 	switch (action)
 	{

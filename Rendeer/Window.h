@@ -15,6 +15,7 @@ public:
 	Window(int width, int height, const std::string& title, bool fullResolutionFullscreen = false, bool vSync = true);
 	~Window();
 
+	static const Window& FromGlfwWindow(GLFWwindow *glfwWindowPointer);
 
 	void GetFramebufferSize(int *widthPixels, int * heightPixels) const;
 	int GetFramebufferWidth() const;

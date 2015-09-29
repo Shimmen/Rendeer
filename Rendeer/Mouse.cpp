@@ -14,7 +14,7 @@ Mouse::Mouse(GLFWwindow *glfwWindow)
 
 /* static */ void Mouse::MouseButtonEventCallback(GLFWwindow *glfwWindow, int button, int action, int mods)
 {
-	Window& window = Window::FromGlfwWindow(glfwWindow);
+	const Window& window = Window::FromGlfwWindow(glfwWindow);
 
 	switch (action)
 	{
@@ -33,7 +33,7 @@ Mouse::Mouse(GLFWwindow *glfwWindow)
 
 /* static */ void Mouse::MouseMovementEventCallback(GLFWwindow *glfwWindow, double xPos, double yPos)
 {
-	Window& window = Window::FromGlfwWindow(glfwWindow);
+	const Window& window = Window::FromGlfwWindow(glfwWindow);
 	Mouse *mouse = window.mouse;
 
 	mouse->currentXPosition = xPos;
