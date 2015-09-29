@@ -18,12 +18,15 @@ so (at least) the Render() call is the same!
 class ScreenAlignedQuad
 {
 public:
+
 	ScreenAlignedQuad();
 	~ScreenAlignedQuad();
 	
 	void Render();
 
 private:
+
 	GLuint vertexArray;
 	GLuint vertexBuffer;
+
 };

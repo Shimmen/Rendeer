@@ -48,6 +48,11 @@ private:
 
 private:
 	
+	// Copying and moving is not allowed!
+	Shader(const Shader&) = delete;
+	Shader(Shader&&) = delete;
+	void operator=(const Shader&) = delete;
+
 	GLuint shaderProgram;
 	std::map<std::string, bool> uniformExists;
 	std::map<std::string, GLuint> uniformLocations;

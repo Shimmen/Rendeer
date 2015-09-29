@@ -11,100 +11,33 @@
 class Window
 {
 public:
+
 	Window(int width, int height, const std::string& title, bool fullResolutionFullscreen = false, bool vSync = true);
 	~Window();
 
-	inline static Window& FromGlfwWindow(GLFWwindow *glfwWindowPointer)
-	{
-		return *static_cast<Window *>(glfwGetWindowUserPointer(glfwWindowPointer));
-	}
 
-	inline void GetFramebufferSize(int *widthPixels, int * heightPixels) const
-	{
-		glfwGetFramebufferSize(windowHandle, widthPixels, heightPixels);
-	}
+	void GetFramebufferSize(int *widthPixels, int * heightPixels) const;
+	int GetFramebufferWidth() const;
+	int GetFramebufferHeight() const;
+	float GetAspectRatio() const;
 
-	inline int GetFramebufferWidth() const
-	{
-		int width;
-		GetFramebufferSize(&width, NULL);
-		return width;
-	}
-
-	inline int GetFramebufferHeight() const
-	{
-		int height;
-		GetFramebufferSize(NULL, &height);
-		return height;
-	}
-
-	inline void SetWindowPosition(int xPos, int yPos) const
-	{
-		glfwSetWindowPos(windowHandle, xPos, yPos);
-	}
-
-	inline float GetAspectRatio() const
-	{
-		int width, height;
-		GetFramebufferSize(&width, &height);
-
-		return (float)width / (float)height;
-	}
-
-	inline void BindAsDrawFramebuffer() const
-	{
-		int width, height;
-		GetFramebufferSize(&width, &height);
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-		glViewport(0, 0, width, height);
-	}
-
-	inline void SetVsyncEnabled(bool enabled) const
-	{
-		int interval = enabled ? 1 : 0;
-		glfwSwapInterval(interval);
-	}
-
-	inline void SwapBuffers() const
-	{
-		glfwSwapBuffers(windowHandle);
-	}
-
-	inline bool IsCloseRequested() const
-	{
-		return (glfwWindowShouldClose(windowHandle) != 0);
-	}
-
-	inline bool IsFullscreen() const
-	{
-		return isFullscreen;
-	}
-
-	inline void SetCursorHidden(bool hidden) const
-	{
-		int mode = (hidden) ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL;
-		glfwSetInputMode(windowHandle, GLFW_CURSOR, mode);
-		this->cursorIsHidden = hidden;
-	}
-
-	inline bool IsCursorHidden() const
-	{
-		return this->cursorIsHidden;
-	}
-
-	inline const Keyboard& GetKeyboard() const
-	{
-		return *keyboard;
-	}
-
-	inline const Mouse& GetMouse() const
-	{
-		return *mouse;
-	}
+	void BindAsDrawFramebuffer() const;
+	void SetVsyncEnabled(bool enabled) const;
+	void SwapBuffers() const;
 
 	void PollEvents() const;
+	
+	bool IsCloseRequested() const;
+	bool IsFullscreen() const;
+	bool IsCursorHidden() const;
+	void SetCursorHidden(bool hidden) const;
+	void SetWindowPosition(int xPos, int yPos) const;
+
+	inline const Keyboard& GetKeyboard() const { return *keyboard; }
+	inline const Mouse& GetMouse() const { return *mouse; }
 
 private:
+
 	GLFWwindow *windowHandle;
 
 	// You should be able to change this, given a const Window.

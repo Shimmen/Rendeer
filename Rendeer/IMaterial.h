@@ -2,6 +2,8 @@
 
 #include "Shader.h"
 
+#include <memory>
+
 class Transform;
 class DeferredRenderer;
 class Camera;
@@ -17,7 +19,6 @@ public:
 
 	virtual ~IMaterial()
 	{
-		delete shader;
 	}
 
 	virtual void UpdateUniforms(const DeferredRenderer& renderer,
@@ -26,6 +27,6 @@ public:
 
 protected:
 
-	Shader *shader;
+	const std::shared_ptr<Shader> shader;
 
 };

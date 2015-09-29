@@ -74,10 +74,10 @@ private:
 	bool wasButtonReleased[MOUSE_BUTTON_COUNT];
 
 
-	double lastXPosition = 0;
-	double lastYPosition = 0;
+	double lastXPosition{0};
+	double lastYPosition{0};
 
-	double currentXPosition = 0;
-	double currentYPosition = 0;
+	double currentXPosition{0};
+	double currentYPosition{0};
 
 };

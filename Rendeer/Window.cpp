@@ -43,7 +43,7 @@ Window::Window(int width, int height, const std::string& title, bool fullResolut
 	glfwMakeContextCurrent(windowHandle);
 
 	// Store a pointer to the screen in the user pointer of the window.
-	glfwSetWindowUserPointer(windowHandle, (void *)this);
+	glfwSetWindowUserPointer(windowHandle, static_cast<void *>(this));
 
 	// Load OpenGL extentions etc. Use the glfw loader with glad.
 	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
@@ -60,16 +60,66 @@ Window::Window(int width, int height, const std::string& title, bool fullResolut
 
 Window::~Window()
 {
-	// Not really needed, but why not.
-	glfwSetKeyCallback(windowHandle, NULL);
-	glfwSetMouseButtonCallback(windowHandle, NULL);
-	glfwSetCursorPosCallback(windowHandle, NULL);
-
+	// Redundant, since glfwTerminate() is called below.
+	glfwSetKeyCallback(windowHandle, nullptr);
+	glfwSetMouseButtonCallback(windowHandle, nullptr);
+	glfwSetCursorPosCallback(windowHandle, nullptr);
 
 	glfwDestroyWindow(windowHandle);
 
-	// Only one window is "allowed" at the moment.
+	// Only one window is "allowed" at the moment, so the glfw instance should be destroyed.
 	glfwTerminate();
+}
+
+/* static */ const Window& Window::FromGlfwWindow(GLFWwindow *glfwWindowPointer)
+{
+	return *static_cast<Window *>(glfwGetWindowUserPointer(glfwWindowPointer));
+}
+
+void Window::GetFramebufferSize(int *widthPixels, int * heightPixels) const
+{
+	glfwGetFramebufferSize(this->windowHandle, widthPixels, heightPixels);
+}
+
+int Window::GetFramebufferWidth() const
+{
+	int width;
+	GetFramebufferSize(&width, NULL);
+	return width;
+}
+
+int Window::GetFramebufferHeight() const
+{
+	int height;
+	GetFramebufferSize(NULL, &height);
+	return height;
+}
+
+float Window::GetAspectRatio() const
+{
+	int width, height;
+	GetFramebufferSize(&width, &height);
+
+	return (float)width / (float)height;
+}
+
+void Window::BindAsDrawFramebuffer() const
+{
+	int width, height;
+	GetFramebufferSize(&width, &height);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+	glViewport(0, 0, width, height);
+}
+
+void Window::SetVsyncEnabled(bool enabled) const
+{
+	int interval = enabled ? 1 : 0;
+	glfwSwapInterval(interval);
+}
+
+void Window::SwapBuffers() const
+{
+	glfwSwapBuffers(this->windowHandle);
 }
 
 void Window::PollEvents() const
@@ -81,4 +131,31 @@ void Window::PollEvents() const
 	mouse->Update();
 
 	glfwPollEvents();
+}
+
+bool Window::IsCloseRequested() const
+{
+	return (glfwWindowShouldClose(this->windowHandle) != 0);
+}
+
+bool Window::IsFullscreen() const
+{
+	return this->isFullscreen;
+}
+
+bool Window::IsCursorHidden() const
+{
+	return this->cursorIsHidden;
+}
+
+void Window::SetCursorHidden(bool hidden) const
+{
+	int mode = (hidden) ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL;
+	glfwSetInputMode(windowHandle, GLFW_CURSOR, mode);
+	this->cursorIsHidden = hidden;
+}
+
+void Window::SetWindowPosition(int xPos, int yPos) const
+{
+	glfwSetWindowPos(this->windowHandle, xPos, yPos);
 }

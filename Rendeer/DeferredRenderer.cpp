@@ -6,7 +6,7 @@
 #include "Texture2D.h"
 #include "DiffuseMaterial.h"
 
-DeferredRenderer::DeferredRenderer(Window& window)
+DeferredRenderer::DeferredRenderer(const Window& window)
 	: window(window)
 	, gBuffer(window.GetFramebufferWidth(), window.GetFramebufferHeight())
 {

@@ -2,6 +2,8 @@
 
 #include <glm/fwd.hpp>
 
+#include <memory>
+
 #include "Shader.h"
 #include "Texture2D.h"
 #include "Transform.h"
@@ -24,7 +26,6 @@ public:
 
 	virtual ~ILight()
 	{
-		delete shader;
 	}
 
 	virtual void SetUniforms(const DeferredRenderer& renderer, Camera& camera) const = 0;
@@ -39,7 +40,7 @@ public:
 	
 protected:
 
-	const Shader *shader;
+	const std::shared_ptr<Shader> shader;
 	Transform transform;
 
 	bool castsShadows{false};

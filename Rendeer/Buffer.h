@@ -8,6 +8,7 @@
 class Buffer
 {
 public:
+
 	Buffer();
 	Buffer(GLuint bufferHandle);
 	Buffer(Buffer& other);
@@ -38,9 +39,11 @@ public:
 	GLuint GetBufferHandle() const;
 
 private:
+
 	GLuint bufferHandle;
 	mutable GLenum lastBoundTarget;
 
 	static GLuint currentlyBoundBufferHandle;
 	static std::map<GLuint, int> referenceCountForBufferHandle;
+
 };
