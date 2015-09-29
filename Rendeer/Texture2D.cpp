@@ -12,6 +12,7 @@ Texture2D::Texture2D(const std::string& filename, bool srgb, GLint magFilter, GL
 }
 
 Texture2D::Texture2D(const Bitmap& image, bool srgb, GLint magFilter, GLint wrapMode)
+	: ITexture()
 {
 	if (image.GetData().size() <= 0)
 	{
@@ -41,6 +42,7 @@ Texture2D::Texture2D(const Bitmap& image, bool srgb, GLint magFilter, GLint wrap
 }
 
 Texture2D::Texture2D(int width, int height, GLenum format, GLenum internalFormat, GLint wrapMode, GLint magFilter, GLint minFilter)
+	: ITexture()
 {
 	this->width = width;
 	this->height = height;
@@ -59,18 +61,9 @@ Texture2D::Texture2D(int width, int height, GLenum format, GLenum internalFormat
 	SetMaxAnisotropy();
 }
 
-Texture2D::~Texture2D()
-{
-	glDeleteTextures(1, &textureHandle);
-}
-
 void Texture2D::Bind(int textureTarget) const
 {
-	// 32 is the maximum active textures possible/allowed
-	assert(textureTarget >= 0 && textureTarget < 32);
-
-	glActiveTexture(GL_TEXTURE0 + textureTarget);
-	glBindTexture(GL_TEXTURE_2D, textureHandle);
+	ITexture::Bind(GL_TEXTURE_2D, textureTarget);
 }
 
 void Texture2D::SetBorderColor(const glm::vec4& color)

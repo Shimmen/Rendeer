@@ -1,5 +1,7 @@
 #pragma once
 
+#include "ITexture.h"
+
 #include "glm/fwd.hpp"
 
 #include <string>
@@ -7,7 +9,7 @@
 
 class Bitmap;
 
-class Texture2D
+class Texture2D: public ITexture
 {
 public:
 
@@ -15,14 +17,11 @@ public:
 	Texture2D(const Bitmap& image, bool srgb, GLint magFilter = GL_LINEAR, GLint wrapMode = GL_REPEAT);
 
 	Texture2D(int width, int height, GLenum format, GLenum internalFormat, GLint wrapMode, GLint magFilter, GLint minFilter);
-
-	~Texture2D();
 	
 	void Bind(int textureTarget) const;
 
 	void SetBorderColor(const glm::vec4& color);
 
-	inline GLuint GetHandle() const { return textureHandle; }
 	inline int GetWidth() const { return width; }
 	inline int GetHeight() const { return height; }
 
@@ -35,8 +34,6 @@ private:
 	void SetMaxAnisotropy() const;
 
 private:
-
-	GLuint textureHandle;
 
 	int width;
 	int height;
