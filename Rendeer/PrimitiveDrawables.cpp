@@ -35,7 +35,7 @@ ScreenAlignedQuad::~ScreenAlignedQuad()
 void ScreenAlignedQuad::Render()
 {
 	glBindVertexArray(vertexArray);
-	glDrawArrays(GL_TRIANGLES, 0, 12);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
 SkyboxCube::SkyboxCube()
@@ -105,5 +105,5 @@ SkyboxCube::~SkyboxCube()
 void SkyboxCube::Render()
 {
 	glBindVertexArray(vertexArray);
-	glDrawArrays(GL_TRIANGLES, 0, 6 * 2); // 6 quads * 2 triangles/quad
+	glDrawArrays(GL_TRIANGLES, 0, 6 * 6); // 6 quads * 6 vertices/quad
 }
