@@ -25,45 +25,45 @@
 int main(int argc, char *argv[])
 {
 	// DISPLAY & RENDERER
-	Window window(WINDOW_WIDTH, WINDOW_HEIGHT, "Rendeer", false, true);
-	DeferredRenderer deferredRenderer(window);
+	Window window{WINDOW_WIDTH, WINDOW_HEIGHT, "Rendeer", false, true};
+	DeferredRenderer deferredRenderer{window};
 
 	// CAMERA
-	Camera camera(glm::vec3(0, 1.5f, -2.8f), glm::angleAxis(0.5f, glm::vec3(1, 0, 0)),
-	              window.GetAspectRatio(), 1.0f, 1000.0f, glm::radians(75.0f), Camera::PERSPECTIVE);
+	Camera camera{glm::vec3{0, 1.5f, -2.8f}, glm::angleAxis(0.5f, glm::vec3{1, 0, 0}),
+		          window.GetAspectRatio(), 1.0f, 1000.0f, glm::radians(75.0f), Camera::PERSPECTIVE};
 
 	// TEAPOT
-	Mesh teapotMesh("models/teapot.obj");
-	Texture2D teapotTexture("textures/default.png", true);
+	Mesh teapotMesh{"models/teapot.obj"};
+	Texture2D teapotTexture{"textures/default.png", true};
 	DiffuseMaterial teapotMaterial;
 	teapotMaterial.diffuseTexture = &teapotTexture;
 	teapotMaterial.specularIntensity = 1.0f;
 	teapotMaterial.shininess = 100.0f;
-	Entity teapot(teapotMesh, teapotMaterial);
-	teapot.GetTransform().SetScale(0.01f).Scale(glm::vec3(0.5f, 1, 1));
-	teapot.GetTransform().SetPosition(glm::vec3(0, 0.5f, 1));
+	Entity teapot{teapotMesh, teapotMaterial};
+	teapot.GetTransform().SetScale(0.01f).Scale(glm::vec3{0.5f, 1, 1});
+	teapot.GetTransform().SetPosition(glm::vec3{0, 0.5f, 1});
 
 	// PANEL
-	Mesh panelMesh("models/cube.obj", false);
-	Texture2D panelTexture("textures/bricks.jpg", true);
-	Texture2D panelNormalMap("textures/bricks_normal.jpg", false);
+	Mesh panelMesh{"models/cube.obj", false};
+	Texture2D panelTexture{"textures/bricks.jpg", true};
+	Texture2D panelNormalMap{"textures/bricks_normal.jpg", false};
 	DiffuseMaterial panelMaterial;
 	panelMaterial.diffuseTexture = &panelTexture;
 	panelMaterial.normalMap = &panelNormalMap;
 	panelMaterial.specularIntensity = 0.05f;
 	panelMaterial.shininess = 20.0f;
-	Entity panel(panelMesh, panelMaterial);
-	panel.GetTransform().SetScale(glm::vec3(3.0f, 0.008f, 1.5f));
+	Entity panel{panelMesh, panelMaterial};
+	panel.GetTransform().SetScale(glm::vec3{3.0f, 0.008f, 1.5f});
 	
 	// FLOOR
-	Mesh floorMesh("models/curved_plane.obj");
-	Texture2D floorTexture("textures/default.png", true);
+	Mesh floorMesh{"models/curved_plane.obj"};
+	Texture2D floorTexture{"textures/default.png", true};
 	DiffuseMaterial floorMaterial;
 	floorMaterial.diffuseTexture = &floorTexture;
 	floorMaterial.specularIntensity = 0.05f;
 	floorMaterial.shininess = 10.0f;
-	Entity floor(floorMesh, floorMaterial);
-	floor.GetTransform().SetPosition(glm::vec3(0, -0.5f, 4));
+	Entity floor{floorMesh, floorMaterial};
+	floor.GetTransform().SetPosition(glm::vec3{0, -0.5f, 4});
 
 	// ENTITIES
 	std::vector<Entity *> entities;
@@ -72,13 +72,13 @@ int main(int argc, char *argv[])
 	entities.push_back(&floor);
 
 	// DIRECTIONAL LIGHT
-	DirectionalLight directionalLight(glm::quat(1, 1, 0, 1), glm::vec3(0.92f, 0.95f, 0.88f), 0.05f);
+	DirectionalLight directionalLight{glm::quat{1, 1, 0, 1}, glm::vec3{0.92f, 0.95f, 0.88f}, 0.05f};
 
 	// POINT LIGHT
-	PointLight pointLight(glm::vec3(0, 0.5f, 0), glm::vec3(1.0f, 0.1f, 0.15f), 0.35f);
+	PointLight pointLight{glm::vec3{0, 0.5f, 0}, glm::vec3{1.0f, 0.1f, 0.15f}, 0.35f};
 
 	// SPOT LIGHT
-	SpotLight spotLight(glm::vec3(0, -0.65f, 4), glm::quat(glm::normalize(glm::vec3(1, -3, 0))), glm::vec3(0, 0, 1), 2.0f, glm::radians(40.0f), glm::radians(30.0f));
+	SpotLight spotLight{glm::vec3{0, -0.65f, 4}, glm::quat{glm::normalize(glm::vec3{1, -3, 0})}, glm::vec3{0, 0, 1}, 2.0f, glm::radians(40.0f), glm::radians(30.0f)};
 
 	// LIGHTS
 	std::vector<ILight *> lights;

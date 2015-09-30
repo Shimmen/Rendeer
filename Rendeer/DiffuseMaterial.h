@@ -10,9 +10,9 @@ public:
 
 	DiffuseMaterial();
 
-	virtual void UpdateUniforms(const DeferredRenderer& renderer,
-	                            const Transform& transform,
-	                            const Camera& camera);
+	void UpdateUniforms(const DeferredRenderer& renderer,
+	                    const Transform& transform,
+	                    const Camera& camera) override;
 
 	// No real need to restrict access to these
 
