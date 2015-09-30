@@ -8,7 +8,7 @@
 #include "Window.h"
 #include "GBuffer.h"
 #include "Texture2D.h"
-#include "ScreenAlignedQuad.h"
+#include "PrimitiveDrawables.h"
 
 class ILight;
 
