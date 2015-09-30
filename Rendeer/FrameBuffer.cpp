@@ -30,7 +30,7 @@ void FrameBuffer::AttachTexture(const Texture2D& texture, GLenum attatchment) co
 	}
 
 	GLint lastBoundFramebuffer;
-	glGetIntegeri_v(GL_FRAMEBUFFER_BINDING, 0, &lastBoundFramebuffer);
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &lastBoundFramebuffer);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, frameBufferHandle);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, attatchment, GL_TEXTURE_2D, texture.GetHandle(), 0);
