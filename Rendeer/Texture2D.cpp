@@ -26,7 +26,6 @@ Texture2D::Texture2D(const Bitmap& image, bool srgb, GLint magFilter, GLint wrap
 	GLint externalFormat = CalculateExternalFormat(image.GetComponentsPerPixel());
 	GLint internalFormat = CalculateInternalFormat(externalFormat, srgb);
 
-	glGenTextures(1, &textureHandle);
 	glBindTexture(GL_TEXTURE_2D, textureHandle);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
@@ -47,7 +46,6 @@ Texture2D::Texture2D(int width, int height, GLenum format, GLenum internalFormat
 	this->width = width;
 	this->height = height;
 
-	glGenTextures(1, &textureHandle);
 	glBindTexture(GL_TEXTURE_2D, textureHandle);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
@@ -63,7 +61,7 @@ Texture2D::Texture2D(int width, int height, GLenum format, GLenum internalFormat
 
 void Texture2D::Bind(int textureTarget) const
 {
-	ITexture::Bind(GL_TEXTURE_2D, textureTarget);
+	ITexture::BindTexture(GL_TEXTURE_2D, textureTarget);
 }
 
 void Texture2D::SetBorderColor(const glm::vec4& color)

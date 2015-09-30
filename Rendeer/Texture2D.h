@@ -39,4 +39,3 @@ private:
 	int height;
 
 };
-
