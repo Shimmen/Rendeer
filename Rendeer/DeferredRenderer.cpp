@@ -29,6 +29,8 @@ void DeferredRenderer::BindForUsage() const
 	glDepthFunc(GL_LEQUAL);
 	
 	glEnable(GL_FRAMEBUFFER_SRGB);
+
+	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 }
 
 
@@ -131,6 +133,28 @@ void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::
 
 		quad.Render();
 	}
+
+	// TEMP - draw skybox
+	/*
+	glDisable(GL_BLEND);
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_GREATER);
+	glDepthMask(GL_FALSE);
+	skyboxShader.Bind();
+	skyboxShader.SetUniform("u_view_rotation_matrix", glm::mat4(glm::mat3(camera.GetViewMatrix()))); // remove translation part
+	skyboxShader.SetUniform("u_projection_matrix", camera.GetProjectionMatrix());
+	skyboxTexture.Bind(35);
+	skyboxShader.SetUniform("u_skybox_texture", 35);
+	//glEnable(GL_CULL_FACE);
+	//glCullFace(GL_FRONT);
+	skyboxMesh.Render();
+	glDepthMask(GL_TRUE);
+
+	// Reset state
+	glCullFace(GL_BACK);
+	glDepthFunc(GL_LEQUAL);
+	*/
+	// TEMP - draw skybox
 
 #if 0
 	RenderTextureToScreen(shadowMap);

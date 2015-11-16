@@ -6,8 +6,10 @@
 #include "Entity.h"
 #include "Camera.h"
 #include "Window.h"
+#include "Bitmap.h"
 #include "GBuffer.h"
 #include "Texture2D.h"
+#include "TextureCube.h"
 #include "PrimitiveDrawables.h"
 
 class ILight;
@@ -30,6 +32,17 @@ private:
 	GBuffer gBuffer;
 	ScreenAlignedQuad quad;
 	
+	Shader skyboxShader{"skybox.vsh", "skybox.fsh"};
+	SkyboxCube skyboxMesh;
+	TextureCube skyboxTexture{
+		Bitmap{"textures/skybox_sunset_flip/left.png"},
+		Bitmap{"textures/skybox_sunset_flip/right.png"},
+		Bitmap{"textures/skybox_sunset_flip/bottom.png"},
+		Bitmap{"textures/skybox_sunset_flip/top.png"},
+		Bitmap{"textures/skybox_sunset_flip/front.png"},
+		Bitmap{"textures/skybox_sunset_flip/back.png"}
+	};
+
 	Shader shadowMapGenerator{"Lighting/ShadowMapGenerator.vsh", "Lighting/ShadowMapGenerator.fsh"};
 	Texture2D shadowMap{2048, 2048, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT16, GL_CLAMP_TO_BORDER, GL_NEAREST, GL_NEAREST};
 	FrameBuffer shadowMapFramebuffer;
@@ -42,4 +55,3 @@ private:
 	Shader renderTextureShader{"postprocess.vsh", "render_texture.fsh"};
 
 };
-

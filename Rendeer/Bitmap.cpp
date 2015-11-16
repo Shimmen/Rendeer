@@ -7,13 +7,12 @@
 
 Bitmap::Bitmap(const std::string& filePath)
 {
+	// Flip images to make complient with OpenGL texture handling
+	stbi_set_flip_vertically_on_load(true);
 	pixel_component_t *tempStbiData = stbi_load(filePath.c_str(), &this->width, &this->height, &this->componentsPerPixel, 0);
 
 	if (tempStbiData != nullptr)
 	{
-		// TODO: Mirror image on the y-axis, since stbi loads the image so the first pixel
-		// is the top left one. OpenGL expects the lower left pixel to be the first.
-
 		// Copy data from stbi's memory into owned memory
 		int dataSize = GetWidth() * GetHeight() * GetComponentsPerPixel();
 		this->pixelData.resize(dataSize);

@@ -11,7 +11,7 @@ Model::Model(const std::string& fileName, bool genSmoothNormals)
 	unsigned int importerFlags = 0;
 	importerFlags |= aiProcess_Triangulate;
 	importerFlags |= aiProcess_CalcTangentSpace;
-	importerFlags |= aiProcess_FlipUVs;
+	//importerFlags |= aiProcess_FlipUVs; // sholdn't be neccesary now when stbi can load images flipped.
 
 	if (genSmoothNormals)
 	{
