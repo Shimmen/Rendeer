@@ -8,7 +8,7 @@
 
 DeferredRenderer::DeferredRenderer(const Window& window)
 	: window(window)
-	, lightAccumulationTexture{window.GetFramebufferWidth(), window.GetFramebufferHeight(), GL_RGBA, GL_RGBA16, GL_CLAMP_TO_EDGE, GL_NEAREST, GL_NEAREST}
+	, lightAccumulationTexture{window.GetFramebufferWidth(), window.GetFramebufferHeight(), GL_RGBA, GL_RGBA16F, GL_CLAMP_TO_EDGE, GL_NEAREST, GL_NEAREST}
 	, gBuffer(window.GetFramebufferWidth(), window.GetFramebufferHeight())
 {
 	lightAccumulationBuffer.AttachTexture(lightAccumulationTexture, GL_COLOR_ATTACHMENT0);
