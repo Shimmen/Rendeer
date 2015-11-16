@@ -138,4 +138,11 @@ float attenuation(in float lightToFragDistance)
 	return 1.0 / (lightToFragDistance * lightToFragDistance);
 }
 
+// Calculate luminance value from given rgb-color.
+float luminance(in vec3 rgbColor)
+{
+	const vec3 luminanceWeight = vec3(0.2126, 0.7152, 0.0722);
+	return dot(rgbColor, luminanceWeight);
+}
+
 #endif // _FUNCTIONS_GLSL

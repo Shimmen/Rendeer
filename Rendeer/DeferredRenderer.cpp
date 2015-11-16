@@ -8,8 +8,12 @@
 
 DeferredRenderer::DeferredRenderer(const Window& window)
 	: window(window)
+	, lightAccumulationTexture{window.GetFramebufferWidth(), window.GetFramebufferHeight(), GL_RGBA, GL_RGBA16, GL_CLAMP_TO_EDGE, GL_NEAREST, GL_NEAREST}
 	, gBuffer(window.GetFramebufferWidth(), window.GetFramebufferHeight())
 {
+	lightAccumulationBuffer.AttachTexture(lightAccumulationTexture, GL_COLOR_ATTACHMENT0);
+	assert(lightAccumulationBuffer.IsComplete());
+
 	shadowMap.SetBorderColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 	shadowMapFramebuffer.AttachTexture(shadowMap, GL_DEPTH_ATTACHMENT);
 	assert(shadowMapFramebuffer.IsComplete());
@@ -62,7 +66,7 @@ void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::
 	// Set up the gl state to render the light pass
 	// 
 
-	window.BindAsDrawFramebuffer();
+	lightAccumulationBuffer.BindAsDrawFrameBuffer();
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	for (auto light = lights.begin(); light != lights.end(); ++light)
@@ -105,7 +109,7 @@ void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::
 		// Render lights
 		// 
 
-		window.BindAsDrawFramebuffer();
+		lightAccumulationBuffer.BindAsDrawFrameBuffer();
 		
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_CULL_FACE);
@@ -160,6 +164,13 @@ void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::
 	RenderTextureToScreen(shadowMap);
 #endif
 
+	// Render light accumulation buffer onto screen with post processing
+	glDisable(GL_BLEND);
+	window.BindAsDrawFramebuffer();
+	postProcessShader.Bind();
+	lightAccumulationTexture.Bind(0);
+	renderTextureShader.SetUniform("u_texture", 0);
+	quad.Render();
 	window.SwapBuffers();
 }
 

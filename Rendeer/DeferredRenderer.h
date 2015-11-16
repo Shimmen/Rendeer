@@ -29,9 +29,19 @@ public:
 
 private:
 
-	GBuffer gBuffer;
 	ScreenAlignedQuad quad;
+
+	GBuffer gBuffer;
 	
+	FrameBuffer lightAccumulationBuffer;
+	Texture2D lightAccumulationTexture;
+
+	Shader shadowMapGenerator{ "Lighting/ShadowMapGenerator.vsh", "Lighting/ShadowMapGenerator.fsh" };
+	Texture2D shadowMap{ 2048, 2048, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT16, GL_CLAMP_TO_BORDER, GL_NEAREST, GL_NEAREST };
+	FrameBuffer shadowMapFramebuffer;
+
+	Shader postProcessShader{ "postprocess.vsh", "Postprocess/postprocess.fsh" };
+
 	Shader skyboxShader{"skybox.vsh", "skybox.fsh"};
 	SkyboxCube skyboxMesh;
 	TextureCube skyboxTexture{
@@ -42,10 +52,6 @@ private:
 		Bitmap{"textures/skybox_sunset_flip/front.png"},
 		Bitmap{"textures/skybox_sunset_flip/back.png"}
 	};
-
-	Shader shadowMapGenerator{"Lighting/ShadowMapGenerator.vsh", "Lighting/ShadowMapGenerator.fsh"};
-	Texture2D shadowMap{2048, 2048, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT16, GL_CLAMP_TO_BORDER, GL_NEAREST, GL_NEAREST};
-	FrameBuffer shadowMapFramebuffer;
 
 	// TODO: Should this really be a const-ref? Or should it be some kind of pointer value?
 	const Window& window;
