@@ -54,9 +54,10 @@ class DirectionalLight : public ILight
 {
 public:
 
-	DirectionalLight(const glm::quat& directionRotation, glm::vec3 color, float intensity)
+	DirectionalLight(const glm::quat& directionRotation, glm::vec3 color, float intensity, bool usingDynamicCameraPositioning = false)
 		: ILight(new Shader("postprocess.vsh", "Lighting/DirectionalLight.fsh")
 		, Transform(glm::vec3(0, 0, 0), glm::normalize(directionRotation)), color, intensity)
+		, usingDynamicCameraPositioning(usingDynamicCameraPositioning)
 	{
 		castsShadows = true;
 	}
@@ -65,6 +66,10 @@ public:
 
 	void SetUniforms(const DeferredRenderer& renderer, Camera& camera) const;
 	Camera GetLightCamera(const Camera& mainCamera, int shadowMapSize) const;
+
+private:
+
+	bool usingDynamicCameraPositioning;
 
 };
 
