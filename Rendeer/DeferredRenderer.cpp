@@ -169,7 +169,7 @@ void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::
 	window.BindAsDrawFramebuffer();
 	postProcessShader.Bind();
 	lightAccumulationTexture.Bind(0);
-	renderTextureShader.SetUniform("u_texture", 0);
+	nofilterFilter.SetUniform("u_texture", 0);
 	quad.Render();
 	window.SwapBuffers();
 }
@@ -177,10 +177,10 @@ void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::
 void DeferredRenderer::RenderTextureToScreen(const Texture2D& texture)
 {
 	window.BindAsDrawFramebuffer();
-	renderTextureShader.Bind();
+	nofilterFilter.Bind();
 
 	texture.Bind(0);
-	renderTextureShader.SetUniform("u_texture", 0);
+	nofilterFilter.SetUniform("u_texture", 0);
 
 	glDisable(GL_CULL_FACE);
 	glDisable(GL_DEPTH_TEST);

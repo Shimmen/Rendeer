@@ -7,7 +7,7 @@
 #ifndef _G_BUFFER_GLSL
 #define _G_BUFFER_GLSL
 
-#include "functions.glsl"
+#include "Generic/GenericFunctions.glsl"
 
 //
 // G-buffer definition for a specific fragment.

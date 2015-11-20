@@ -1,6 +1,6 @@
 #version 420 core
 
-#include "functions.glsl"
+#include "Generic/GenericFunctions.glsl"
 
 #define LIGHT_SHADER
 #include "GBuffer/g_buffer.glsl"

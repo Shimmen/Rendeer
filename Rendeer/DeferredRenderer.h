@@ -40,9 +40,9 @@ private:
 	Texture2D shadowMap{ 2048, 2048, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT16, GL_CLAMP_TO_BORDER, GL_NEAREST, GL_NEAREST };
 	FrameBuffer shadowMapFramebuffer;
 
-	Shader postProcessShader{ "postprocess.vsh", "Postprocess/Postprocess.fsh" };
+	Shader postProcessShader{ "Generic/ScreenSpaceQuad.vsh", "Postprocess/Postprocess.fsh" };
 
-	Shader skyboxShader{"skybox.vsh", "skybox.fsh"};
+	Shader skyboxShader{"Generic/Skybox.vsh", "Generic/Skybox.fsh"};
 	SkyboxCube skyboxMesh;
 	TextureCube skyboxTexture{
 		Bitmap{"textures/skybox_sunset_flip/left.png"},
@@ -58,6 +58,6 @@ private:
 
 	// Debug stuff etc.
 	void RenderTextureToScreen(const Texture2D& texture);
-	Shader renderTextureShader{"postprocess.vsh", "render_texture.fsh"};
+	Shader nofilterFilter{"Generic/ScreenSpaceQuad.vsh", "Filtering/Nofilter.fsh"};
 
 };

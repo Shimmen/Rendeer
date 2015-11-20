@@ -1,7 +1,7 @@
 #version 420 core
 
-#include "Filters/Filtering.glsl"
-#include "Filters/ToneMapping.glsl"
+#include "Filtering/Filtering.glsl"
+#include "Filtering/ToneMapping.glsl"
 
 layout(location=0) out vec4 o_fragment_color;
 

@@ -55,7 +55,7 @@ class DirectionalLight : public ILight
 public:
 
 	DirectionalLight(const glm::quat& directionRotation, glm::vec3 color, float intensity, bool usingDynamicCameraPositioning = false)
-		: ILight(new Shader("postprocess.vsh", "Lighting/DirectionalLight.fsh")
+		: ILight(new Shader("Generic/ScreenSpaceQuad.vsh", "Lighting/DirectionalLight.fsh")
 		, Transform(glm::vec3(0, 0, 0), glm::normalize(directionRotation)), color, intensity)
 		, usingDynamicCameraPositioning(usingDynamicCameraPositioning)
 	{
@@ -78,7 +78,7 @@ class PointLight : public ILight
 public:
 
 	PointLight(const glm::vec3 position, glm::vec3 color, float intensity)
-		: ILight(new Shader("postprocess.vsh", "Lighting/PointLight.fsh")
+		: ILight(new Shader("Generic/ScreenSpaceQuad.vsh", "Lighting/PointLight.fsh")
 		, Transform(position, glm::quat(0, 0, 0, 1)), color, intensity)
 	{
 		castsShadows = false;
@@ -96,7 +96,7 @@ class SpotLight : public ILight
 public:
 
 	SpotLight(const glm::vec3 position, const glm::quat orientation, glm::vec3 color, float intensity, float outerConeAngle, float innerConeAngle)
-		: ILight(new Shader("postprocess.vsh", "Lighting/SpotLight.fsh")
+		: ILight(new Shader("Generic/ScreenSpaceQuad.vsh", "Lighting/SpotLight.fsh")
 		, Transform(position, orientation), color, intensity)
 		, outerConeAngle(outerConeAngle), innerConeAngle(innerConeAngle)
 	{

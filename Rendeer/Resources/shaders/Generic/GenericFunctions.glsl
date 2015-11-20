@@ -5,8 +5,8 @@
  * between different shaders.
  */
 
-#ifndef _FUNCTIONS_GLSL
-#define _FUNCTIONS_GLSL
+#ifndef _GENERIC_FUNCTIONS_GLSL
+#define _GENERIC_FUNCTIONS_GLSL
 
 float lambertianFactor(in vec3 surfaceNormal, in vec3 lightDirection)
 {
@@ -46,4 +46,4 @@ float attenuation(in float lightToFragDistance)
 	return 1.0 / (lightToFragDistance * lightToFragDistance);
 }
 
-#endif // _FUNCTIONS_GLSL
+#endif // _GENERIC_FUNCTIONS_GLSL

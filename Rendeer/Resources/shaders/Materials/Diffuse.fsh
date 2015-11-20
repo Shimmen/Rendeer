@@ -2,7 +2,8 @@
 
 #define MATERIAL_SHADER
 #include "GBuffer/g_buffer.glsl"
-#include "functions.glsl"
+
+#include "Generic/GenericFunctions.glsl"
 
 smooth in vec2 v_tex_coord;
 smooth in vec3 v_normal;
