@@ -154,7 +154,9 @@ std::string Shader::ReadFile(const std::string& filePath)
 			// Append the result to this current string. Also, if it was an include directive, don't include the actual line.
 
 			// If the line begins with the include directive plus one (or more blankspaces)
-			if (line.find(std::string(SHADER_INCLUDE_DIRECTIVE) + " ") == 0)
+
+			auto foundPosition = line.find(std::string(SHADER_INCLUDE_DIRECTIVE) + " ");
+			if (foundPosition != std::string::npos)
 			{
 				const char * const DELIMITERS = " ";
 

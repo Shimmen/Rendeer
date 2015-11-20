@@ -5,6 +5,8 @@
 #define LIGHT_SHADER
 #include "GBuffer/g_buffer.glsl"
 
+#include "Shadowing/ShadowCalculations.glsl"
+
 layout(location=0) out vec4 o_fragment_color;
 
 noperspective in vec2 v_tex_coord;
