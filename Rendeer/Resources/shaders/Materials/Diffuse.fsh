@@ -1,7 +1,7 @@
 #version 420 core
 
 #define MATERIAL_SHADER
-#include "g_buffer.glsl"
+#include "GBuffer/g_buffer.glsl"
 #include "functions.glsl"
 
 smooth in vec2 v_tex_coord;

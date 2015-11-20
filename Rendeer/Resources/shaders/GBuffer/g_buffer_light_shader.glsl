@@ -1,48 +1,3 @@
-
-#ifndef _G_BUFFER_GLSL
-#define _G_BUFFER_GLSL
-
-#include "functions.glsl"
-
-
-// Defines a GBuffer for a specific fragment.
-struct GBuffer
-{
-	vec3 albedo;
-	vec3 normal;
-
-	float specularIntensity;
-	float shininess;
-
-#ifdef LIGHT_SHADER
-	vec3 position;
-#endif
-};
-
-
-
-#ifdef MATERIAL_SHADER
-
-layout(location=0) out vec3 o_albedo;
-layout(location=1) out vec3 o_normal;
-layout(location=2) out vec4 o_material;
-
-void writeGBufferData(in GBuffer gBuffer)
-{
-	o_albedo = gBuffer.albedo;
-
-	vec3 encodedNormal = encodeNormal(gBuffer.normal);
-	o_normal = encodedNormal;
-
-	o_material = vec4(gBuffer.specularIntensity, gBuffer.shininess, 0.0, 0.0);
-}
-
-#endif // MATERIAL_SHADER
-
-
-
-#ifdef LIGHT_SHADER
-
 uniform sampler2D u_albedo;
 uniform sampler2D u_normals;
 uniform sampler2D u_material;
@@ -77,9 +32,3 @@ GBuffer extractGBufferData(in vec2 texCoord)
 	gBuffer.position = viewSpacePosition.xyz;
 	return gBuffer;
 }
-
-#endif // LIGHT_SHADER
-
-
-
-#endif // _G_BUFFER_GLSL

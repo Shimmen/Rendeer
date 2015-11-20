@@ -3,7 +3,7 @@
 #include "functions.glsl"
 
 #define LIGHT_SHADER
-#include "g_buffer.glsl"
+#include "GBuffer/g_buffer.glsl"
 
 layout(location=0) out vec4 o_fragment_color;
 

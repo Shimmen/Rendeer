@@ -40,7 +40,7 @@ private:
 	Texture2D shadowMap{ 2048, 2048, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT16, GL_CLAMP_TO_BORDER, GL_NEAREST, GL_NEAREST };
 	FrameBuffer shadowMapFramebuffer;
 
-	Shader postProcessShader{ "postprocess.vsh", "Postprocess/postprocess.fsh" };
+	Shader postProcessShader{ "postprocess.vsh", "Postprocess/Postprocess.fsh" };
 
 	Shader skyboxShader{"skybox.vsh", "skybox.fsh"};
 	SkyboxCube skyboxMesh;

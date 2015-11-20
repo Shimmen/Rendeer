@@ -8,16 +8,6 @@
 #ifndef _FUNCTIONS_GLSL
 #define _FUNCTIONS_GLSL
 
-vec3 encodeNormal(in vec3 normal)
-{
-	return normal * 0.5 + 0.5;
-}
-
-vec3 decodeNormal(in vec3 encodedNormal)
-{
-	return encodedNormal * 2.0 - 1.0;
-}
-
 float lambertianFactor(in vec3 surfaceNormal, in vec3 lightDirection)
 {
 	return max(dot(normalize(surfaceNormal), normalize(-lightDirection)), 0.0);
