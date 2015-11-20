@@ -13,4 +13,15 @@ float luminance(in vec3 rgbColor)
 	return dot(rgbColor, luminanceWeight);
 }
 
+// Performs a high-pass filter of color (cut of lows are represented as vec4(0,0,0,0)).
+// Threshold is used as following:
+//   threshold=0 - everything passes through
+//   threshold>0 - less passes through as threshold increases.
+vec4 highPass(in vec4 color, in float threshold)
+{
+	float fragmentLuminance = luminance(color.rgb);
+	float multiplier = step(threshold, fragmentLuminance);
+	return color * vec4(multiplier, multiplier, multiplier, 1.0);
+}
+
 #endif // _FILTERING_GLSL

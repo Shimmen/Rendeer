@@ -169,7 +169,7 @@ void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::
 	window.BindAsDrawFramebuffer();
 	postProcessShader.Bind();
 	lightAccumulationTexture.Bind(0);
-	nofilterFilter.SetUniform("u_texture", 0);
+	postProcessShader.SetUniform("u_texture", 0);
 	quad.Render();
 	window.SwapBuffers();
 }

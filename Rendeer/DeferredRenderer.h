@@ -53,6 +53,9 @@ private:
 		Bitmap{"textures/skybox_sunset_flip/back.png"}
 	};
 
+	// Filters
+	Shader highPassFilter{"Generic/ScreenSpaceQuad.vsh", "Filtering/HighPassFilter.fsh"};
+
 	// TODO: Should this really be a const-ref? Or should it be some kind of pointer value?
 	const Window& window;
 
