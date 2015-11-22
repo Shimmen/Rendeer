@@ -9,10 +9,18 @@
 DeferredRenderer::DeferredRenderer(const Window& window)
 	: window(window)
 	, lightAccumulationTexture{window.GetFramebufferWidth(), window.GetFramebufferHeight(), GL_RGBA, GL_RGBA16F, GL_CLAMP_TO_EDGE, GL_NEAREST, GL_NEAREST}
+	, auxTexture1{ window.GetFramebufferWidth(), window.GetFramebufferHeight(), GL_RGBA, GL_RGBA16F, GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR }
+	, auxTexture2{ window.GetFramebufferWidth(), window.GetFramebufferHeight(), GL_RGBA, GL_RGBA16F, GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR }
 	, gBuffer(window.GetFramebufferWidth(), window.GetFramebufferHeight())
 {
 	lightAccumulationBuffer.AttachTexture(lightAccumulationTexture, GL_COLOR_ATTACHMENT0);
 	assert(lightAccumulationBuffer.IsComplete());
+
+	auxFramebuffer1.AttachTexture(auxTexture1, GL_COLOR_ATTACHMENT0);
+	assert(auxFramebuffer1.IsComplete());
+
+	auxFramebuffer2.AttachTexture(auxTexture2, GL_COLOR_ATTACHMENT0);
+	assert(auxFramebuffer2.IsComplete());
 
 	shadowMap.SetBorderColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 	shadowMapFramebuffer.AttachTexture(shadowMap, GL_DEPTH_ATTACHMENT);
@@ -164,13 +172,38 @@ void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::
 	RenderTextureToScreen(shadowMap);
 #endif
 
-	// Render light accumulation buffer onto screen with post processing
 	glDisable(GL_BLEND);
+
+	auxFramebuffer1.BindAsDrawFrameBuffer();
+	nofilterFilter.Bind();
+	lightAccumulationTexture.Bind(0);
+	nofilterFilter.SetUniform("u_texture", 0);
+	quad.Render();
+
+	// Blur light accumulation buffer in several passes
+	int numBlurPasses = 7;
+	for (int i = 0; i < numBlurPasses; i++)
+	{
+		auxFramebuffer2.BindAsDrawFrameBuffer();
+		auxTexture1.Bind(0);
+		gaussianBlurHorizontal.Bind();
+		gaussianBlurHorizontal.SetUniform("u_texture", 0);
+		quad.Render();
+
+		auxFramebuffer1.BindAsDrawFrameBuffer();
+		auxTexture2.Bind(0);
+		gaussianBlurVertical.Bind();
+		gaussianBlurVertical.SetUniform("u_texture", 0);
+		quad.Render();
+	}
+	
+	// Render light accumulation buffer onto screen with post processing
 	window.BindAsDrawFramebuffer();
 	postProcessShader.Bind();
-	lightAccumulationTexture.Bind(0);
+	auxTexture1.Bind(0);
 	postProcessShader.SetUniform("u_texture", 0);
 	quad.Render();
+
 	window.SwapBuffers();
 }
 

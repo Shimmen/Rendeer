@@ -24,4 +24,8 @@ vec4 highPass(in vec4 color, in float threshold)
 	return color * vec4(multiplier, multiplier, multiplier, 1.0);
 }
 
+// Sigma value used for the weights in GaussianBlur.fsh.
+// This should be used in GaussianBlurH/V.vsh aswell to match.
+const float GAUSSIAN_BLUR_SIGMA = 2.5;
+
 #endif // _FILTERING_GLSL

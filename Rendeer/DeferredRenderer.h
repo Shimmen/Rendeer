@@ -53,8 +53,14 @@ private:
 		Bitmap{"textures/skybox_sunset_flip/back.png"}
 	};
 
-	// Filters
+	// Filters etc.
+	Texture2D auxTexture1;
+	Texture2D auxTexture2;
+	FrameBuffer auxFramebuffer1;
+	FrameBuffer auxFramebuffer2;
 	Shader highPassFilter{"Generic/ScreenSpaceQuad.vsh", "Filtering/HighPassFilter.fsh"};
+	Shader gaussianBlurVertical{"Filtering/GaussianBlurV.vsh", "Filtering/GaussianBlur.fsh"};
+	Shader gaussianBlurHorizontal{"Filtering/GaussianBlurH.vsh", "Filtering/GaussianBlur.fsh"};
 
 	// TODO: Should this really be a const-ref? Or should it be some kind of pointer value?
 	const Window& window;
