@@ -55,9 +55,11 @@ private:
 
 	// Filters etc.
 	Texture2D auxTexture1;
-	Texture2D auxTexture2;
 	FrameBuffer auxFramebuffer1;
-	FrameBuffer auxFramebuffer2;
+	Texture2D auxTextureLow1;
+	Texture2D auxTextureLow2;
+	FrameBuffer auxFramebufferLow1;
+	FrameBuffer auxFramebufferLow2;
 	Shader highPassFilter{"Generic/ScreenSpaceQuad.vsh", "Filtering/HighPassFilter.fsh"};
 	Shader gaussianBlurVertical{"Filtering/GaussianBlurV.vsh", "Filtering/GaussianBlur.fsh"};
 	Shader gaussianBlurHorizontal{"Filtering/GaussianBlurH.vsh", "Filtering/GaussianBlur.fsh"};

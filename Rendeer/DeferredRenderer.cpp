@@ -8,10 +8,11 @@
 
 DeferredRenderer::DeferredRenderer(const Window& window)
 	: window(window)
+	, gBuffer(window.GetFramebufferWidth(), window.GetFramebufferHeight())
 	, lightAccumulationTexture{window.GetFramebufferWidth(), window.GetFramebufferHeight(), GL_RGBA, GL_RGBA16F, GL_CLAMP_TO_EDGE, GL_NEAREST, GL_NEAREST}
 	, auxTexture1{ window.GetFramebufferWidth(), window.GetFramebufferHeight(), GL_RGBA, GL_RGBA16F, GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR }
-	, auxTexture2{ window.GetFramebufferWidth(), window.GetFramebufferHeight(), GL_RGBA, GL_RGBA16F, GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR }
-	, gBuffer(window.GetFramebufferWidth(), window.GetFramebufferHeight())
+	, auxTextureLow1{ window.GetFramebufferWidth() / 4, window.GetFramebufferHeight() / 4, GL_RGBA, GL_RGBA16F, GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR }
+	, auxTextureLow2{ window.GetFramebufferWidth() / 4, window.GetFramebufferHeight() / 4, GL_RGBA, GL_RGBA16F, GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR }
 {
 	lightAccumulationBuffer.AttachTexture(lightAccumulationTexture, GL_COLOR_ATTACHMENT0);
 	assert(lightAccumulationBuffer.IsComplete());
@@ -19,8 +20,11 @@ DeferredRenderer::DeferredRenderer(const Window& window)
 	auxFramebuffer1.AttachTexture(auxTexture1, GL_COLOR_ATTACHMENT0);
 	assert(auxFramebuffer1.IsComplete());
 
-	auxFramebuffer2.AttachTexture(auxTexture2, GL_COLOR_ATTACHMENT0);
-	assert(auxFramebuffer2.IsComplete());
+	auxFramebufferLow1.AttachTexture(auxTextureLow1, GL_COLOR_ATTACHMENT0);
+	assert(auxFramebufferLow1.IsComplete());
+
+	auxFramebufferLow2.AttachTexture(auxTextureLow2, GL_COLOR_ATTACHMENT0);
+	assert(auxFramebufferLow2.IsComplete());
 
 	shadowMap.SetBorderColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 	shadowMapFramebuffer.AttachTexture(shadowMap, GL_DEPTH_ATTACHMENT);
@@ -33,7 +37,7 @@ DeferredRenderer::~DeferredRenderer()
 
 void DeferredRenderer::BindForUsage() const
 {
-	glClearColor(0, 0, 0, 1);
+	glClearColor(0, 0, 0, 0);
 
 	glFrontFace(GL_CW);
 	glCullFace(GL_BACK);
@@ -146,12 +150,24 @@ void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::
 		quad.Render();
 	}
 
-	// TEMP - draw skybox
+	glDisable(GL_BLEND);
+	glDisable(GL_DEPTH_TEST);
+
+	// Render light accumulation buffer into auxTexture1
+	auxFramebuffer1.BindAsDrawFrameBuffer();
+	glClear(GL_COLOR_BUFFER_BIT);
+	lightAccumulationTexture.Bind(0);
+	nofilterFilter.Bind();
+	nofilterFilter.SetUniform("u_texture", 0);
+	quad.Render();
+
+	// TODO: render skybox into light accumulation. However, this doesn't work *properly* until we make use of HDR skyboxes.
 	/*
 	glDisable(GL_BLEND);
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_GREATER);
-	glDepthMask(GL_FALSE);
+	glDisable(GL_DEPTH_TEST);
+	//glEnable(GL_DEPTH_TEST);
+	//glDepthFunc(GL_GREATER);
+	//glDepthMask(GL_FALSE);
 	skyboxShader.Bind();
 	skyboxShader.SetUniform("u_view_rotation_matrix", glm::mat4(glm::mat3(camera.GetViewMatrix()))); // remove translation part
 	skyboxShader.SetUniform("u_projection_matrix", camera.GetProjectionMatrix());
@@ -161,47 +177,68 @@ void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::
 	//glCullFace(GL_FRONT);
 	skyboxMesh.Render();
 	glDepthMask(GL_TRUE);
-
-	// Reset state
 	glCullFace(GL_BACK);
 	glDepthFunc(GL_LEQUAL);
 	*/
-	// TEMP - draw skybox
 
-#if 0
-	RenderTextureToScreen(shadowMap);
-#endif
+	//
+	// Perform bloom
+	//
+	
+	const int numBlurPasses = 4;
+	const float brightPassFilterThreshold = 1.2f;
 
-	glDisable(GL_BLEND);
-
-	// Render light accumulation buffer into auxTexture1
-	auxFramebuffer1.BindAsDrawFrameBuffer();
+	// Downsample current render
+	auxFramebufferLow1.BindAsDrawFrameBuffer();
+	glClear(GL_COLOR_BUFFER_BIT);
+	auxTexture1.Bind(0);
 	nofilterFilter.Bind();
-	lightAccumulationTexture.Bind(0);
 	nofilterFilter.SetUniform("u_texture", 0);
 	quad.Render();
 
-	// TODO: render skybox into light accumulation. However, this doesn't work *properly* until we make use of HDR skyboxes.
+	// Extract bright spots through a bright-pass filter
+	auxFramebufferLow2.BindAsDrawFrameBuffer();
+	glClear(GL_COLOR_BUFFER_BIT);
+	auxTextureLow1.Bind(0);
+	highPassFilter.Bind();
+	highPassFilter.SetUniform("u_texture", 0);
+	highPassFilter.SetUniform("u_threshold", brightPassFilterThreshold);
+	quad.Render();
 
-	// Blur light accumulation buffer in several passes
-	// TODO: Convert this to a proper bloom instead of just a blur.
-	int numBlurPasses = 7;
+	// Blur downsampled and high-passed render
 	for (int i = 0; i < numBlurPasses; i++)
 	{
-		auxFramebuffer2.BindAsDrawFrameBuffer();
-		auxTexture1.Bind(0);
-		gaussianBlurHorizontal.Bind();
-		gaussianBlurHorizontal.SetUniform("u_texture", 0);
-		quad.Render();
-
-		auxFramebuffer1.BindAsDrawFrameBuffer();
-		auxTexture2.Bind(0);
+		auxFramebufferLow1.BindAsDrawFrameBuffer();
+		glClear(GL_COLOR_BUFFER_BIT);
+		auxTextureLow2.Bind(0);
 		gaussianBlurVertical.Bind();
 		gaussianBlurVertical.SetUniform("u_texture", 0);
 		quad.Render();
+
+		auxFramebufferLow2.BindAsDrawFrameBuffer();
+		glClear(GL_COLOR_BUFFER_BIT);
+		auxTextureLow1.Bind(0);
+		gaussianBlurHorizontal.Bind();
+		gaussianBlurHorizontal.SetUniform("u_texture", 0);
+		quad.Render();
 	}
-	
-	// Render light accumulation buffer onto screen with final post processing step (like tone mapping etc.)
+
+	// Additivly blend the bloom result on top of the default render
+	auxFramebuffer1.BindAsDrawFrameBuffer();
+	auxTextureLow2.Bind(0);
+	nofilterFilter.Bind();
+	nofilterFilter.SetUniform("u_texture", 0);
+	glEnable(GL_BLEND);
+	glBlendEquation(GL_FUNC_ADD);
+	glBlendFunc(GL_ONE, GL_ONE);
+	quad.Render();
+	glDisable(GL_BLEND);
+
+	//
+	// Final post-processing
+	//
+
+	// Render light accumulation buffer onto screen with final post processing step(like tone mapping etc.)
 	window.BindAsDrawFramebuffer();
 	postProcessShader.Bind();
 	auxTexture1.Bind(0);
