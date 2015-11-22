@@ -174,13 +174,17 @@ void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::
 
 	glDisable(GL_BLEND);
 
+	// Render light accumulation buffer into auxTexture1
 	auxFramebuffer1.BindAsDrawFrameBuffer();
 	nofilterFilter.Bind();
 	lightAccumulationTexture.Bind(0);
 	nofilterFilter.SetUniform("u_texture", 0);
 	quad.Render();
 
+	// TODO: render skybox into light accumulation. However, this doesn't work *properly* until we make use of HDR skyboxes.
+
 	// Blur light accumulation buffer in several passes
+	// TODO: Convert this to a proper bloom instead of just a blur.
 	int numBlurPasses = 7;
 	for (int i = 0; i < numBlurPasses; i++)
 	{
@@ -197,7 +201,7 @@ void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::
 		quad.Render();
 	}
 	
-	// Render light accumulation buffer onto screen with post processing
+	// Render light accumulation buffer onto screen with final post processing step (like tone mapping etc.)
 	window.BindAsDrawFramebuffer();
 	postProcessShader.Bind();
 	auxTexture1.Bind(0);
