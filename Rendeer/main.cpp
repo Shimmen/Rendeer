@@ -13,6 +13,7 @@
 #include "Shader.h"
 #include "Entity.h"
 #include "Window.h"
+#include "Logger.h"
 #include "Texture2D.h"
 #include "Lighting.h"
 #include "DiffuseMaterial.h"
@@ -25,8 +26,24 @@
 int main(int argc, char *argv[])
 {
 	// DISPLAY & RENDERER
-	Window window{WINDOW_WIDTH, WINDOW_HEIGHT, "Rendeer", false, true};
+	const bool fullscreen = false;
+	const bool vsync = true;
+	Window window{WINDOW_WIDTH, WINDOW_HEIGHT, "Rendeer", fullscreen, vsync};
 	DeferredRenderer deferredRenderer{window};
+
+	// Log default startup stuff
+	Logger& logger = Logger::GetDefaultLogger();
+#if defined(_DEBUG)
+	logger.LogHeading("Rendeer - debug build");
+#else
+	logger.LogHeading("Rendeer - release build");
+#endif
+	logger.Log("Starting session with:");
+	logger.Log("\t- fullscreen " + Logger::GetStateDescription(fullscreen));
+	logger.Log("\t- vsync " + Logger::GetStateDescription(fullscreen));
+
+	logger.LogSubheading("Scene setup begin");
+	logger.LogTimestamp();
 
 	// CAMERA
 	Camera camera{glm::vec3{0, 1.5f, -2.8f}, glm::angleAxis(0.5f, glm::vec3{1, 0, 0}),
@@ -89,6 +106,9 @@ int main(int argc, char *argv[])
 	//////////
 	// LOOP //
 	//////////
+
+	logger.LogSubheading("Render loop begin");
+	logger.LogTimestamp();
 
 	// Will set up the renderer for rendering
 	deferredRenderer.BindForUsage();
@@ -175,6 +195,9 @@ int main(int argc, char *argv[])
 		deferredRenderer.Render(entities, lights, camera);
 
 	}
+
+	logger.LogSubheading("Render loop end");
+	logger.LogTimestamp();
 
 	return 0;
 }
