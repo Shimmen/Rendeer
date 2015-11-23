@@ -17,10 +17,10 @@ class ILight
 public:
 
 	ILight(Shader *shader, const Transform& transform, glm::vec3 color, float intensity)
-		: shader(shader)
-		, transform(transform)
-		, color(color)
-		, intensity(intensity)
+		: shader{ shader }
+		, transform{ transform }
+		, color{ color }
+		, intensity{ intensity }
 	{
 	}
 
@@ -55,9 +55,11 @@ class DirectionalLight : public ILight
 public:
 
 	DirectionalLight(const glm::quat& directionRotation, glm::vec3 color, float intensity, bool usingDynamicCameraPositioning = false)
-		: ILight(new Shader("Generic/ScreenSpaceQuad.vsh", "Lighting/DirectionalLight.fsh")
-		, Transform(glm::vec3(0, 0, 0), glm::normalize(directionRotation)), color, intensity)
-		, usingDynamicCameraPositioning(usingDynamicCameraPositioning)
+		: ILight{
+			new Shader{ "Generic/ScreenSpaceQuad.vsh", "Lighting/DirectionalLight.fsh" }
+			, Transform{ glm::vec3{0, 0, 0}, glm::normalize(directionRotation) }
+			, color, intensity }
+		, usingDynamicCameraPositioning{ usingDynamicCameraPositioning }
 	{
 		castsShadows = true;
 	}
@@ -78,8 +80,10 @@ class PointLight : public ILight
 public:
 
 	PointLight(const glm::vec3 position, glm::vec3 color, float intensity)
-		: ILight(new Shader("Generic/ScreenSpaceQuad.vsh", "Lighting/PointLight.fsh")
-		, Transform(position, glm::quat(0, 0, 0, 1)), color, intensity)
+		: ILight{
+			new Shader{"Generic/ScreenSpaceQuad.vsh", "Lighting/PointLight.fsh"}
+			, Transform{ position, glm::quat{0, 0, 0, 1}}
+			, color, intensity }
 	{
 		castsShadows = false;
 	}
@@ -96,9 +100,12 @@ class SpotLight : public ILight
 public:
 
 	SpotLight(const glm::vec3 position, const glm::quat orientation, glm::vec3 color, float intensity, float outerConeAngle, float innerConeAngle)
-		: ILight(new Shader("Generic/ScreenSpaceQuad.vsh", "Lighting/SpotLight.fsh")
-		, Transform(position, orientation), color, intensity)
-		, outerConeAngle(outerConeAngle), innerConeAngle(innerConeAngle)
+		: ILight{
+			new Shader{"Generic/ScreenSpaceQuad.vsh", "Lighting/SpotLight.fsh"}
+			, Transform{position, orientation}
+			, color, intensity }
+		, outerConeAngle{ outerConeAngle }
+		, innerConeAngle{ innerConeAngle }
 	{
 		assert(outerConeAngle >= innerConeAngle);
 		assert(outerConeAngle >= 0);

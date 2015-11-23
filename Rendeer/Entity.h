@@ -15,7 +15,7 @@ class Entity
 public:
 
 	Entity(Mesh& mesh, IMaterial& material)
-		: transform()
+		: transform{}
 	{
 		this->mesh = &mesh;
 		this->material = &material;

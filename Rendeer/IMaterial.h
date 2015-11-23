@@ -13,7 +13,7 @@ class IMaterial
 public:
 
 	IMaterial(Shader *shader)
-		: shader(shader)
+		: shader{ shader }
 	{
 	}
 

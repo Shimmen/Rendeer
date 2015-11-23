@@ -67,7 +67,7 @@ private:
 
 
 	// The highest possible button count is GLFW_MOUSE_BUTTON_LAST.
-	static const int MOUSE_BUTTON_COUNT = GLFW_MOUSE_BUTTON_LAST;
+	static const int MOUSE_BUTTON_COUNT{ GLFW_MOUSE_BUTTON_LAST };
 
 	bool isButtonDown[MOUSE_BUTTON_COUNT];
 	bool wasButtonPressed[MOUSE_BUTTON_COUNT];
