@@ -7,7 +7,7 @@
 #include "Bitmap.h"
 
 Texture2D::Texture2D(const std::string& filename, bool srgb, GLint magFilter, GLint wrapMode)
-	: Texture2D(Bitmap(filename), srgb, magFilter, wrapMode)
+	: Texture2D{ Bitmap{filename}, srgb, magFilter, wrapMode }
 {
 }
 

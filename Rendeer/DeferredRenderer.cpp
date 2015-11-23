@@ -7,8 +7,8 @@
 #include "DiffuseMaterial.h"
 
 DeferredRenderer::DeferredRenderer(const Window& window)
-	: window(window)
-	, gBuffer(window.GetFramebufferWidth(), window.GetFramebufferHeight())
+	: window{ window }
+	, gBuffer{ window.GetFramebufferWidth(), window.GetFramebufferHeight() }
 	, lightAccumulationTexture{window.GetFramebufferWidth(), window.GetFramebufferHeight(), GL_RGBA, GL_RGBA16F, GL_CLAMP_TO_EDGE, GL_NEAREST, GL_NEAREST}
 	, auxTexture1{ window.GetFramebufferWidth(), window.GetFramebufferHeight(), GL_RGBA, GL_RGBA16F, GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR }
 	, auxTextureLow1{ window.GetFramebufferWidth() / 4, window.GetFramebufferHeight() / 4, GL_RGBA, GL_RGBA16F, GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR }

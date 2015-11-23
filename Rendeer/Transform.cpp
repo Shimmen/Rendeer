@@ -13,9 +13,9 @@ Transform::Transform(glm::vec3 position, glm::vec3 rotation, float scale)
 */
 
 Transform::Transform(glm::vec3 position, glm::quat orientation, glm::vec3 scale)
-	: position(position)
-	, orientation(orientation)
-	, scale(scale)
+	: position{ position }
+	, orientation{ orientation }
+	, scale{ scale }
 {
 }
 

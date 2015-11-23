@@ -30,10 +30,11 @@ Bitmap::Bitmap(const std::string& filePath)
 }
 
 Bitmap::Bitmap(int width, int height, int componentsPerPixel, const std::vector<pixel_component_t>& data)
-	: width(width)
-	, height(height)
-	, componentsPerPixel(componentsPerPixel)
+	: width{ width }
+	, height{ height }
+	, componentsPerPixel{ componentsPerPixel }
 	, pixelData(width * height * componentsPerPixel)
+	, isHdr{false}
 {
 	SetData(data);
 }

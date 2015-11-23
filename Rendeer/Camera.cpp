@@ -9,12 +9,12 @@
 
 Camera::Camera(const glm::vec3& position, const glm::quat& rotation, float aspectRatio,
 			   float nearPlane, float farPlane, float fovOrSize, Camera::CameraType type)
-	: transform(position, rotation)
-	, aspectRatio(aspectRatio)
-	, nearClippingPlane(nearPlane)
-	, farClippingPlane(farPlane)
-	, fovOrSize(fovOrSize)
-	, type(type)
+	: transform{ position, rotation }
+	, aspectRatio{ aspectRatio }
+	, nearClippingPlane{ nearPlane }
+	, farClippingPlane{ farPlane }
+	, fovOrSize{ fovOrSize }
+	, type{ type }
 {
 	assert(farClippingPlane > nearClippingPlane);
 	assert(fovOrSize > 0.0f);

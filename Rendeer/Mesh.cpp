@@ -10,7 +10,7 @@
 #include "Buffer.h"
 
 Mesh::Mesh(const std::string& filePath, bool genSmoothNormals)
-	: Mesh(Model(filePath, genSmoothNormals))
+	: Mesh{ Model{filePath, genSmoothNormals} }
 {
 }
 
@@ -41,7 +41,7 @@ GLuint Mesh::CreateMesh(const Model& model)
 
 	// TODO: Use stride and offset!
 	int stride = 0;
-	int offset = 0;
+	INT64 offset = 0;
 
 	// Positions
 	buffers[POSITION_BUFFER].Bind(GL_ARRAY_BUFFER).SetData(model.positions, GL_STATIC_DRAW);

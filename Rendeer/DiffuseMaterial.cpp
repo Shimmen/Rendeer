@@ -6,7 +6,7 @@
 #include "Camera.h"
 
 DiffuseMaterial::DiffuseMaterial()
-	: IMaterial(new Shader("Materials/Diffuse.vsh", "Materials/Diffuse.fsh"))
+	: IMaterial{ new Shader{"Materials/Diffuse.vsh", "Materials/Diffuse.fsh"} }
 {
 }
 
