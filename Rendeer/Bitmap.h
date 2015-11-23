@@ -17,7 +17,6 @@ public:
 	int GetWidth() const;
 	int GetHeight() const;
 
-	int GetPixelCount() const;
 	int GetComponentsPerPixel() const;
 
 	const std::vector<pixel_component_t>& GetData() const;
