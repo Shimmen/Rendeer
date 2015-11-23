@@ -1,6 +1,7 @@
 #include "GBuffer.h"
 
 #include "Shader.h"
+#include "Logger.h"
 
 GBuffer::GBuffer(int renderWidth, int renderHeight)
 	: frameBuffer{}
@@ -18,7 +19,7 @@ GBuffer::GBuffer(int renderWidth, int renderHeight)
 	GLenum reason = 0;
 	if (!frameBuffer.IsComplete(&reason))
 	{
-		std::cout << "Error: G Buffer framebuffer is incomplete!\nReason: " << reason << std::endl;
+		Logger::GetDefaultLogger().Log("Error: GBuffer framebuffer is incomplete! Reason: " + reason);
 	}
 }
 

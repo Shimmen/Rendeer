@@ -6,6 +6,8 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+#include "Logger.h"
+
 Model::Model(const std::string& fileName, bool genSmoothNormals)
 {
 	unsigned int importerFlags = 0;
@@ -26,9 +28,9 @@ Model::Model(const std::string& fileName, bool genSmoothNormals)
 	const aiScene* scene = importer.ReadFile(fileName, importerFlags);
 	if (scene == nullptr)
 	{
-		std::cerr << "Error: could not load Model with file name: " << fileName << std::endl;
-		std::cerr << importer.GetErrorString() << std::endl;
-		exit(1);
+		const Logger& logger = Logger::GetDefaultLogger();
+		logger.Log("Error: could not load Model with file name: " + fileName);
+		logger.Log("       Reason: " + std::string(importer.GetErrorString()));
 	}
 
 	// Get the first mesh (we sort of assume there is only one)

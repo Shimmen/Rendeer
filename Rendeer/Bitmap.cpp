@@ -5,6 +5,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
+#include "Logger.h"
+
 Bitmap::Bitmap(const std::string& filePath)
 {
 	// Flip images to make complient with OpenGL texture handling
@@ -25,7 +27,7 @@ Bitmap::Bitmap(const std::string& filePath)
 	}
 	else
 	{
-		std::cerr << "Error: could not load texture with name: " << filePath << "." << std::endl;
+		Logger::GetDefaultLogger().Log("Error: could not load texture with name: " + filePath + ".");
 	}
 }
 

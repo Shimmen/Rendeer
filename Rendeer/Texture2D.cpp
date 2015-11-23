@@ -5,6 +5,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Bitmap.h"
+#include "Logger.h"
 
 Texture2D::Texture2D(const std::string& filename, bool srgb, GLint magFilter, GLint wrapMode)
 	: Texture2D{ Bitmap{filename}, srgb, magFilter, wrapMode }
@@ -16,8 +17,7 @@ Texture2D::Texture2D(const Bitmap& image, bool srgb, GLint magFilter, GLint wrap
 {
 	if (image.GetData().size() <= 0)
 	{
-		// TODO: Do proper error handling
-		exit(EXIT_FAILURE);
+		Logger::GetDefaultLogger().Log("Texture2D ctor was given a Bitmap with empty (size <= 0) data.");
 	}
 
 	this->width = image.GetWidth();

@@ -5,6 +5,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Texture2D.h"
+#include "Logger.h"
 #include "Buffer.h"
 
 Shader::Shader(const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath)
@@ -206,8 +207,7 @@ std::string Shader::ReadFile(const std::string& filePath)
 	}
 	else
 	{
-		std::cerr << "Error, could not load shader file with file path: "
-			<< filePath << std::endl;
+		Logger::GetDefaultLogger().Log("Error, could not load shader file with file path: " + filePath);
 	}
 
 	return result;
@@ -256,6 +256,8 @@ void Shader::CheckShaderErrors(GLuint shader, int isProgram, GLuint stageFlag, c
 			glGetShaderInfoLog(shader, sizeof(errorMessage), NULL, errorMessage);
 		}
 
-		std::cerr << customMessage << errorMessage << std::endl;
+		const Logger& logger = Logger::GetDefaultLogger();
+		logger.Log("Shader error: " + customMessage);
+		logger.Log("\tshader compiler error:" + std::string(errorMessage));
 	}
 }
