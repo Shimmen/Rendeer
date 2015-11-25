@@ -20,16 +20,13 @@
 #include "DeferredRenderer.h"
 #include "Camera.h"
 
-#define WINDOW_WIDTH 1920
-#define WINDOW_HEIGHT 1080
-
 int main(int argc, char *argv[])
 {
 	// DISPLAY & RENDERER
-	const bool fullscreen = false;
-	const bool vsync = true;
-	Window window{WINDOW_WIDTH, WINDOW_HEIGHT, "Rendeer", fullscreen, vsync};
-	DeferredRenderer deferredRenderer{window};
+	const int WINDOW_WIDTH = 1920;
+	const int WINDOW_HEIGHT = 1080;
+	Window window{ WINDOW_WIDTH, WINDOW_HEIGHT, "Rendeer" };
+	DeferredRenderer deferredRenderer{ window };
 
 	// Log default startup stuff
 	Logger& logger = Logger::GetDefaultLogger();
@@ -39,8 +36,8 @@ int main(int argc, char *argv[])
 	logger.LogHeading("Rendeer - release build");
 #endif
 	logger.Log("Starting session with:");
-	logger.Log("\t- fullscreen " + Logger::GetStateDescription(fullscreen));
-	logger.Log("\t- vsync " + Logger::GetStateDescription(fullscreen));
+	logger.Log("\t- fullscreen " + Logger::GetStateDescription(window.IsFullscreen()));
+	logger.Log("\t- vsync " + Logger::GetStateDescription(window.IsVsyncEnabled()));
 
 	logger.LogSubheading("Scene setup begin");
 	logger.LogTimestamp();

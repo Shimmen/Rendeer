@@ -12,46 +12,64 @@ class Window
 {
 public:
 
-	Window(int width, int height, const std::string& title, bool fullResolutionFullscreen = false, bool vSync = true);
+	Window(int width, int height, const std::string& title, bool vSync = true);
+	Window(const std::string& title, bool vSync = true);
+
 	~Window();
 
 	static const Window& FromGlfwWindow(GLFWwindow *glfwWindowPointer);
+
+	void PollEvents() const;
+	void SwapBuffers() const;
+	bool IsCloseRequested() const;
+
+	void MakeContextCurrent() const;
+	void BindAsDrawFramebuffer() const;
+
+	bool IsFullscreen() const;
+	void SetWindowPosition(int xPos, int yPos) const;
 
 	void GetFramebufferSize(int *widthPixels, int * heightPixels) const;
 	int GetFramebufferWidth() const;
 	int GetFramebufferHeight() const;
 	float GetAspectRatio() const;
 
-	void BindAsDrawFramebuffer() const;
-	void SetVsyncEnabled(bool enabled) const;
-	void SwapBuffers() const;
-
-	void PollEvents() const;
+	bool IsVsyncEnabled() const;
+	void SetVsyncEnabled(bool enabled);
 	
-	bool IsCloseRequested() const;
-	bool IsFullscreen() const;
 	bool IsCursorHidden() const;
 	void SetCursorHidden(bool hidden) const;
-	void SetWindowPosition(int xPos, int yPos) const;
 
-	inline const Keyboard& GetKeyboard() const { return *keyboard; }
-	inline const Mouse& GetMouse() const { return *mouse; }
+	const Keyboard& GetKeyboard() const;
+	const Mouse& GetMouse() const;
+
+private:
+
+	Window(Window& other) = delete;
+	Window& operator=(Window& other) = delete;
+
+	GLFWwindow *CreateWindowedWindow(int width, int height, const std::string& title) const;
+	GLFWwindow *CreateFullscreenWindow(const std::string& title) const;
+
+	void InitializeGlfwIfNeeded() const;
+	void LoadOpenGLForCurrentContext() const;
+	void SetUpGlobalWindowHints() const;
+	void SetUpWindowUserPointer(GLFWwindow *window);
+	void CreateInputHandlers(GLFWwindow *window);
 
 private:
 
 	GLFWwindow *windowHandle;
-
-	// You should be able to change this, given a const Window.
-	// The state if this isnt really a big deal really.
-	mutable bool cursorIsHidden;
+	static int windowCount;
 
 	bool isFullscreen;
+	bool isVsyncEnabled;
 
-	// The input classes and their callbacks require
-	//access to certain members of the Window class
+	// The input classes and their callbacks require access to certain members of the Window class
 	friend class Keyboard;
 	friend class Mouse;
 
+	// Pointer types to initialization can be deferred to the constructor body
 	Keyboard *keyboard;
 	Mouse *mouse;
 
