@@ -69,13 +69,23 @@ void Logger::LogSubheading(std::string subheading) const
 	int remainingLength = preferredLineLength - subheadingLength;
 	if (remainingLength > 0)
 	{
-		int paddingOnEachSide = remainingLength / 2 - 1;
-		std::string padding = GenerateHorizontalDivider('-', paddingOnEachSide);
+		const char paddingChar = '-';
+		int paddingOnEachSide = remainingLength / 2;
+
+		// Subtract one from padding, since there is a space as padding as well
+		std::string paddingLeft = GenerateHorizontalDivider(paddingChar, paddingOnEachSide - 1);
+		std::string paddingRight = paddingLeft;
+
+		// If the subheading has an uneven length, add one extra padding character to one side
+		if (subheadingLength % 2 == 0)
+		{
+			paddingRight += paddingChar;
+		}
 
 		formattedSubheading
-			<< padding << " "
+			<< paddingLeft << " "
 			<< subheading
-			<< " " << padding;
+			<< " " << paddingRight;
 	}
 
 	LogEmptyLine();
