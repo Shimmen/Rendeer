@@ -11,8 +11,8 @@ DeferredRenderer::DeferredRenderer(const Window& window)
 	, gBuffer{ window.GetFramebufferWidth(), window.GetFramebufferHeight() }
 	, lightAccumulationTexture{window.GetFramebufferWidth(), window.GetFramebufferHeight(), GL_RGBA, GL_RGBA16F, GL_CLAMP_TO_EDGE, GL_NEAREST, GL_NEAREST}
 	, auxTexture1{ window.GetFramebufferWidth(), window.GetFramebufferHeight(), GL_RGBA, GL_RGBA16F, GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR }
-	, auxTextureLow1{ window.GetFramebufferWidth() / 4, window.GetFramebufferHeight() / 4, GL_RGBA, GL_RGBA16F, GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR }
-	, auxTextureLow2{ window.GetFramebufferWidth() / 4, window.GetFramebufferHeight() / 4, GL_RGBA, GL_RGBA16F, GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR }
+	, auxTextureLow1{ window.GetFramebufferWidth() / 2, window.GetFramebufferHeight() / 2, GL_RGBA, GL_RGBA16F, GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR }
+	, auxTextureLow2{ window.GetFramebufferWidth() / 2, window.GetFramebufferHeight() / 2, GL_RGBA, GL_RGBA16F, GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR }
 {
 	lightAccumulationBuffer.AttachTexture(lightAccumulationTexture, GL_COLOR_ATTACHMENT0);
 	assert(lightAccumulationBuffer.IsComplete());
@@ -185,8 +185,8 @@ void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::
 	// Perform bloom
 	//
 	
-	const int numBlurPasses = 4;
-	const float brightPassFilterThreshold = 1.2f;
+	const int numBlurPasses = 7;
+	const float brightPassFilterThreshold = 1.4f;
 
 	// Downsample current render
 	auxFramebufferLow1.BindAsDrawFrameBuffer();

@@ -44,6 +44,7 @@ int main(int argc, char *argv[])
 
 	logger.LogSubheading("Scene setup begin");
 	logger.LogTimestamp();
+	logger.LogEmptyLine();
 
 	// CAMERA
 	Camera camera{glm::vec3{0, 1.5f, -2.8f}, glm::angleAxis(0.5f, glm::vec3{1, 0, 0}),
@@ -109,6 +110,7 @@ int main(int argc, char *argv[])
 
 	logger.LogSubheading("Render loop begin");
 	logger.LogTimestamp();
+	logger.LogEmptyLine();
 
 	// Will set up the renderer for rendering
 	deferredRenderer.BindForUsage();
