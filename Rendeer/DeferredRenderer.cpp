@@ -6,14 +6,16 @@
 #include "Texture2D.h"
 #include "DiffuseMaterial.h"
 
-DeferredRenderer::DeferredRenderer(const Window& window)
+DeferredRenderer::DeferredRenderer(const Window *window)
 	: window{ window }
-	, gBuffer{ window.GetFramebufferWidth(), window.GetFramebufferHeight() }
-	, lightAccumulationTexture{window.GetFramebufferWidth(), window.GetFramebufferHeight(), GL_RGBA, GL_RGBA16F, GL_CLAMP_TO_EDGE, GL_NEAREST, GL_NEAREST}
-	, auxTexture1{ window.GetFramebufferWidth(), window.GetFramebufferHeight(), GL_RGBA, GL_RGBA16F, GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR }
-	, auxTextureLow1{ window.GetFramebufferWidth() / 2, window.GetFramebufferHeight() / 2, GL_RGBA, GL_RGBA16F, GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR }
-	, auxTextureLow2{ window.GetFramebufferWidth() / 2, window.GetFramebufferHeight() / 2, GL_RGBA, GL_RGBA16F, GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR }
+	, gBuffer{ window->GetFramebufferWidth(), window->GetFramebufferHeight() }
+	, lightAccumulationTexture{window->GetFramebufferWidth(), window->GetFramebufferHeight(), GL_RGBA, GL_RGBA16F, GL_CLAMP_TO_EDGE, GL_NEAREST, GL_NEAREST}
+	, auxTexture1{ window->GetFramebufferWidth(), window->GetFramebufferHeight(), GL_RGBA, GL_RGBA16F, GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR }
+	, auxTextureLow1{ window->GetFramebufferWidth() / 2, window->GetFramebufferHeight() / 2, GL_RGBA, GL_RGBA16F, GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR }
+	, auxTextureLow2{ window->GetFramebufferWidth() / 2, window->GetFramebufferHeight() / 2, GL_RGBA, GL_RGBA16F, GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR }
 {
+	assert(window != nullptr);
+
 	lightAccumulationBuffer.AttachTexture(lightAccumulationTexture, GL_COLOR_ATTACHMENT0);
 	assert(lightAccumulationBuffer.IsComplete());
 
@@ -239,18 +241,18 @@ void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::
 	//
 
 	// Render light accumulation buffer onto screen with final post processing step(like tone mapping etc.)
-	window.BindAsDrawFramebuffer();
+	window->BindAsDrawFramebuffer();
 	postProcessShader.Bind();
 	auxTexture1.Bind(0);
 	postProcessShader.SetUniform("u_texture", 0);
 	quad.Render();
 
-	window.SwapBuffers();
+	window->SwapBuffers();
 }
 
 void DeferredRenderer::RenderTextureToScreen(const Texture2D& texture)
 {
-	window.BindAsDrawFramebuffer();
+	window->BindAsDrawFramebuffer();
 	nofilterFilter.Bind();
 
 	texture.Bind(0);

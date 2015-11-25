@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
 	const int WINDOW_WIDTH = 1920;
 	const int WINDOW_HEIGHT = 1080;
 	Window window{ WINDOW_WIDTH, WINDOW_HEIGHT, "Rendeer" };
-	DeferredRenderer deferredRenderer{ window };
+	DeferredRenderer deferredRenderer{ &window };
 
 	// Log default startup stuff
 	Logger& logger = Logger::GetDefaultLogger();
