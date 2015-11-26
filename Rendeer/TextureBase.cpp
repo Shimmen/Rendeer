@@ -1,5 +1,7 @@
 #include "TextureBase.h"
 
+#include <cassert>
+
 GLuint TextureBase::GetTextureHandle() const
 {
 	return this->textureHandle;

@@ -1,5 +1,7 @@
 #include "TextureCube.h"
 
+#include <cassert>
+
 #include "Bitmap.h"
 
 TextureCube::TextureCube(const Bitmap& left,

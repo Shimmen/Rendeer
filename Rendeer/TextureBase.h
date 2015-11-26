@@ -2,8 +2,6 @@
 
 #include <glad/glad.h>
 
-#include <cassert>
-
 class TextureBase
 {
 public:
