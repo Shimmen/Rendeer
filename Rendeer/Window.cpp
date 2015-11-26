@@ -49,15 +49,9 @@ Window::Window(const std::string & title, bool vSync)
 
 Window::~Window()
 {
-	// Redundant, since glfwTerminate() is called below.
 	glfwSetKeyCallback(windowHandle, nullptr);
 	glfwSetMouseButtonCallback(windowHandle, nullptr);
 	glfwSetCursorPosCallback(windowHandle, nullptr);
-
-	// Delete keyboard and mouse instances
-	delete keyboard;
-	delete mouse;
-
 	glfwDestroyWindow(windowHandle);
 
 	windowCount--;
@@ -261,6 +255,6 @@ void Window::SetUpWindowUserPointer(GLFWwindow *window)
 
 void Window::CreateInputHandlers(GLFWwindow *window)
 {
-	keyboard = new Keyboard(window);
-	mouse = new Mouse(window);
+	keyboard.reset(new Keyboard(window));
+	mouse.reset(new Mouse(window));
 }

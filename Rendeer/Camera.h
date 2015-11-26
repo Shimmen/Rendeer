@@ -8,7 +8,7 @@ class Camera
 {
 public:
 
-	enum CameraType
+	enum class CameraType
 	{
 		PERSPECTIVE,
 		ORTHOGRAPHIC
@@ -17,7 +17,7 @@ public:
 public:
 
 	Camera(const glm::vec3& position, const glm::quat& rotation, float aspectRatio,
-		   float nearPlane, float farPlane, float fovOrSize, CameraType type = PERSPECTIVE);
+		   float nearPlane, float farPlane, float fovOrSize, CameraType type = CameraType::PERSPECTIVE);
 
 	inline Transform& GetTransform() { return transform; }
 	inline const Transform& GetTransform() const { return transform; }

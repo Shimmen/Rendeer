@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 
 #include <string>
+#include <memory>
 
 #include "Keyboard.h"
 #include "Mouse.h"
@@ -70,7 +71,7 @@ private:
 	friend class Mouse;
 
 	// Pointer types to initialization can be deferred to the constructor body
-	Keyboard *keyboard;
-	Mouse *mouse;
+	std::unique_ptr<Keyboard> keyboard;
+	std::unique_ptr<Mouse> mouse;
 
 };

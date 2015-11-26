@@ -34,7 +34,7 @@ glm::mat4 Camera::GetProjectionMatrix() const
 
 	switch (this->type)
 	{
-		case PERSPECTIVE:
+		case CameraType::PERSPECTIVE:
 		{
 			// glm::perspective uses a right handed coordinate system
 			// which I don't want, so below is my own version in
@@ -50,7 +50,7 @@ glm::mat4 Camera::GetProjectionMatrix() const
 			
 		} break;
 
-		case ORTHOGRAPHIC:
+		case CameraType::ORTHOGRAPHIC:
 		{
 			float halfVerticalSize = fovOrSize;
 			float halfDepth = (farClippingPlane - nearClippingPlane) * 0.5f;

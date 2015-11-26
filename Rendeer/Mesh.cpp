@@ -8,6 +8,7 @@
 #include <assimp/postprocess.h>
 
 #include "Buffer.h"
+#include "GeneralUtil.h"
 
 Mesh::Mesh(const std::string& filePath, bool genSmoothNormals)
 	: Mesh{ Model{filePath, genSmoothNormals} }
@@ -37,34 +38,34 @@ GLuint Mesh::CreateMesh(const Model& model)
 	glGenVertexArrays(1, &vertexArray);
 	glBindVertexArray(vertexArray);
 
-	auto buffers = Buffer::GenerateBuffers(MESH_BUFFER_COUNT);
+	auto buffers = Buffer::GenerateBuffers(nonstd::as_integer(MeshBuffers::MESH_BUFFER_COUNT));
 
 	// TODO: Use stride and offset!
 	int stride = 0;
 	INT64 offset = 0;
 
 	// Positions
-	buffers[POSITION_BUFFER].Bind(GL_ARRAY_BUFFER).SetData(model.positions, GL_STATIC_DRAW);
+	buffers[nonstd::as_integer(MeshBuffers::POSITION_BUFFER)].Bind(GL_ARRAY_BUFFER).SetData(model.positions, GL_STATIC_DRAW);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void *)offset);
 
 	// Normals
-	buffers[NORMAL_BUFFER].Bind(GL_ARRAY_BUFFER).SetData(model.normals, GL_STATIC_DRAW);
+	buffers[nonstd::as_integer(MeshBuffers::NORMAL_BUFFER)].Bind(GL_ARRAY_BUFFER).SetData(model.normals, GL_STATIC_DRAW);
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride, (void *)offset);
 
 	// Tangents
-	buffers[TANGENT_BUFFER].Bind(GL_ARRAY_BUFFER).SetData(model.tangents, GL_STATIC_DRAW);
+	buffers[nonstd::as_integer(MeshBuffers::TANGENT_BUFFER)].Bind(GL_ARRAY_BUFFER).SetData(model.tangents, GL_STATIC_DRAW);
 	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, stride, (void *)offset);
 
 	// Texture coordinates
-	buffers[TEXCOORD_BUFFER].Bind(GL_ARRAY_BUFFER).SetData(model.texCoords, GL_STATIC_DRAW);
+	buffers[nonstd::as_integer(MeshBuffers::TEXCOORD_BUFFER)].Bind(GL_ARRAY_BUFFER).SetData(model.texCoords, GL_STATIC_DRAW);
 	glEnableVertexAttribArray(3);
 	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, stride, (void *)offset);
 
 	// Indices
-	buffers[INDEX_BUFFER].Bind(GL_ELEMENT_ARRAY_BUFFER).SetData(model.indices, GL_STATIC_DRAW);
+	buffers[nonstd::as_integer(MeshBuffers::INDEX_BUFFER)].Bind(GL_ELEMENT_ARRAY_BUFFER).SetData(model.indices, GL_STATIC_DRAW);
 
 	// Unbind this so the buffers can be deleted. The vertex array is a container type
 	// so everything applied when it's bound will persist.

@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
 
 	// CAMERA
 	Camera camera{glm::vec3{0, 1.5f, -2.8f}, glm::angleAxis(0.5f, glm::vec3{1, 0, 0}),
-		          window.GetAspectRatio(), 1.0f, 1000.0f, glm::radians(75.0f), Camera::PERSPECTIVE};
+		          window.GetAspectRatio(), 1.0f, 1000.0f, glm::radians(75.0f), Camera::CameraType::PERSPECTIVE};
 
 	// TEAPOT
 	Mesh teapotMesh{"models/teapot.obj"};

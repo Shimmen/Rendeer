@@ -41,7 +41,7 @@ public:
 private:
 
 	// Not copy-assignable (for now at least)
-	Buffer& operator=(Buffer& other);
+	Buffer& operator=(Buffer& other) = delete;
 
 private:
 

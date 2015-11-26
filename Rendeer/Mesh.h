@@ -20,7 +20,7 @@ public:
 
 private:
 
-	enum MeshBuffers
+	enum class MeshBuffers
 	{
 		POSITION_BUFFER = 0,
 		NORMAL_BUFFER,

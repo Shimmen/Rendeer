@@ -152,5 +152,8 @@
     <ClInclude Include="ShaderUnit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GeneralUtil.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
