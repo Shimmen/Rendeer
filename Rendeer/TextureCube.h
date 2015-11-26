@@ -1,10 +1,10 @@
 #pragma once
 
-#include "ITexture.h"
+#include "TextureBase.h"
 
 class Bitmap;
 
-class TextureCube: public ITexture
+class TextureCube: public TextureBase
 {
 public:
 

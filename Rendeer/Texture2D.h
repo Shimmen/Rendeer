@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ITexture.h"
+#include "TextureBase.h"
 
 #include "glm/fwd.hpp"
 
@@ -9,7 +9,7 @@
 
 class Bitmap;
 
-class Texture2D: public ITexture
+class Texture2D: public TextureBase
 {
 public:
 

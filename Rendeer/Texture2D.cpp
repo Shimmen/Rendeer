@@ -13,7 +13,7 @@ Texture2D::Texture2D(const std::string& filename, bool srgb, GLint magFilter, GL
 }
 
 Texture2D::Texture2D(const Bitmap& image, bool srgb, GLint magFilter, GLint wrapMode)
-	: ITexture()
+	: TextureBase()
 {
 	if (image.GetData().size() <= 0)
 	{
@@ -26,7 +26,7 @@ Texture2D::Texture2D(const Bitmap& image, bool srgb, GLint magFilter, GLint wrap
 	GLint externalFormat = CalculateExternalFormat(image.GetComponentsPerPixel());
 	GLint internalFormat = CalculateInternalFormat(externalFormat, srgb);
 
-	glBindTexture(GL_TEXTURE_2D, textureHandle);
+	glBindTexture(GL_TEXTURE_2D, GetTextureHandle());
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
@@ -41,12 +41,12 @@ Texture2D::Texture2D(const Bitmap& image, bool srgb, GLint magFilter, GLint wrap
 }
 
 Texture2D::Texture2D(int width, int height, GLenum format, GLenum internalFormat, GLint wrapMode, GLint magFilter, GLint minFilter)
-	: ITexture()
+	: TextureBase()
 {
 	this->width = width;
 	this->height = height;
 
-	glBindTexture(GL_TEXTURE_2D, textureHandle);
+	glBindTexture(GL_TEXTURE_2D, GetTextureHandle());
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
@@ -61,7 +61,7 @@ Texture2D::Texture2D(int width, int height, GLenum format, GLenum internalFormat
 
 void Texture2D::Bind(int textureTarget) const
 {
-	ITexture::BindTexture(GL_TEXTURE_2D, textureTarget);
+	TextureBase::Bind(GL_TEXTURE_2D, textureTarget);
 }
 
 void Texture2D::SetBorderColor(const glm::vec4& color)

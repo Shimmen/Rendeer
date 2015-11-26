@@ -105,9 +105,11 @@
     <ClCompile Include="PrimitiveDrawables.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderUnit.cpp" />
+    <ClCompile Include="TextureBase.cpp" />
     <ClCompile Include="Texture2D.cpp" />
     <ClCompile Include="TextureCube.cpp" />
     <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="VertexArray.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -118,7 +120,7 @@
     <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="GBuffer.h" />
     <ClInclude Include="GeneralUtil.h" />
-    <ClInclude Include="ITexture.h" />
+    <ClInclude Include="TextureBase.h" />
     <ClInclude Include="Keyboard.h" />
     <ClInclude Include="Lighting.h" />
     <ClInclude Include="IMaterial.h" />
@@ -134,6 +136,7 @@
     <ClInclude Include="Texture2D.h" />
     <ClInclude Include="TextureCube.h" />
     <ClInclude Include="Transform.h" />
+    <ClInclude Include="VertexArray.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

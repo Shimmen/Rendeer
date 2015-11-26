@@ -8,7 +8,7 @@ TextureCube::TextureCube(const Bitmap& left,
                          const Bitmap& up,
                          const Bitmap& front,
                          const Bitmap& back)
-	: ITexture()
+	: TextureBase()
 {
 	// Assert all Bitmaps are in the RGB format
 	assert(left.GetComponentsPerPixel()  == 3 &&
@@ -18,7 +18,7 @@ TextureCube::TextureCube(const Bitmap& left,
 		   front.GetComponentsPerPixel() == 3 &&
 		   back.GetComponentsPerPixel()  == 3);
 
-	glBindTexture(GL_TEXTURE_CUBE_MAP, textureHandle);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, GetTextureHandle());
 
 	// Set texture parameters
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -39,5 +39,5 @@ TextureCube::TextureCube(const Bitmap& left,
 
 void TextureCube::Bind(int textureTarget) const
 {
-	ITexture::BindTexture(GL_TEXTURE_CUBE_MAP, textureTarget);
+	TextureBase::Bind(GL_TEXTURE_CUBE_MAP, textureTarget);
 }
