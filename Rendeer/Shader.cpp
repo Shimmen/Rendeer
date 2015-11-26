@@ -4,34 +4,33 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
-#include "Texture2D.h"
 #include "Logger.h"
 #include "Buffer.h"
+#include "Texture2D.h"
+#include "ShaderUnit.h"
 
 Shader::Shader(const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath)
 {
-	// Create shader components
-	GLuint vertexShader = CreateShaderComponent(ReadFile(vertexShaderFilePath), GL_VERTEX_SHADER);
-	GLuint fragmentShader = CreateShaderComponent(ReadFile(fragmentShaderFilePath), GL_FRAGMENT_SHADER);
+	// Create shader components/units
+	ShaderUnit vertexShader{ vertexShaderFilePath, ShaderUnit::Type::VERTEX_SHADER };
+	ShaderUnit fragmentShader{ fragmentShaderFilePath, ShaderUnit::Type::FRAGMENT_SHADER };
 
 	// Create program and attach components
 	shaderProgram = glCreateProgram();
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
+	glAttachShader(shaderProgram, vertexShader.shaderUnitHandle);
+	glAttachShader(shaderProgram, fragmentShader.shaderUnitHandle);
 
 	// Link program
 	glLinkProgram(shaderProgram);
-	CheckShaderErrors(shaderProgram, true, GL_LINK_STATUS, "Error linking program: ");
+	CheckShaderErrors(shaderProgram, GL_LINK_STATUS);
 
 	// Validate program
 	glValidateProgram(shaderProgram);
-	CheckShaderErrors(shaderProgram, true, GL_VALIDATE_STATUS, "Could not validate program!");
+	CheckShaderErrors(shaderProgram, GL_VALIDATE_STATUS);
 
-	// Release shader components
-	glDetachShader(shaderProgram, vertexShader);
-	glDetachShader(shaderProgram, fragmentShader);
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
+	// Release shader components from the program
+	glDetachShader(shaderProgram, vertexShader.shaderUnitHandle);
+	glDetachShader(shaderProgram, fragmentShader.shaderUnitHandle);
 	
 	LocateAndRegisterUniforms();
 }
@@ -97,9 +96,35 @@ void Shader::SetUniformBlock(const std::string& uniformBlockName, const Buffer& 
 	nextUniformBlockBinding = (nextUniformBlockBinding + 1) % GL_MAX_UNIFORM_BUFFER_BINDINGS;
 }
 
+void Shader::CheckShaderErrors(GLuint shaderProgram, GLenum stage) const
+{
+	assert(stage == GL_LINK_STATUS || stage == GL_VALIDATE_STATUS);
+
+	GLint success;
+	glGetProgramiv(shaderProgram, stage, &success);
+	if (success == GL_FALSE)
+	{
+		const Logger& logger = Logger::GetDefaultLogger();
+		if (stage == GL_LINK_STATUS)
+		{
+			logger.Log("Shader error: shader program could not be liked.");
+		}
+		else if (stage == GL_VALIDATE_STATUS)
+		{
+			logger.Log("Shader error: shader program could not be validated.");
+		}
+
+		GLchar errorMessage[2048];
+		memset(errorMessage, '\0', sizeof(errorMessage));
+		glGetProgramInfoLog(shaderProgram, sizeof(errorMessage), nullptr, errorMessage);
+
+		logger.Log("\terror message:" + std::string(errorMessage));
+	}
+}
+
 void Shader::LocateAndRegisterUniforms()
 {
-	static const int NAME_BUFFER_LENGTH = 200;
+	static const int NAME_BUFFER_LENGTH = 512;
 
 	this->Bind();
 
@@ -109,9 +134,9 @@ void Shader::LocateAndRegisterUniforms()
 	for (int i = 0; i < activeUniformCount; ++i)
 	{
 		char uniformName[NAME_BUFFER_LENGTH];
-		int uniformNameLength = 0;
+		int uniformNameLength;
 		glGetActiveUniformName(shaderProgram, GLuint(i), NAME_BUFFER_LENGTH - 1, &uniformNameLength, uniformName);
-		uniformName[uniformNameLength] = 0;
+		uniformName[uniformNameLength] = '\0';
 
 		GLuint location = glGetUniformLocation(shaderProgram, uniformName);
 		uniformLocations[uniformName] = location;
@@ -124,140 +149,12 @@ void Shader::LocateAndRegisterUniforms()
 	for (int i = 0; i < activeUniformBlockCount; ++i)
 	{
 		char uniformBlockName[NAME_BUFFER_LENGTH];
-		int uniformBlockNameLength = 0;
+		int uniformBlockNameLength;
 		glGetActiveUniformBlockName(shaderProgram, GLuint(i), NAME_BUFFER_LENGTH - 1, &uniformBlockNameLength, uniformBlockName);
-		uniformBlockName[uniformBlockNameLength] = 0;
+		uniformBlockName[uniformBlockNameLength] = '\0';
 
 		GLuint blockIndex = glGetUniformBlockIndex(shaderProgram, uniformBlockName);
 		uniformBlockIndicies[uniformBlockName] = blockIndex;
 		uniformExists[uniformBlockName] = true;
-	}
-	
-}
-
-std::string Shader::ReadFile(const std::string& filePath)
-{
-	const std::string fullFilePath = "shaders/" + filePath;
-
-	std::ifstream fileStream;
-	fileStream.open(fullFilePath);
-
-	std::string result;
-	std::string line;
-
-	if (fileStream.is_open())
-	{
-		while (fileStream.good())
-		{
-			getline(fileStream, line);
-
-			//if (line begins with SHADER_INCLUDE_DIRECTIVE, find the second blank space-separated thing in the line and call this function recursively.
-			// Append the result to this current string. Also, if it was an include directive, don't include the actual line.
-
-			// If the line begins with the include directive plus one (or more blankspaces)
-
-			auto foundPosition = line.find(std::string(SHADER_INCLUDE_DIRECTIVE) + " ");
-			if (foundPosition != std::string::npos)
-			{
-				const char * const DELIMITERS = " ";
-
-				// get non-const char * from string
-				const size_t lineBufferLength = line.length() + 1;
-				char * lineChars = new char[lineBufferLength];
-				strcpy_s(lineChars, lineBufferLength, line.c_str());
-
-				char *context = NULL;
-				std::vector<std::string> tokens;
-				char *currentToken = strtok_s(lineChars, DELIMITERS, &context);
-
-				while (currentToken != NULL)
-				{
-					tokens.push_back(std::string(currentToken));
-					currentToken = strtok_s(NULL, DELIMITERS, &context);
-				}
-
-				delete lineChars;
-
-				// Iff there are two tokens, assume the second is the path.
-				if (tokens.size() == 2)
-				{
-					// Extract the path from inside the quotation marks
-					// TODO: Handle relative paths (from the current file's context)
-					std::string path = tokens[1].substr(1, tokens[1].length() - 2);
-
-					// Append the contents, then continue on the next line.
-					result.append(ReadFile(path));
-					continue;
-				}
-				else
-				{
-					// Yep, I'm using goto.
-					goto appendCurrentLine;
-				}
-			}
-			else
-			{
-				goto appendCurrentLine;
-			}
-
-			appendCurrentLine:
-			result.append(line + "\n");
-		}
-		fileStream.close();
-	}
-	else
-	{
-		Logger::GetDefaultLogger().Log("Error, could not load shader file with file path: " + filePath);
-	}
-
-	return result;
-}
-
-GLuint Shader::CreateShaderComponent(const std::string& source, GLenum shaderType)
-{
-	GLuint shaderObject = glCreateShader(shaderType);
-
-	const GLchar *strings[1];
-	strings[0] = (GLchar *)source.c_str();
-	GLint lengths[1];
-	lengths[0] = (GLint)source.length();
-
-	glShaderSource(shaderObject, 1, strings, lengths);
-
-	glCompileShader(shaderObject);
-	CheckShaderErrors(shaderObject, false, GL_COMPILE_STATUS, "Error, could not compile shader: ");
-
-	return shaderObject;
-}
-
-void Shader::CheckShaderErrors(GLuint shader, int isProgram, GLuint stageFlag, const std::string& customMessage)
-{
-	GLint success;
-
-	if (isProgram)
-	{
-		glGetProgramiv(shader, stageFlag, &success);
-	}
-	else
-	{
-		glGetShaderiv(shader, stageFlag, &success);
-	}
-
-	if (success == GL_FALSE)
-	{
-		GLchar errorMessage[1024] = {0};
-
-		if (isProgram)
-		{
-			glGetProgramInfoLog(shader, sizeof(errorMessage), NULL, errorMessage);
-		}
-		else
-		{
-			glGetShaderInfoLog(shader, sizeof(errorMessage), NULL, errorMessage);
-		}
-
-		const Logger& logger = Logger::GetDefaultLogger();
-		logger.Log("Shader error: " + customMessage);
-		logger.Log("\tshader compiler error:" + std::string(errorMessage));
 	}
 }

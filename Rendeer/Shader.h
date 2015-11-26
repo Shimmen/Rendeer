@@ -40,20 +40,16 @@ public:
 
 private:
 	
+	void CheckShaderErrors(GLuint shaderProgram, GLenum stage) const;
 	void LocateAndRegisterUniforms();
 
-	std::string ReadFile(const std::string& filePath);
-	GLuint CreateShaderComponent(const std::string& source, GLenum shaderType);
-	void CheckShaderErrors(GLuint shader, int isProgram, GLuint stageFlag, const std::string& customMessage);
-
 private:
-	
-	// Copying and moving is not allowed!
+
 	Shader(const Shader&) = delete;
-	Shader(Shader&&) = delete;
-	void operator=(const Shader&) = delete;
+	Shader& operator=(const Shader&) = delete;
 
 	GLuint shaderProgram;
+
 	std::map<std::string, bool> uniformExists;
 	std::map<std::string, GLuint> uniformLocations;
 	std::map<std::string, GLuint> uniformBlockIndicies;
