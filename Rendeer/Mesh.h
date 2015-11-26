@@ -33,6 +33,11 @@ private:
 
 private:
 
+	Mesh(Mesh& other) = delete;
+	Mesh& operator=(Mesh& other) = delete;
+
+private:
+
 	GLuint vertexArray;
 	size_t indexCount;
 

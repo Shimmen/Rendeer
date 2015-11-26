@@ -33,6 +33,9 @@ private:
 	void GenerateMipmaps(GLint minFilter) const;
 	void SetMaxAnisotropy() const;
 
+	Texture2D(Texture2D&) = delete;
+	Texture2D& operator=(Texture2D&) = delete;
+
 private:
 
 	int width;

@@ -43,10 +43,10 @@ private:
 	void CheckShaderErrors(GLuint shaderProgram, GLenum stage) const;
 	void LocateAndRegisterUniforms();
 
-private:
+	Shader(Shader&) = delete;
+	Shader& operator=(Shader&) = delete;
 
-	Shader(const Shader&) = delete;
-	Shader& operator=(const Shader&) = delete;
+private:
 
 	GLuint shaderProgram;
 

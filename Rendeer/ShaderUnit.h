@@ -30,7 +30,7 @@ private:
 	static const std::string INCLUDE_DIRECTIVE;
 
 	// Non-copyable
-	ShaderUnit(const ShaderUnit& other) = delete;
+	ShaderUnit(ShaderUnit& other) = delete;
 	ShaderUnit& operator=(ShaderUnit& other) = delete;
 
 private:

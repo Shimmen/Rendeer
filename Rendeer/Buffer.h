@@ -40,6 +40,11 @@ public:
 
 private:
 
+	// Not copy-assignable (for now at least)
+	Buffer& operator=(Buffer& other);
+
+private:
+
 	GLuint bufferHandle;
 	mutable GLenum lastBoundTarget;
 

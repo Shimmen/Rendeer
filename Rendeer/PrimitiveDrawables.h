@@ -20,6 +20,11 @@ public:
 
 private:
 
+	ScreenAlignedQuad(ScreenAlignedQuad& other) = delete;
+	ScreenAlignedQuad& operator=(ScreenAlignedQuad& other) = delete;
+
+private:
+
 	GLuint vertexArray;
 	GLuint vertexBuffer;
 
@@ -33,6 +38,11 @@ public:
 	~SkyboxCube();
 
 	void Render();
+
+private:
+
+	SkyboxCube(SkyboxCube& other) = delete;
+	SkyboxCube& operator=(SkyboxCube& other) = delete;
 
 private:
 

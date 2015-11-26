@@ -17,5 +17,10 @@ public:
 
 	void Bind(int textureTarget) const;
 
+private:
+
+	TextureCube(TextureCube&) = delete;
+	TextureCube& operator=(TextureCube&) = delete;
+
 };
 

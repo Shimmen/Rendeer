@@ -29,4 +29,9 @@ protected:
 	mutable int attachedTextureWidth{0};
 	mutable int attachedTextureHeight{0};
 
+private:
+
+	FrameBuffer(FrameBuffer& other) = delete;
+	FrameBuffer& operator=(FrameBuffer& other) = delete;
+
 };
