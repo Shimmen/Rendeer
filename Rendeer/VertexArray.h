@@ -10,6 +10,7 @@ public:
 	~VertexArray();
 
 	void Bind() const;
+	void Unbind() const;
 
 	// There are more ways to render a vertexArray ... add them as they are needed.
 	void RenderWithElementArrayBuffer(GLenum polygonType, size_t indexCount, GLenum indexType = GL_UNSIGNED_INT) const;

@@ -7,16 +7,23 @@
 #include <glad/glad.h>
 
 #include "Model.h"
+#include "VertexArray.h"
 
 class Mesh
 {
 public:
 
-	Mesh(const std::string& filePath, bool genSmoothNormals = true);
 	Mesh(const Model& model);
+	Mesh(const std::string& filePath, bool genSmoothNormals = true);
 	~Mesh();
 
 	void Render();
+
+private:
+
+	// Non-copyable
+	Mesh(Mesh& other) = delete;
+	Mesh& operator=(Mesh& other) = delete;
 
 private:
 
@@ -33,14 +40,7 @@ private:
 
 private:
 
-	Mesh(Mesh& other) = delete;
-	Mesh& operator=(Mesh& other) = delete;
-
-private:
-
-	GLuint vertexArray;
+	VertexArray vertexArray;
 	size_t indexCount;
-
-	GLuint CreateMesh(const Model& model);
 
 };

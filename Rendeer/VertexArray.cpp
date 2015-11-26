@@ -17,9 +17,13 @@ void VertexArray::Bind() const
 	glBindVertexArray(this->vertexArrayHandle);
 }
 
+void VertexArray::Unbind() const
+{
+	glBindVertexArray(0);
+}
+
 void VertexArray::RenderWithElementArrayBuffer(GLenum polygonType, size_t indexCount, GLenum indexType) const
 {
-	this->Bind();
 	glDrawElements(polygonType, static_cast<GLsizei>(indexCount), indexType, nullptr);
 }
 
@@ -31,7 +35,6 @@ void VertexArray::AddVertexAttribute(int index, int valueCount, GLenum valueType
 	// (At least not for a floating point processor like for a PC).
 	static const GLboolean normalizeFixedPointValues = GL_FALSE;
 
-	this->Bind();
 	glEnableVertexAttribArray(index);
 	glVertexAttribPointer(index, valueCount, valueType, normalizeFixedPointValues, stride, offset);
 }
