@@ -2,6 +2,7 @@
 
 #include <vector>
 
+#include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Logger.h"
@@ -85,7 +86,7 @@ void Shader::SetUniformBlock(const std::string& uniformBlockName, const Buffer& 
 	buffer.Bind(GL_UNIFORM_BUFFER);
 
 	// Bind the uniform buffer to a unique binding. It's possible that the binding will not be unique,
-	// but it's unlikely, since GL_MAX_UNIFORM_BUFFER_BINDINGS is very large.
+	// but it's unlikely, since GL_MAX_UNIFORM_BUFFER_BINDINGS is quite large.
 	GLuint binding = nextUniformBlockBinding;
 	glBindBufferBase(GL_UNIFORM_BUFFER, binding, buffer.GetBufferHandle());
 
@@ -93,7 +94,7 @@ void Shader::SetUniformBlock(const std::string& uniformBlockName, const Buffer& 
 	glUniformBlockBinding(shaderProgram, uniformBlockIndicies.at(uniformBlockName), binding);
 
 	// Calculate next uniform binding
-	nextUniformBlockBinding = (nextUniformBlockBinding + 1) % GL_MAX_UNIFORM_BUFFER_BINDINGS;
+	nextUniformBlockBinding = (nextUniformBlockBinding + 1) % GetMaxNumberOfUniformBufferBindings();
 }
 
 void Shader::CheckShaderErrors(GLuint shaderProgram, GLenum stage) const
@@ -158,3 +159,17 @@ void Shader::LocateAndRegisterUniforms()
 		uniformExists[uniformBlockName] = true;
 	}
 }
+
+int Shader::GetMaxNumberOfUniformBufferBindings()
+{
+	if (Shader::maxNumberOfUniformBufferBindings == -1)
+	{
+		GLint64 count;
+		glGetInteger64v(GL_MAX_UNIFORM_BUFFER_BINDINGS, &count);
+		Shader::maxNumberOfUniformBufferBindings = static_cast<int>(count);
+	}
+
+	return Shader::maxNumberOfUniformBufferBindings;
+}
+
+/* static */ int Shader::maxNumberOfUniformBufferBindings{ -1 };

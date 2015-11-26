@@ -7,16 +7,12 @@
 #include <vector>
 
 #include <glad/glad.h>
-#include <glm/glm.hpp>
+#include <glm/fwd.hpp>
 
 class Transform;
 class Texture;
 class Material;
 class Buffer;
-
-#ifndef SHADER_INCLUDE_DIRECTIVE
-#define SHADER_INCLUDE_DIRECTIVE "#include"
-#endif
 
 class Shader
 {
@@ -54,5 +50,13 @@ private:
 	std::map<std::string, GLuint> uniformLocations;
 	std::map<std::string, GLuint> uniformBlockIndicies;
 	mutable int nextUniformBlockBinding;
+
+public:
+
+	static int GetMaxNumberOfUniformBufferBindings();
+
+private:
+
+	static int maxNumberOfUniformBufferBindings;
 
 };
