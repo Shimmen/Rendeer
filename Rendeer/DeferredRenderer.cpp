@@ -28,6 +28,7 @@ DeferredRenderer::DeferredRenderer(const Window *window)
 	auxFramebufferLow2.AttachTexture(auxTextureLow2, GL_COLOR_ATTACHMENT0);
 	assert(auxFramebufferLow2.IsComplete());
 
+	shadowMap.Bind(0);
 	shadowMap.SetBorderColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 	shadowMapFramebuffer.AttachTexture(shadowMap, GL_DEPTH_ATTACHMENT);
 	assert(shadowMapFramebuffer.IsComplete());

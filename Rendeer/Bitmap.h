@@ -9,25 +9,26 @@ public:
 
 	Bitmap();
 	Bitmap(const std::string& filePath);
-	Bitmap(int width, int height, int pixelSize, const std::vector<void *>& data);
+	Bitmap(int width, int height, int pixelComponentCount, const std::vector<void *>& data);
 	~Bitmap();
 
 	int GetWidth() const;
 	int GetHeight() const;
-	int GetPixelSize() const;
+	int GetPixelComponentCount() const;
 	bool IsHdr() const;
 
+	size_t GetPixelSize() const;
 	size_t GetDataSize() const;
 	const std::vector<void *>& GetData() const;
-	void SetData(const std::vector<void *>& data);
 
 private:
 
 	int width{ 0 };
 	int height{ 0 };
-	int pixelSize{ 0 };
+	int pixelComponentCount{ 0 };
 	bool isHdr{ false };
 
+	int pixelSize{ 0 };
 	std::vector<void *> pixelData{};
 
 };

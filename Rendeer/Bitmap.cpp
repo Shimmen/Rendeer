@@ -9,9 +9,10 @@
 Bitmap::Bitmap()
 	: width{ 0 }
 	, height{ 0 }
+	, pixelComponentCount{ 0 }
+	, isHdr{ false }
 	, pixelSize{ 0 }
 	, pixelData{ 0 }
-	, isHdr{ false }
 {
 }
 
@@ -32,21 +33,24 @@ Bitmap::Bitmap(const std::string& filePath)
 
 	if (IsHdr())
 	{
-		stbiOwnedData = stbi_loadf(filePath.c_str(), &this->width, &this->height, &this->pixelSize, 0);
+		stbiOwnedData = stbi_loadf(filePath.c_str(), &this->width, &this->height, &this->pixelComponentCount, 0);
+		this->pixelSize = pixelComponentCount * sizeof(float);
 	}
 	else
 	{
-		stbiOwnedData = stbiOwnedData = stbi_load(filePath.c_str(), &this->width, &this->height, &this->pixelSize, 0);
+		stbiOwnedData = stbi_load(filePath.c_str(), &this->width, &this->height, &this->pixelComponentCount, 0);
+		this->pixelSize = pixelComponentCount * sizeof(unsigned char);
 	}
 
 	if (stbiOwnedData == nullptr)
 	{
 		Logger::GetDefaultLogger().Log("Error: stbi could not load image with name: " + filePath + ".");
+		Logger::GetDefaultLogger().Log("       Reason: " + std::string(stbi_failure_reason()));
 	}
 	else
 	{
 		// Copy data from stbi's memory into owned memory
-		size_t dataSize = GetWidth() * GetHeight() * GetPixelSize();
+		size_t dataSize = GetDataSize();
 		this->pixelData.resize(dataSize);
 		memcpy_s(&this->pixelData[0], dataSize, stbiOwnedData, dataSize);
 
@@ -55,14 +59,17 @@ Bitmap::Bitmap(const std::string& filePath)
 	}
 }
 
-Bitmap::Bitmap(int width, int height, int pixelSize, const std::vector<void *>& data)
+Bitmap::Bitmap(int width, int height, int pixelComponentCount, const std::vector<void *>& data)
 	: width{ width } 
 	, height{ height }
-	, pixelSize{ pixelSize }
-	, pixelData(width * height * pixelSize)
+	, pixelComponentCount{ pixelComponentCount }
 	, isHdr{ false }
+	, pixelSize{ pixelComponentCount }
+	, pixelData(width * height * pixelSize)
 {
-	SetData(data);
+	// It could also be smaller, but this could possible avoid some bugs where you miss a row, or similar.
+	assert(data.size() == pixelData.size());
+	memcpy_s(&pixelData[0], pixelData.size(), &data[0], pixelData.size());
 }
 
 Bitmap::~Bitmap()
@@ -79,14 +86,19 @@ int Bitmap::GetHeight() const
 	return height;
 }
 
-int Bitmap::GetPixelSize() const
+int Bitmap::GetPixelComponentCount() const
 {
-	return pixelSize;
+	return pixelComponentCount;
 }
 
 bool Bitmap::IsHdr() const
 {
 	return isHdr;
+}
+
+size_t Bitmap::GetPixelSize() const
+{
+	return pixelSize;
 }
 
 size_t Bitmap::GetDataSize() const
@@ -97,11 +109,4 @@ size_t Bitmap::GetDataSize() const
 const std::vector<void *>& Bitmap::GetData() const
 {
 	return pixelData;
-}
-
-void Bitmap::SetData(const std::vector<void *>& data)
-{
-	// It could also be smaller, but this could possible avoid some bugs where you miss a row, or similar.
-	assert(data.size() == pixelData.size());
-	memcpy_s(&pixelData[0], pixelData.size(), &data[0], pixelData.size());
 }
