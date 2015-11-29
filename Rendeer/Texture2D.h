@@ -27,7 +27,7 @@ public:
 
 private:
 
-	GLint CalculateExternalFormat(int componentCount) const;
+	GLint CalculateExternalFormat(int pixelSize) const;
 	GLint CalculateInternalFormat(GLint externalFormat, bool srgb) const;
 
 	void GenerateMipmaps(GLint minFilter) const;

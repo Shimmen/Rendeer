@@ -1,44 +1,72 @@
 #include "Bitmap.h"
 
-#include <iostream>
-
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
 #include "Logger.h"
+#include "GeneralUtil.h"
+
+Bitmap::Bitmap()
+	: width{ 0 }
+	, height{ 0 }
+	, pixelSize{ 0 }
+	, pixelData{ 0 }
+	, isHdr{ false }
+{
+}
 
 Bitmap::Bitmap(const std::string& filePath)
 {
 	// Flip images to make complient with OpenGL texture handling
 	stbi_set_flip_vertically_on_load(true);
-	pixel_component_t *tempStbiData = stbi_load(filePath.c_str(), &this->width, &this->height, &this->componentsPerPixel, 0);
 
-	if (tempStbiData != nullptr)
+	if (nonstd::file_is_readable(filePath) == false)
 	{
-		// Copy data from stbi's memory into owned memory
-		int dataSize = GetWidth() * GetHeight() * GetComponentsPerPixel();
-		this->pixelData.resize(dataSize);
-		memcpy_s(&this->pixelData[0], dataSize, tempStbiData, dataSize);
+		Logger::GetDefaultLogger().Log("Error: can't read file with name: " + filePath + ".");
+	}
 
-		// Check if file is HDR
-		this->isHdr = (stbi_is_hdr_from_memory(tempStbiData, dataSize) != 0);
+	// Check if image is HDR or not
+	this->isHdr = stbi_is_hdr(filePath.c_str()) != 0;
 
-		stbi_image_free(tempStbiData);
+	void *stbiOwnedData = nullptr;
+
+	if (IsHdr())
+	{
+		stbiOwnedData = stbi_loadf(filePath.c_str(), &this->width, &this->height, &this->pixelSize, 0);
 	}
 	else
 	{
-		Logger::GetDefaultLogger().Log("Error: could not load texture with name: " + filePath + ".");
+		stbiOwnedData = stbiOwnedData = stbi_load(filePath.c_str(), &this->width, &this->height, &this->pixelSize, 0);
+	}
+
+	if (stbiOwnedData == nullptr)
+	{
+		Logger::GetDefaultLogger().Log("Error: stbi could not load image with name: " + filePath + ".");
+	}
+	else
+	{
+		// Copy data from stbi's memory into owned memory
+		size_t dataSize = GetWidth() * GetHeight() * GetPixelSize();
+		this->pixelData.resize(dataSize);
+		memcpy_s(&this->pixelData[0], dataSize, stbiOwnedData, dataSize);
+
+		// Tell stbi to free it's own data
+		stbi_image_free(stbiOwnedData);
 	}
 }
 
-Bitmap::Bitmap(int width, int height, int componentsPerPixel, const std::vector<pixel_component_t>& data)
-	: width{ width }
+Bitmap::Bitmap(int width, int height, int pixelSize, const std::vector<void *>& data)
+	: width{ width } 
 	, height{ height }
-	, componentsPerPixel{ componentsPerPixel }
-	, pixelData(width * height * componentsPerPixel)
-	, isHdr{false}
+	, pixelSize{ pixelSize }
+	, pixelData(width * height * pixelSize)
+	, isHdr{ false }
 {
 	SetData(data);
+}
+
+Bitmap::~Bitmap()
+{
 }
 
 int Bitmap::GetWidth() const
@@ -51,17 +79,27 @@ int Bitmap::GetHeight() const
 	return height;
 }
 
-int Bitmap::GetComponentsPerPixel() const
+int Bitmap::GetPixelSize() const
 {
-	return componentsPerPixel;
+	return pixelSize;
 }
 
-const std::vector<Bitmap::pixel_component_t>& Bitmap::GetData() const
+bool Bitmap::IsHdr() const
+{
+	return isHdr;
+}
+
+size_t Bitmap::GetDataSize() const
+{
+	return GetWidth() * GetHeight() * GetPixelSize();
+}
+
+const std::vector<void *>& Bitmap::GetData() const
 {
 	return pixelData;
 }
 
-void Bitmap::SetData(const std::vector<pixel_component_t>& data)
+void Bitmap::SetData(const std::vector<void *>& data)
 {
 	// It could also be smaller, but this could possible avoid some bugs where you miss a row, or similar.
 	assert(data.size() == pixelData.size());

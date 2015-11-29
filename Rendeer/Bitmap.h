@@ -7,29 +7,27 @@ class Bitmap
 {
 public:
 
-	typedef unsigned char pixel_component_t;
-
-public:
-
+	Bitmap();
 	Bitmap(const std::string& filePath);
-	Bitmap(int width, int height, int componentsPerPixel, const std::vector<pixel_component_t>& data);
+	Bitmap(int width, int height, int pixelSize, const std::vector<void *>& data);
+	~Bitmap();
 
 	int GetWidth() const;
 	int GetHeight() const;
+	int GetPixelSize() const;
+	bool IsHdr() const;
 
-	int GetComponentsPerPixel() const;
-
-	const std::vector<pixel_component_t>& GetData() const;
-	void SetData(const std::vector<pixel_component_t>& data);
+	size_t GetDataSize() const;
+	const std::vector<void *>& GetData() const;
+	void SetData(const std::vector<void *>& data);
 
 private:
 
-	int width{0};
-	int height{0};
+	int width{ 0 };
+	int height{ 0 };
+	int pixelSize{ 0 };
+	bool isHdr{ false };
 
-	int componentsPerPixel{0};
-	std::vector<pixel_component_t> pixelData{};
-
-	bool isHdr{false};
+	std::vector<void *> pixelData{};
 
 };

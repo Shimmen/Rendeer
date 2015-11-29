@@ -13,12 +13,12 @@ TextureCube::TextureCube(const Bitmap& left,
 	: TextureBase()
 {
 	// Assert all Bitmaps are in the RGB format
-	assert(left.GetComponentsPerPixel()  == 3 &&
-		   right.GetComponentsPerPixel() == 3 &&
-		   down.GetComponentsPerPixel()  == 3 &&
-		   up.GetComponentsPerPixel()    == 3 &&
-		   front.GetComponentsPerPixel() == 3 &&
-		   back.GetComponentsPerPixel()  == 3);
+	assert(left.GetPixelSize()  == 3 &&
+		   right.GetPixelSize() == 3 &&
+		   down.GetPixelSize()  == 3 &&
+		   up.GetPixelSize()    == 3 &&
+		   front.GetPixelSize() == 3 &&
+		   back.GetPixelSize()  == 3);
 
 	glBindTexture(GL_TEXTURE_CUBE_MAP, GetTextureHandle());
 

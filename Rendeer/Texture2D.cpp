@@ -23,7 +23,7 @@ Texture2D::Texture2D(const Bitmap& image, bool srgb, GLint magFilter, GLint wrap
 	this->width = image.GetWidth();
 	this->height = image.GetHeight();
 
-	GLint externalFormat = CalculateExternalFormat(image.GetComponentsPerPixel());
+	GLint externalFormat = CalculateExternalFormat(image.GetPixelSize());
 	GLint internalFormat = CalculateInternalFormat(externalFormat, srgb);
 
 	glBindTexture(GL_TEXTURE_2D, GetTextureHandle());
@@ -33,7 +33,7 @@ Texture2D::Texture2D(const Bitmap& image, bool srgb, GLint magFilter, GLint wrap
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapMode);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapMode);
 
-	const unsigned char *imageData = &image.GetData()[0];
+	const void *imageData = &image.GetData()[0];
 	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, externalFormat, GL_UNSIGNED_BYTE, imageData);
 
 	GenerateMipmaps(GL_LINEAR_MIPMAP_LINEAR);
@@ -70,13 +70,13 @@ void Texture2D::SetBorderColor(const glm::vec4& color)
 	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, glm::value_ptr(color));
 }
 
-GLint Texture2D::CalculateExternalFormat(int componentCount) const
+GLint Texture2D::CalculateExternalFormat(int pixelSize) const
 {
-	assert(componentCount > 0 && componentCount <= 4);
-	if (componentCount == 1) return GL_RED;
-	if (componentCount == 2) return GL_RG;
-	if (componentCount == 3) return GL_RGB;
-	if (componentCount == 4) return GL_RGBA;
+	assert(pixelSize > 0 && pixelSize <= 4);
+	if (pixelSize == 1) return GL_RED;
+	if (pixelSize == 2) return GL_RG;
+	if (pixelSize == 3) return GL_RGB;
+	if (pixelSize == 4) return GL_RGBA;
 	else return 0;
 }
 

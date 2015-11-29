@@ -6,6 +6,7 @@
 #include <sys/stat.h>
 
 #include "Logger.h"
+#include "GeneralUtil.h"
 
 ShaderUnit::ShaderUnit(const std::string& shaderSourcePath, ShaderUnit::Type type)
 	: type{ type }
@@ -124,8 +125,7 @@ const std::string & ShaderUnit::GetSourceFilePath() const
 				includedFilePath = includedFilePath.substr(1, includedFilePath.length() - 2);
 
 				// Check if file exists (no need to open a file to just check its exisitance)
-				std::ifstream file(pathPrefix + includedFilePath.c_str());
-				if (file.good())
+				if (nonstd::file_is_readable(pathPrefix + includedFilePath))
 				{
 					// Append the contents recursivly, then continue with the next line.
 					result.append(ReadShaderSourceFile(includedFilePath));
@@ -133,7 +133,7 @@ const std::string & ShaderUnit::GetSourceFilePath() const
 				}
 				else
 				{
-					Logger::GetDefaultLogger().Log("Error: shader includes a nonexistent file with the path \"" + includedFilePath + "\".");
+					Logger::GetDefaultLogger().Log("Error: shader includes a non-readable/non-existent file with the path \"" + includedFilePath + "\".");
 				}
 			}
 			else
