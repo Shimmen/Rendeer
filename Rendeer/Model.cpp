@@ -8,23 +8,20 @@
 
 #include "Logger.h"
 
+Model::Model()
+{
+	// Do nothing, creates an empty model
+}
+
 Model::Model(const std::string& fileName, bool genSmoothNormals)
 {
 	unsigned int importerFlags = 0;
 	importerFlags |= aiProcess_Triangulate;
 	importerFlags |= aiProcess_CalcTangentSpace;
-	//importerFlags |= aiProcess_FlipUVs; // sholdn't be neccesary now when stbi can load images flipped.
-
-	if (genSmoothNormals)
-	{
-		importerFlags |= aiProcess_GenSmoothNormals;
-	}
-	else
-	{
-		importerFlags |= aiProcess_GenNormals;
-	}
+	importerFlags |= (genSmoothNormals) ? aiProcess_GenSmoothNormals : aiProcess_GenNormals;
 
 	Assimp::Importer importer;
+
 	const aiScene* scene = importer.ReadFile(fileName, importerFlags);
 	if (scene == nullptr)
 	{
@@ -34,12 +31,14 @@ Model::Model(const std::string& fileName, bool genSmoothNormals)
 	}
 
 	// Get the first mesh (we sort of assume there is only one)
+	// TODO: Don't assume this, it's very wrong in most cases...
 	const aiMesh* model = scene->mMeshes[0];
 
+	// Construct vertices
 	const aiVector3D zeroVector(0, 0, 0);
 	for (unsigned int i = 0; i < model->mNumVertices; i++)
 	{
-		// We can assume all of these exist (since assimp was asked to create them if they didn't)
+		// We can assume these exist (since assimp was asked to create them if they didn't)
 		const aiVector3D position = model->mVertices[i];
 		const aiVector3D normal = model->mNormals[i];
 		
@@ -52,9 +51,10 @@ Model::Model(const std::string& fileName, bool genSmoothNormals)
 		positions.push_back(glm::vec3(position.x, position.y, position.z));
 		normals.push_back(glm::vec3(normal.x, normal.y, normal.z));
 		tangents.push_back(glm::vec3(tangent.x, tangent.y, tangent.z));
-		texCoords.push_back(glm::vec2(texCoord.x, texCoord.y));
+		textureCoordinates.push_back(glm::vec2(texCoord.x, texCoord.y));
 	}
 
+	// Construct faces
 	for (unsigned int i = 0; i < model->mNumFaces; i++)
 	{
 		const aiFace face = model->mFaces[i];
@@ -66,4 +66,33 @@ Model::Model(const std::string& fileName, bool genSmoothNormals)
 		indices.push_back(face.mIndices[1]);
 		indices.push_back(face.mIndices[2]);
 	}
+}
+
+Model::~Model()
+{
+}
+
+bool Model::HasPositions() const
+{
+	return positions.empty();
+}
+
+bool Model::HasNormals() const
+{
+	return normals.empty();
+}
+
+bool Model::HasTangents() const
+{
+	return tangents.empty();
+}
+
+bool Model::HasTextureCoordinates() const
+{
+	return textureCoordinates.empty();
+}
+
+bool Model::HasIndices() const
+{
+	return indices.empty();
 }

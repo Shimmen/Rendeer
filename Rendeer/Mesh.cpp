@@ -40,7 +40,7 @@ Mesh::Mesh(const Model& model)
 	vertexArray.AddVertexAttribute(2, 3, GL_FLOAT, stride, (void *)offset);
 
 	// Texture coordinates
-	buffers[nonstd::as_integer(MeshBuffers::TEXCOORD_BUFFER)].Bind(GL_ARRAY_BUFFER).SetData(model.texCoords, GL_STATIC_DRAW);
+	buffers[nonstd::as_integer(MeshBuffers::TEXCOORD_BUFFER)].Bind(GL_ARRAY_BUFFER).SetData(model.textureCoordinates, GL_STATIC_DRAW);
 	vertexArray.AddVertexAttribute(3, 2, GL_FLOAT, stride, (void *)offset);
 
 	// Indices
