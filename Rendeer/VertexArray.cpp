@@ -27,6 +27,11 @@ void VertexArray::RenderWithElementArrayBuffer(GLenum polygonType, size_t indexC
 	glDrawElements(polygonType, static_cast<GLsizei>(indexCount), indexType, nullptr);
 }
 
+void VertexArray::RenderWithArrayBuffer(GLenum polygonType, int vertexCount, int vertexIndexOffset) const
+{
+	glDrawArrays(polygonType, vertexIndexOffset, vertexCount);
+}
+
 void VertexArray::AddVertexAttribute(int index, int valueCount, GLenum valueType, int stride, void *offset)
 {
 	assert(index < VertexArray::GetMaxNumberOfVertexAttributes());

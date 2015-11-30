@@ -2,12 +2,7 @@
 
 #include <glad/glad.h>
 
-/*
-
-A simple mesh that is a suitable mesh for rendering to textures etc.
-Should always be used with the vertex shader screen_aligned_quad.vsh
-
-*/
+#include "VertexArray.h"
 
 class ScreenAlignedQuad
 {
@@ -25,8 +20,7 @@ private:
 
 private:
 
-	GLuint vertexArray;
-	GLuint vertexBuffer;
+	VertexArray vertexArray;
 
 };
 
@@ -46,7 +40,6 @@ private:
 
 private:
 
-	GLuint vertexArray;
-	GLuint vertexBuffer;
+	VertexArray vertexArray;
 
 };

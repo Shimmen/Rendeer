@@ -14,28 +14,25 @@ ScreenAlignedQuad::ScreenAlignedQuad()
 		1.0f, -1.0f,   // bottom right
 	};
 
-	glGenVertexArrays(1, &vertexArray);
-	glBindVertexArray(vertexArray);
-
+	vertexArray.Bind();
+	
 	Buffer vertexBuffer;
 	vertexBuffer.Bind(GL_ARRAY_BUFFER);
 	vertexBuffer.SetData(&vertices[0], sizeof(vertices), GL_STATIC_DRAW);
-
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-	glBindVertexArray(0);
+	vertexArray.AddVertexAttribute(0, 2, GL_FLOAT, 0, 0);
+	
+	vertexArray.Unbind();
 }
 
 ScreenAlignedQuad::~ScreenAlignedQuad()
 {
-	glDeleteVertexArrays(1, &vertexArray);
 }
 
 void ScreenAlignedQuad::Render()
 {
-	glBindVertexArray(vertexArray);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
+	vertexArray.Bind();
+	vertexArray.RenderWithArrayBuffer(GL_TRIANGLES, 6);
+	vertexArray.Unbind();
 }
 
 SkyboxCube::SkyboxCube()
@@ -100,26 +97,26 @@ SkyboxCube::SkyboxCube()
 
 	};
 
-	glGenVertexArrays(1, &vertexArray);
-	glBindVertexArray(vertexArray);
+	vertexArray.Bind();
 
 	Buffer vertexBuffer;
 	vertexBuffer.Bind(GL_ARRAY_BUFFER);
 	vertexBuffer.SetData(&skyboxVertices[0], sizeof(skyboxVertices), GL_STATIC_DRAW);
+	vertexArray.AddVertexAttribute(0, 3, GL_FLOAT, 0, 0);
 
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-	glBindVertexArray(0);
+	vertexArray.Unbind();
 }
 
 SkyboxCube::~SkyboxCube()
 {
-	glDeleteVertexArrays(1, &vertexArray);
 }
 
 void SkyboxCube::Render()
 {
-	glBindVertexArray(vertexArray);
-	glDrawArrays(GL_TRIANGLES, 0, 6 * 6); // 6 quads * 6 vertices/quad
+	// 6 quads * 6 vertices/quad
+	static const int vertexCount = 6 * 6;
+
+	vertexArray.Bind();
+	vertexArray.RenderWithArrayBuffer(GL_TRIANGLES, vertexCount);
+	vertexArray.Unbind();
 }

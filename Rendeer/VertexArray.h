@@ -14,6 +14,7 @@ public:
 
 	// There are more ways to render a vertexArray ... add them as they are needed.
 	void RenderWithElementArrayBuffer(GLenum polygonType, size_t indexCount, GLenum indexType = GL_UNSIGNED_INT) const;
+	void RenderWithArrayBuffer(GLenum polygonType, int vertexCount, int vertexIndexOffset = 0) const;
 
 	// This will also enable the relevant vertex attribute array
 	void AddVertexAttribute(int index, int valueCount, GLenum valueType, int stride = 0, void *offset = nullptr);
