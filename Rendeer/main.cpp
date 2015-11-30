@@ -60,8 +60,8 @@ int main(int argc, char *argv[])
 
 	// PANEL
 	Mesh panelMesh{"models/cube.obj", false};
-	Texture2D panelTexture{"textures/bricks.jpg", true};
-	Texture2D panelNormalMap{"textures/bricks_normal.jpg", false};
+	Texture2D panelTexture{"textures/bricks/bricks_col.jpg", true};
+	Texture2D panelNormalMap{"textures/bricks/bricks_norm.jpg", false};
 	DiffuseMaterial panelMaterial;
 	panelMaterial.diffuseTexture = &panelTexture;
 	panelMaterial.normalMap = &panelNormalMap;
@@ -72,9 +72,11 @@ int main(int argc, char *argv[])
 	
 	// FLOOR
 	Mesh floorMesh{"models/curved_plane.obj"};
-	Texture2D floorTexture{"textures/default.png", true};
+	Texture2D gravelColor{"textures/gravel/gravel_col.jpg", true};
+	Texture2D gravelNormal{ "textures/gravel/gravel_norm.jpg", false };
 	DiffuseMaterial floorMaterial;
-	floorMaterial.diffuseTexture = &floorTexture;
+	floorMaterial.diffuseTexture = &gravelColor;
+	floorMaterial.normalMap = &gravelNormal;
 	floorMaterial.specularIntensity = 0.05f;
 	floorMaterial.shininess = 10.0f;
 	Entity floor{floorMesh, floorMaterial};
