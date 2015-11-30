@@ -38,63 +38,44 @@ void ScreenAlignedQuad::Render()
 SkyboxCube::SkyboxCube()
 {
 	static const GLfloat skyboxVertices[] = {
+		-10.0, -10.0, +10.0,
+		-10.0, +10.0, +10.0,
+		+10.0, +10.0, +10.0,
+		+10.0, -10.0, +10.0,
 
-		// Directions relative to outside looking at the box
-		
+		-10.0, -10.0, -10.0,
+		-10.0, +10.0, -10.0,
+		+10.0, +10.0, -10.0,
+		+10.0, -10.0, -10.0,
+	};
+
+	static const GLubyte skyboxIndices[] = {
+
+		// As seen from inside the cube
+
 		// Front
-		-10.0f, -10.0f, -10.0f,
-		-10.0f, 10.0f, -10.0f,
-		10.0f, 10.0f, -10.0f,
-
-		-10.0f, -10.0f, -10.0f,
-		10.0f, 10.0f, -10.0f,
-		10.0f, -10.0f, -10.0f,
+		0, 1, 2,
+		0, 2, 3,
 
 		// Right
-		10.0f, -10.0f, -10.0f,
-		10.0f, 10.0f, -10.0f,
-		10.0f, 10.0f, 10.0f,
-
-		10.0f, -10.0f, -10.0f,
-		10.0f, 10.0f, 10.0f,
-		10.0f, -10.0f, 10.0f,
-
-		// Back
-		10.0f, -10.0f, 10.0f,
-		10.0f, 10.0f, 10.0f,
-		-10.0f, 10.0f, 10.0f,
-
-		10.0f, -10.0f, 10.0f,
-		-10.0f, 10.0f, 10.0f,
-		-10.0f, -10.0f, 10.0f,
+		3, 2, 6,
+		3, 6, 7,
 
 		// Left
-		-10.0f, -10.0f, 10.0f,
-		-10.0f, 10.0f, 10.0f,
-		-10.0f, 10.0f, -10.0f,
+		4, 5, 1,
+		4, 1, 0,
 
-		-10.0f, -10.0f, 10.0f,
-		-10.0f, 10.0f, -10.0f,
-		-10.0f, -10.0f, -10.0f,
-
-		// Bottom
-		-10.0f, -10.0f, 10.0f,
-		-10.0f, -10.0f, -10.0f,
-		10.0f, -10.0f, -10.0f,
-		
-		-10.0f, -10.0f, 10.0f,
-		10.0f, -10.0f, -10.0f,
-		10.0f, -10.0f, 10.0f,
+		// Back
+		7, 6, 5,
+		7, 5, 4,
 
 		// Top
-		-10.0f, 10.0f, -10.0f,
-		-10.0f, 10.0f, 10.0f,
-		10.0f, 10.0f, 10.0f,
+		1, 5, 6,
+		1, 6, 2,
 
-		-10.0f, 10.0f, -10.0f,
-		10.0f, 10.0f, 10.0f,
-		10.0f, 10.0f, -10.0f
-
+		// Bottom
+		4, 0, 3,
+		4, 3, 7
 	};
 
 	vertexArray.Bind();
@@ -103,6 +84,10 @@ SkyboxCube::SkyboxCube()
 	vertexBuffer.Bind(GL_ARRAY_BUFFER);
 	vertexBuffer.SetData(&skyboxVertices[0], sizeof(skyboxVertices), GL_STATIC_DRAW);
 	vertexArray.AddVertexAttribute(0, 3, GL_FLOAT, 0, 0);
+
+	Buffer indexBuffer;
+	indexBuffer.Bind(GL_ELEMENT_ARRAY_BUFFER);
+	indexBuffer.SetData(&skyboxIndices[0], sizeof(skyboxIndices), GL_STATIC_DRAW);
 
 	vertexArray.Unbind();
 }
@@ -113,10 +98,10 @@ SkyboxCube::~SkyboxCube()
 
 void SkyboxCube::Render()
 {
-	// 6 quads * 6 vertices/quad
-	static const int vertexCount = 6 * 6;
+	// 6 quads * 6 indices/quad
+	static const int indexCount = 6 * 6;
 
 	vertexArray.Bind();
-	vertexArray.RenderWithArrayBuffer(GL_TRIANGLES, vertexCount);
+	vertexArray.RenderWithElementArrayBuffer(GL_TRIANGLES, indexCount, GL_UNSIGNED_BYTE);
 	vertexArray.Unbind();
 }
