@@ -30,12 +30,12 @@ mat3 makeTbnMatrix(in vec3 normal, in vec3 tangent)
 }
 
 // TODO: How should this be handled?
-//#define USE_MAX_LIGHT_RANGE
+#define USE_MAX_LIGHT_RANGE 0
 
 // Since we use 8-bit color depth, a value lower that 1/256 is not visible. Therefore
 // we can find the max light range by solving x for:
 // (1 / x*x) < (1.0 / 256.0) => +-16
-#ifdef USE_MAX_LIGHT_RANGE
+#if USE_MAX_LIGHT_RANGE
 	#define ATTENUATION_MAX_LIGHT_RANGE 16.0
 #else
 	#define ATTENUATION_MAX_LIGHT_RANGE 999999.0

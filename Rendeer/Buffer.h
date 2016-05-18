@@ -18,6 +18,7 @@ public:
 	~Buffer();
 
 	const Buffer& Bind(GLenum target) const;
+	const Buffer& BindAsUniformBuffer(GLuint index) const;
 	
 	template <typename T>
 	void SetData(const std::vector<T>& data, GLenum dataUsage) const

@@ -7,8 +7,12 @@
 
 #include "Logger.h"
 #include "Buffer.h"
+#include "Uniform.h"
 #include "Texture2D.h"
 #include "ShaderUnit.h"
+
+/* static */ int Shader::maxNumberOfUniformBufferBindings{ -1 };
+/* static */ GLuint Shader::currentlyBoundShaderProgram{ 0 };
 
 Shader::Shader(const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath)
 {
@@ -43,58 +47,135 @@ Shader::~Shader()
 
 void Shader::Bind() const
 {
-	glUseProgram(shaderProgram);
+	if (this->shaderProgram != currentlyBoundShaderProgram)
+	{
+		glUseProgram(shaderProgram);
+		currentlyBoundShaderProgram = this->shaderProgram;
+	}
 }
 
 bool Shader::HasUniformWithName(const std::string& uniformName) const
 {
-	return uniformExists.at(uniformName);
+	return uniforms.find(uniformName) != uniforms.end();
 }
 
-void Shader::SetUniform(const std::string& uniformName, int intValue) const
+const Uniform *Shader::GetUniformWithName(const std::string& uniformName) const
 {
-	glUniform1i(uniformLocations.at(uniformName), intValue);
+	auto foundUniforms = uniforms.find(uniformName);
+	if (foundUniforms != uniforms.end())
+	{
+		return &foundUniforms->second;
+	}
+	else
+	{
+		return nullptr;
+	}
 }
 
-void Shader::SetUniform(const std::string& uniformName, float floatValue) const
+bool Shader::SetUniform(const std::string& uniformName, int intValue) const
 {
-	glUniform1f(uniformLocations.at(uniformName), floatValue);
+	if (auto uniform = GetUniformWithName(uniformName))
+	{
+		uniform->Set(intValue);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
-void Shader::SetUniform(const std::string& uniformName, const glm::vec2& vector2) const
+bool Shader::SetUniform(const std::string& uniformName, float floatValue) const
 {
-	glUniform2fv(uniformLocations.at(uniformName), 1, glm::value_ptr(vector2));
+	if (auto uniform = GetUniformWithName(uniformName))
+	{
+		uniform->Set(floatValue);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
-void Shader::SetUniform(const std::string& uniformName, const glm::vec3& vector3) const
+bool Shader::SetUniform(const std::string& uniformName, const glm::vec2& vector2) const
 {
-	glUniform3fv(uniformLocations.at(uniformName), 1, glm::value_ptr(vector3));
+	if (auto uniform = GetUniformWithName(uniformName))
+	{
+		uniform->Set(vector2);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
-void Shader::SetUniform(const std::string& uniformName, const glm::mat3& matrix3) const
+bool Shader::SetUniform(const std::string& uniformName, const glm::vec3& vector3) const
 {
-	glUniformMatrix3fv(uniformLocations.at(uniformName), 1, GL_FALSE, glm::value_ptr(matrix3));
+	if (auto uniform = GetUniformWithName(uniformName))
+	{
+		uniform->Set(vector3);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
-void Shader::SetUniform(const std::string& uniformName, const glm::mat4& matrix4) const
+bool Shader::SetUniform(const std::string& uniformName, const glm::mat3& matrix3) const
 {
-	glUniformMatrix4fv(uniformLocations.at(uniformName), 1, GL_FALSE, glm::value_ptr(matrix4));
+	if (auto uniform = GetUniformWithName(uniformName))
+	{
+		uniform->Set(matrix3);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
-void Shader::SetUniformBlock(const std::string& uniformBlockName, const Buffer& buffer) const
+bool Shader::SetUniform(const std::string& uniformName, const glm::mat4& matrix4) const
 {
-	buffer.Bind(GL_UNIFORM_BUFFER);
+	if (auto uniform = GetUniformWithName(uniformName))
+	{
+		uniform->Set(matrix4);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
 
-	// Bind the uniform buffer to a unique binding. It's possible that the binding will not be unique,
-	// but it's unlikely, since GL_MAX_UNIFORM_BUFFER_BINDINGS is quite large.
+bool Shader::SetUniformBlock(const std::string& uniformBlockName, const Buffer& buffer) const
+{
+	if (auto uniform = GetUniformWithName(uniformBlockName))
+	{
+		uniform->SetBlock(buffer);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+GLuint Shader::GetNextUniformBlockBinding() const
+{
 	GLuint binding = nextUniformBlockBinding;
-	glBindBufferBase(GL_UNIFORM_BUFFER, binding, buffer.GetBufferHandle());
 
-	// Connect the shader's uniform block index to the binding
-	glUniformBlockBinding(shaderProgram, uniformBlockIndicies.at(uniformBlockName), binding);
-
-	// Calculate next uniform binding
+	// Calculate next binding
 	nextUniformBlockBinding = (nextUniformBlockBinding + 1) % GetMaxNumberOfUniformBufferBindings();
+
+	return binding;
+}
+
+GLuint Shader::GetProgramHandle() const
+{
+	return shaderProgram;
 }
 
 void Shader::CheckShaderErrors(GLuint shaderProgram, GLenum stage) const
@@ -134,14 +215,21 @@ void Shader::LocateAndRegisterUniforms()
 
 	for (int i = 0; i < activeUniformCount; ++i)
 	{
+		// Get uniform name
 		char uniformName[NAME_BUFFER_LENGTH];
 		int uniformNameLength;
 		glGetActiveUniformName(shaderProgram, GLuint(i), NAME_BUFFER_LENGTH - 1, &uniformNameLength, uniformName);
 		uniformName[uniformNameLength] = '\0';
+		std::string name{uniformName};
 
+		// Get uniform location
 		GLuint location = glGetUniformLocation(shaderProgram, uniformName);
-		uniformLocations[uniformName] = location;
-		uniformExists[uniformName] = true;
+
+		// There should definitly be no uniform name duplicates
+		assert(uniforms.find(name) == uniforms.end());
+
+		Uniform uniform{*this, name, location};
+		uniforms.emplace(std::make_pair(name, uniform));
 	}
 	
 	int activeUniformBlockCount = 0;
@@ -156,7 +244,6 @@ void Shader::LocateAndRegisterUniforms()
 
 		GLuint blockIndex = glGetUniformBlockIndex(shaderProgram, uniformBlockName);
 		uniformBlockIndicies[uniformBlockName] = blockIndex;
-		uniformExists[uniformBlockName] = true;
 	}
 }
 
@@ -171,5 +258,3 @@ int Shader::GetMaxNumberOfUniformBufferBindings()
 
 	return Shader::maxNumberOfUniformBufferBindings;
 }
-
-/* static */ int Shader::maxNumberOfUniformBufferBindings{ -1 };

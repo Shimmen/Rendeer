@@ -16,12 +16,14 @@ Buffer::Buffer()
 
 Buffer::Buffer(GLuint bufferHandle)
 	: bufferHandle(bufferHandle)
+	, lastBoundTarget(GL_NONE)
 {
 	INCREMENT_REFERENCE_COUNT(bufferHandle);
 }
 
 Buffer::Buffer(Buffer& other)
 	: bufferHandle(other.bufferHandle)
+	, lastBoundTarget(other.lastBoundTarget)
 {
 	INCREMENT_REFERENCE_COUNT(bufferHandle);
 }
@@ -70,6 +72,14 @@ const Buffer& Buffer::Bind(GLenum target) const
 
 	lastBoundTarget = target;
 	currentlyBoundBufferHandle = this->bufferHandle;
+
+	return *this;
+}
+
+const Buffer& Buffer::BindAsUniformBuffer(GLuint binding) const
+{
+	Bind(GL_UNIFORM_BUFFER);
+	glBindBufferBase(GL_UNIFORM_BUFFER, binding, GetBufferHandle());
 
 	return *this;
 }

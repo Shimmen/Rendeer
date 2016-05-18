@@ -55,15 +55,16 @@ private:
 	// Skybox related
 	Shader skyboxShader{"Generic/Skybox.vsh", "Generic/Skybox.fsh"};
 	SkyboxCube skyboxMesh;
+	TextureCube hdrSkyboxTexture{ Bitmap{ "textures/grove.env.hdr" } };
 	TextureCube skyboxTexture{
-		Bitmap{"textures/skybox_sunset_flip/left.png"},
-		Bitmap{"textures/skybox_sunset_flip/right.png"},
-		Bitmap{"textures/skybox_sunset_flip/bottom.png"},
-		Bitmap{"textures/skybox_sunset_flip/top.png"},
-		Bitmap{"textures/skybox_sunset_flip/front.png"},
-		Bitmap{"textures/skybox_sunset_flip/back.png"}
+		Bitmap{"textures/skybox_sunset/left.png"},
+		Bitmap{"textures/skybox_sunset/right.png"},
+		Bitmap{"textures/skybox_sunset/bottom.png"},
+		Bitmap{"textures/skybox_sunset/top.png"},
+		Bitmap{"textures/skybox_sunset/front.png"},
+		Bitmap{"textures/skybox_sunset/back.png"}
 	};
-	
+
 	// Filters and general shaders, etc.
 	Shader highPassFilter{"Generic/ScreenSpaceQuad.vsh", "Filtering/HighPassFilter.fsh"};
 	Shader gaussianBlurVertical{"Filtering/GaussianBlurV.vsh", "Filtering/GaussianBlur.fsh"};

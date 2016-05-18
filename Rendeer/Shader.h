@@ -10,8 +10,9 @@
 #include <glm/fwd.hpp>
 
 class Transform;
-class Texture;
 class Material;
+class Texture;
+class Uniform;
 class Buffer;
 
 class Shader
@@ -24,15 +25,19 @@ public:
 	void Bind() const;
 
 	bool HasUniformWithName(const std::string& uniformName) const;
+	const Uniform *GetUniformWithName(const std::string& uniformName) const;
 
-	void SetUniform(const std::string& uniformName, int intValue) const;
-	void SetUniform(const std::string& uniformName, float floatValue) const;
-	void SetUniform(const std::string& uniformName, const glm::vec2& vector2) const;
-	void SetUniform(const std::string& uniformName, const glm::vec3& vector3) const;
-	void SetUniform(const std::string& uniformName, const glm::mat3& matrix3) const;
-	void SetUniform(const std::string& uniformName, const glm::mat4& matrix4) const;
+	bool SetUniform(const std::string& uniformName, int intValue) const;
+	bool SetUniform(const std::string& uniformName, float floatValue) const;
+	bool SetUniform(const std::string& uniformName, const glm::vec2& vector2) const;
+	bool SetUniform(const std::string& uniformName, const glm::vec3& vector3) const;
+	bool SetUniform(const std::string& uniformName, const glm::mat3& matrix3) const;
+	bool SetUniform(const std::string& uniformName, const glm::mat4& matrix4) const;
 
-	void SetUniformBlock(const std::string& uniformBlockName, const Buffer& buffer) const;
+	bool SetUniformBlock(const std::string& uniformBlockName, const Buffer& buffer) const;
+	GLuint GetNextUniformBlockBinding() const;
+
+	GLuint GetProgramHandle() const;
 
 private:
 	
@@ -46,8 +51,7 @@ private:
 
 	GLuint shaderProgram;
 
-	std::map<std::string, bool> uniformExists;
-	std::map<std::string, GLuint> uniformLocations;
+	std::map<std::string, Uniform> uniforms;
 	std::map<std::string, GLuint> uniformBlockIndicies;
 	mutable int nextUniformBlockBinding;
 
@@ -58,5 +62,6 @@ public:
 private:
 
 	static int maxNumberOfUniformBufferBindings;
+	static GLuint currentlyBoundShaderProgram;
 
 };

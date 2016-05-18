@@ -19,7 +19,7 @@ Bitmap::Bitmap()
 Bitmap::Bitmap(const std::string& filePath)
 {
 	// Flip images to make complient with OpenGL texture handling
-	stbi_set_flip_vertically_on_load(true);
+	stbi_set_flip_vertically_on_load(false);
 
 	if (nonstd::file_is_readable(filePath) == false)
 	{
