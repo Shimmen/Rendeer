@@ -10,34 +10,26 @@
 #include "FrameBuffer.h"
 
 class DeferredRenderer;
+class Uniform;
 class Camera;
 
 class ILight
 {
 public:
 
-	ILight(Shader *shader, const Transform& transform, glm::vec3 color, float intensity)
-		: shader{ shader }
-		, transform{ transform }
-		, color{ color }
-		, intensity{ intensity }
-	{
-	}
+	ILight(Shader *shader, const Transform& transform, glm::vec3 color, float intensity);
+	virtual ~ILight() {}
 
-	virtual ~ILight()
-	{
-	}
-
-	virtual void SetUniforms(const DeferredRenderer& renderer, Camera& camera) const = 0;
+	virtual void SetUniforms(const DeferredRenderer& renderer, Camera& camera) const;
 	virtual Camera GetLightCamera(const Camera& mainCamera, int shadowMapSize) const = 0;
 
 	const Shader& GetShader() const { return *shader; }
-	
+
 	Transform& GetTransform() { return transform; }
 	const Transform& GetTransform() const { return transform; }
 
 	bool CastsShadows() const { return castsShadows; }
-	
+
 protected:
 
 	const std::shared_ptr<Shader> shader;
@@ -48,22 +40,16 @@ protected:
 	glm::vec3 color;
 	float intensity;
 
+	const Uniform *colorUniform;
+	const Uniform *intensityUniform;
+
 };
 
 class DirectionalLight : public ILight
 {
 public:
 
-	DirectionalLight(const glm::quat& directionRotation, glm::vec3 color, float intensity, bool usingDynamicCameraPositioning = false)
-		: ILight{
-			new Shader{ "Generic/ScreenSpaceQuad.vsh", "Lighting/DirectionalLight.fsh" }
-			, Transform{ glm::vec3{0, 0, 0}, glm::normalize(directionRotation) }
-			, color, intensity }
-		, usingDynamicCameraPositioning{ usingDynamicCameraPositioning }
-	{
-		castsShadows = true;
-	}
-
+	DirectionalLight(const glm::quat& directionRotation, glm::vec3 color, float intensity, bool usingDynamicCameraPositioning = false);
 	virtual ~DirectionalLight() {}
 
 	void SetUniforms(const DeferredRenderer& renderer, Camera& camera) const;
@@ -73,25 +59,25 @@ private:
 
 	bool usingDynamicCameraPositioning;
 
+	const Uniform *directionUniform;
+	const Uniform *inverseProjectionUniform;
+
 };
 
 class PointLight : public ILight
 {
 public:
 
-	PointLight(const glm::vec3 position, glm::vec3 color, float intensity)
-		: ILight{
-			new Shader{"Generic/ScreenSpaceQuad.vsh", "Lighting/PointLight.fsh"}
-			, Transform{ position, glm::quat{0, 0, 0, 1}}
-			, color, intensity }
-	{
-		castsShadows = false;
-	}
-
+	PointLight(const glm::vec3 position, glm::vec3 color, float intensity);
 	virtual ~PointLight() {}
 
 	void SetUniforms(const DeferredRenderer& renderer, Camera& camera) const;
 	Camera GetLightCamera(const Camera& mainCamera, int shadowMapSize) const;
+
+private:
+
+	const Uniform *positionUniform;
+	const Uniform *inverseProjectionUniform;
 
 };
 
@@ -99,21 +85,7 @@ class SpotLight : public ILight
 {
 public:
 
-	SpotLight(const glm::vec3 position, const glm::quat orientation, glm::vec3 color, float intensity, float outerConeAngle, float innerConeAngle)
-		: ILight{
-			new Shader{"Generic/ScreenSpaceQuad.vsh", "Lighting/SpotLight.fsh"}
-			, Transform{position, orientation}
-			, color, intensity }
-		, outerConeAngle{ outerConeAngle }
-		, innerConeAngle{ innerConeAngle }
-	{
-		assert(outerConeAngle >= innerConeAngle);
-		assert(outerConeAngle >= 0);
-		assert(innerConeAngle >= 0);
-
-		castsShadows = true;
-	}
-
+	SpotLight(const glm::vec3 position, const glm::quat orientation, glm::vec3 color, float intensity, float outerConeAngle, float innerConeAngle);
 	virtual ~SpotLight() {}
 
 	void SetUniforms(const DeferredRenderer& renderer, Camera& camera) const;
@@ -123,5 +95,11 @@ private:
 
 	float outerConeAngle;
 	float innerConeAngle;
+
+	const Uniform *positionUniform;
+	const Uniform *directionUniform;
+	const Uniform *outerConeAngleUniform;
+	const Uniform *innerConeAngleUniform;
+	const Uniform *inverseProjectionUniform;
 
 };

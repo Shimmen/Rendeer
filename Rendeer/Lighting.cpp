@@ -4,21 +4,50 @@
 #include <glm/gtx/quaternion.hpp>
 
 #include "Shader.h"
+#include "Uniform.h"
 #include "DeferredRenderer.h"
 #include "Camera.h"
 
-void DirectionalLight::SetUniforms(const DeferredRenderer& renderer, Camera& camera) const
+ILight::ILight(Shader *shader, const Transform& transform, glm::vec3 color, float intensity)
+	: shader{ shader }
+	, transform{ transform }
+	, color{ color }
+	, intensity{ intensity }
+{
+	this->colorUniform = shader->GetUniformWithName("u_light_color");
+	this->intensityUniform = shader->GetUniformWithName("u_light_intensity");
+}
+
+void ILight::SetUniforms(const DeferredRenderer& renderer, Camera& camera) const
 {
 	shader->Bind();
 
+	colorUniform->Set(this->color);
+	intensityUniform->Set(this->intensity);
+}
+
+DirectionalLight::DirectionalLight(const glm::quat& directionRotation, glm::vec3 color, float intensity, bool usingDynamicCameraPositioning)
+	: ILight{
+	new Shader{ "Generic/ScreenSpaceQuad.vsh", "Lighting/DirectionalLight.fsh" }
+	, Transform{ glm::vec3{ 0, 0, 0 }, glm::normalize(directionRotation) }
+	, color, intensity }
+	, usingDynamicCameraPositioning{ usingDynamicCameraPositioning }
+{
+	castsShadows = true;
+
+	this->directionUniform = shader->GetUniformWithName("u_light_direction");
+	this->inverseProjectionUniform = shader->GetUniformWithName("u_inverse_projection_matrix");
+}
+
+void DirectionalLight::SetUniforms(const DeferredRenderer& renderer, Camera& camera) const
+{
+	ILight::SetUniforms(renderer, camera);
+
 	auto lightForward = this->transform.GetForward();
 	auto viewSpaceLightForward = camera.GetTransform().GetInverse().RotateVector(lightForward);
+	directionUniform->Set(viewSpaceLightForward);
 
-	shader->SetUniform("u_light_direction", viewSpaceLightForward);
-	shader->SetUniform("u_light_color", this->color);
-	shader->SetUniform("u_light_intensity", this->intensity);
-
-	shader->SetUniform("u_inverse_projection_matrix", glm::inverse((camera.GetProjectionMatrix())));
+	inverseProjectionUniform->Set(glm::inverse((camera.GetProjectionMatrix())));
 }
 
 Camera DirectionalLight::GetLightCamera(const Camera& mainCamera, int shadowMapSize) const
@@ -52,17 +81,26 @@ Camera DirectionalLight::GetLightCamera(const Camera& mainCamera, int shadowMapS
 	              1.0f, cameraNear, cameraFar, cameraScale, Camera::CameraType::ORTHOGRAPHIC);
 }
 
+PointLight::PointLight(const glm::vec3 position, glm::vec3 color, float intensity)
+	: ILight{
+	new Shader{ "Generic/ScreenSpaceQuad.vsh", "Lighting/PointLight.fsh" }
+	, Transform{ position, glm::quat{ 0, 0, 0, 1 } }
+	, color, intensity }
+{
+	castsShadows = false;
+
+	this->positionUniform = shader->GetUniformWithName("u_light_position");
+	this->inverseProjectionUniform = shader->GetUniformWithName("u_inverse_projection_matrix");
+}
+
 void PointLight::SetUniforms(const DeferredRenderer& renderer, Camera& camera) const
 {
-	shader->Bind();
+	ILight::SetUniforms(renderer, camera);
 
 	auto viewSpaceLightPosition = glm::vec3(camera.GetViewMatrix() * glm::vec4(this->transform.GetPosition(), 1.0f));
+	positionUniform->Set(viewSpaceLightPosition);
 
-	shader->SetUniform("u_light_position", viewSpaceLightPosition);
-	shader->SetUniform("u_light_color", this->color);
-	shader->SetUniform("u_light_intensity", this->intensity);
-
-	shader->SetUniform("u_inverse_projection_matrix", glm::inverse((camera.GetProjectionMatrix())));
+	inverseProjectionUniform->Set(glm::inverse((camera.GetProjectionMatrix())));
 }
 
 Camera PointLight::GetLightCamera(const Camera& mainCamera, int shadowMapSize) const
@@ -73,23 +111,42 @@ Camera PointLight::GetLightCamera(const Camera& mainCamera, int shadowMapSize) c
 	              1.0f, 1.0f, 100.0f, glm::radians(90.0f), Camera::CameraType::PERSPECTIVE);
 }
 
+SpotLight::SpotLight(const glm::vec3 position, const glm::quat orientation, glm::vec3 color, float intensity, float outerConeAngle, float innerConeAngle)
+	: ILight{
+	new Shader{ "Generic/ScreenSpaceQuad.vsh", "Lighting/SpotLight.fsh" }
+	, Transform{ position, orientation }
+	, color, intensity }
+	, outerConeAngle{ outerConeAngle }
+	, innerConeAngle{ innerConeAngle }
+{
+	assert(outerConeAngle >= innerConeAngle);
+	assert(outerConeAngle >= 0);
+	assert(innerConeAngle >= 0);
+
+	castsShadows = true;
+
+	this->positionUniform = shader->GetUniformWithName("u_light_position");
+	this->directionUniform = shader->GetUniformWithName("u_light_direction");
+	this->outerConeAngleUniform = shader->GetUniformWithName("u_light_outer_cone_angle_cos");
+	this->innerConeAngleUniform = shader->GetUniformWithName("u_light_inner_cone_angle_cos");
+	this->inverseProjectionUniform = shader->GetUniformWithName("u_inverse_projection_matrix");
+}
+
 void SpotLight::SetUniforms(const DeferredRenderer& renderer, Camera& camera) const
 {
-	shader->Bind();
+	ILight::SetUniforms(renderer, camera);
 
 	auto viewSpaceLightPosition = glm::vec3(camera.GetViewMatrix() * glm::vec4(this->transform.GetPosition(), 1.0f));
 
 	auto lightForward = this->transform.GetForward();
 	auto viewSpaceLightForward = camera.GetTransform().GetInverse().RotateVector(lightForward);
 
-	shader->SetUniform("u_light_position", viewSpaceLightPosition);
-	shader->SetUniform("u_light_direction", viewSpaceLightForward);
-	shader->SetUniform("u_light_outer_cone_angle_cos", cosf(this->outerConeAngle / 2.0f));
-	shader->SetUniform("u_light_inner_cone_angle_cos", cosf(this->innerConeAngle / 2.0f));
-	shader->SetUniform("u_light_color", this->color);
-	shader->SetUniform("u_light_intensity", this->intensity);
+	positionUniform->Set(viewSpaceLightPosition);
+	directionUniform->Set(viewSpaceLightForward);
+	outerConeAngleUniform->Set(cosf(this->outerConeAngle / 2.0f));
+	innerConeAngleUniform->Set(cosf(this->innerConeAngle / 2.0f));
 
-	shader->SetUniform("u_inverse_projection_matrix", glm::inverse((camera.GetProjectionMatrix())));
+	inverseProjectionUniform->Set(glm::inverse((camera.GetProjectionMatrix())));
 }
 
 Camera SpotLight::GetLightCamera(const Camera& mainCamera, int shadowMapSize) const

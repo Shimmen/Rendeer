@@ -36,15 +36,21 @@ void GBuffer::BindAsUniform(const Shader& lightShader) const
 {
 	lightShader.Bind();
 
-	albedo.Bind(10);
-	lightShader.SetUniform("u_albedo", 10);
+	int numTextureUnits = Texture2D::GetMaxNumberOfCombinedTextureUnits();
+	int currentUnit = numTextureUnits - 1;
 
-	normal.Bind(11);
-	lightShader.SetUniform("u_normals", 11);
+	albedo.Bind(currentUnit);
+	lightShader.SetUniform("u_albedo", currentUnit);
+	currentUnit -= 1;
 
-	material.Bind(12);
-	lightShader.SetUniform("u_material", 12);
-	
-	depth.Bind(13);
-	lightShader.SetUniform("u_depth", 13);
+	normal.Bind(currentUnit);
+	lightShader.SetUniform("u_normals", currentUnit);
+	currentUnit -= 1;
+
+	material.Bind(currentUnit);
+	lightShader.SetUniform("u_material", currentUnit);
+	currentUnit -= 1;
+
+	depth.Bind(currentUnit);
+	lightShader.SetUniform("u_depth", currentUnit);
 }
