@@ -2,13 +2,14 @@
 
 #include <string>
 
+#include "Mesh.h"
 #include "Transform.h"
 #include "IMaterial.h"
-#include "Mesh.h"
+#include "DiffuseMaterial.h"
 
+class Camera;
 class Shader;
 class DeferredRenderer;
-class Camera;
 
 class Entity
 {
@@ -16,19 +17,22 @@ public:
 
 	Entity(Mesh& mesh, IMaterial& material)
 		: transform{}
+		, material{material}
+		, mesh{mesh}
 	{
-		this->mesh = &mesh;
-		this->material = &material;
 	}
 	
 	inline Transform& GetTransform() { return transform; }
-	inline IMaterial& GetMaterial() { return *material; }
-	inline Mesh& GetMesh() { return *mesh; }
+	inline IMaterial& GetMaterial() { return material; }
+	inline Mesh& GetMesh() { return mesh; }
 
 private:
 
 	Transform transform;
-	IMaterial *material;
-	Mesh *mesh;
+
+	// TODO: Make it possible to attach behaviour to an entity (like a list of behaviour impl. instances)
+
+	IMaterial& material;
+	Mesh& mesh;
 
 };

@@ -98,6 +98,7 @@
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="Model.cpp" />
+    <ClCompile Include="ModelLoader.cpp" />
     <ClCompile Include="Mouse.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -121,6 +122,7 @@
     <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="GBuffer.h" />
     <ClInclude Include="GeneralUtil.h" />
+    <ClInclude Include="ModelLoader.h" />
     <ClInclude Include="TextureBase.h" />
     <ClInclude Include="Keyboard.h" />
     <ClInclude Include="Lighting.h" />
