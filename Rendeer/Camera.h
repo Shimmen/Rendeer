@@ -3,8 +3,9 @@
 #include <glm/fwd.hpp>
 
 #include "Transform.h"
+#include "Component.h"
 
-class Camera
+class Camera: Component
 {
 public:
 
@@ -16,18 +17,22 @@ public:
 
 public:
 
-	Camera(const glm::vec3& position, const glm::quat& rotation, float aspectRatio,
-		   float nearPlane, float farPlane, float fovOrSize, CameraType type = CameraType::PERSPECTIVE);
+	Camera(const glm::vec3 position, const glm::quat& orientation,
+		float aspectRatio, float nearPlane, float farPlane, float fovOrSize, CameraType type = CameraType::PERSPECTIVE);
 
-	inline Transform& GetTransform() { return transform; }
-	inline const Transform& GetTransform() const { return transform; }
+	virtual void Init();
+
+	Transform& GetTransform();
+	const Transform& GetTransform() const;
 
 	glm::mat4 GetViewMatrix() const;
 	glm::mat4 GetProjectionMatrix() const;
 
 private:
 
+	// TODO: Remove this, it exists in the component owner
 	Transform transform;
+	// -----------------------------------------------------
 
 	float aspectRatio;
 	

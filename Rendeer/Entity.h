@@ -1,15 +1,14 @@
 #pragma once
 
 #include <string>
+#include <vector>
+#include <memory>
 
 #include "Mesh.h"
 #include "Transform.h"
 #include "IMaterial.h"
-#include "DiffuseMaterial.h"
 
-class Camera;
-class Shader;
-class DeferredRenderer;
+class Component;
 
 class Entity
 {
@@ -22,16 +21,32 @@ public:
 	{
 	}
 	
+/*	TODO: Replace the above CTOR with this!
+
+	Entity(const Transform& transform)
+		: transform{ transform }
+	{
+	}
+*/
+
 	inline Transform& GetTransform() { return transform; }
+	inline const Transform& GetTransform() const { return transform; }
+
 	inline IMaterial& GetMaterial() { return material; }
 	inline Mesh& GetMesh() { return mesh; }
+
+	// Add the component and return this.
+	Entity& AddComponent(const std::shared_ptr<Component> component);
 
 private:
 
 	Transform transform;
 
-	// TODO: Make it possible to attach behaviour to an entity (like a list of behaviour impl. instances)
+	// List of entity components
+	std::vector<std::shared_ptr<Component>> components;
 
+
+	// TODO: Move these to a Renderable component or similar
 	IMaterial& material;
 	Mesh& mesh;
 

@@ -7,9 +7,9 @@
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-Camera::Camera(const glm::vec3& position, const glm::quat& rotation, float aspectRatio,
-			   float nearPlane, float farPlane, float fovOrSize, Camera::CameraType type)
-	: transform{ position, rotation }
+Camera::Camera(const glm::vec3 position, const glm::quat& orientation,
+	float aspectRatio, float nearPlane, float farPlane, float fovOrSize, Camera::CameraType type)
+	: transform{ position, orientation }
 	, aspectRatio{ aspectRatio }
 	, nearClippingPlane{ nearPlane }
 	, farClippingPlane{ farPlane }
@@ -20,8 +20,33 @@ Camera::Camera(const glm::vec3& position, const glm::quat& rotation, float aspec
 	assert(fovOrSize > 0.0f);
 }
 
+void Camera::Init()
+{
+
+}
+
+Transform& Camera::GetTransform()
+{
+	// TODO: Use this!
+	//return GetOwnerEntity().GetTransform();
+	// ---------------
+
+	return transform;
+}
+
+const Transform& Camera::GetTransform() const
+{
+	// TODO: Use this!
+	//return GetOwnerEntity().GetTransform();
+	// ---------------
+
+	return transform;
+}
+
 glm::mat4 Camera::GetViewMatrix() const
 {
+	// TODO: Use correct transform!
+	const Transform& transform = /*GetOwnerEntity().*/GetTransform();
 	glm::mat4 negativePosition = glm::translate(glm::mat4(1.0), -transform.GetPosition());
 	glm::mat4 negativeRotation = glm::toMat4(glm::conjugate(transform.GetOrientation()));
 

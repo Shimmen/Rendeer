@@ -89,8 +89,10 @@
   <ItemGroup>
     <ClCompile Include="Bitmap.cpp" />
     <ClCompile Include="Buffer.cpp" />
+    <ClCompile Include="Component.cpp" />
     <ClCompile Include="DeferredRenderer.cpp" />
     <ClCompile Include="DiffuseMaterial.cpp" />
+    <ClCompile Include="Entity.cpp" />
     <ClCompile Include="GBuffer.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="Keyboard.cpp" />
@@ -122,6 +124,7 @@
     <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="GBuffer.h" />
     <ClInclude Include="GeneralUtil.h" />
+    <ClInclude Include="Component.h" />
     <ClInclude Include="ModelLoader.h" />
     <ClInclude Include="TextureBase.h" />
     <ClInclude Include="Keyboard.h" />
