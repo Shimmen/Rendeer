@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Component.h"
+#include "IMaterial.h"
+#include "Mesh.h"
 
 class Renderable : public Component
 {

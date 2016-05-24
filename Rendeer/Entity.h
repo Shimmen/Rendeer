@@ -5,12 +5,9 @@
 #include <memory>
 #include <type_traits>
 
-#include "Mesh.h"
 #include "Transform.h"
-#include "IMaterial.h"
 
 class Component;
-class Renderable;
 
 class Entity
 {
