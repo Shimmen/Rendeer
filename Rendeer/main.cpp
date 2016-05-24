@@ -123,7 +123,7 @@ int main(int argc, char *argv[])
 		window.PollEvents();
 
 		// Make the escape button quit the app/close the window
-		if (window.GetKeyboard().WasKeyPressed(GLFW_KEY_ESCAPE))
+		if (window.GetKeyboard().WasKeyPressed(GLFW_KEY_ESCAPE) || window.GetMouse().WasButtonPressed(GLFW_MOUSE_BUTTON_RIGHT))
 		{
 			window.SetCursorHidden(false);
 		}
