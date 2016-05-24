@@ -1,5 +1,7 @@
 #include "Component.h"
 
+#include "Renderable.h"
+
 Entity& Component::GetOwnerEntity()
 {
 	return *ownerEntity;

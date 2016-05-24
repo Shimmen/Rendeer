@@ -12,7 +12,7 @@ public:
 
 	void UpdateUniforms(const DeferredRenderer& renderer,
 	                    const Transform& transform,
-	                    const Camera& camera) override;
+	                    const Camera& camera) const override;
 
 	// No real need to restrict access to these
 

@@ -55,7 +55,7 @@ Mesh::~Mesh()
 {
 }
 
-void Mesh::Render()
+void Mesh::Render() const
 {
 	vertexArray.Bind();
 	vertexArray.RenderWithElementArrayBuffer(GL_TRIANGLES, this->indexCount, GL_UNSIGNED_INT);

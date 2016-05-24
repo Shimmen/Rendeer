@@ -23,7 +23,7 @@ public:
 
 	virtual void UpdateUniforms(const DeferredRenderer& renderer,
 	                            const Transform& transform,
-	                            const Camera& camera) = 0;
+	                            const Camera& camera) const = 0;
 
 protected:
 

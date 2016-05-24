@@ -17,7 +17,7 @@ public:
 	Mesh(const std::string& filePath, bool genSmoothNormals = true);
 	~Mesh();
 
-	void Render();
+	void Render() const;
 
 private:
 

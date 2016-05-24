@@ -7,13 +7,14 @@ class Renderable : public Component
 public:
 
 	Renderable(Mesh& mesh, IMaterial& material)
-		: material{ material }
+		: Component{}
+		, material{ material }
 		, mesh{ mesh }
 	{
 	}
 
-	IMaterial& GetMaterial() { return material; }
-	Mesh& GetMesh() { return mesh; }
+	const IMaterial& GetMaterial() const { return material; }
+	const Mesh& GetMesh() const { return mesh; }
 
 private:
 

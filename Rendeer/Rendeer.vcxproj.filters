@@ -185,7 +185,7 @@
     <ClInclude Include="Component.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RenderableComponent.h">
+    <ClInclude Include="Renderable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -126,7 +126,7 @@
     <ClInclude Include="GeneralUtil.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="ModelLoader.h" />
-    <ClInclude Include="RenderableComponent.h" />
+    <ClInclude Include="Renderable.h" />
     <ClInclude Include="TextureBase.h" />
     <ClInclude Include="Keyboard.h" />
     <ClInclude Include="Lighting.h" />

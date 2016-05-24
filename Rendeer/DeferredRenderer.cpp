@@ -4,6 +4,7 @@
 #include "Entity.h"
 #include "Lighting.h"
 #include "Texture2D.h"
+#include "Renderable.h"
 #include "DiffuseMaterial.h"
 
 DeferredRenderer::DeferredRenderer(const Window *window)
@@ -71,12 +72,15 @@ void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::
 	for (auto entityIt = entities.begin(); entityIt != entities.end(); ++entityIt)
 	{
 		Entity *entity = (*entityIt);
-		auto& transform = entity->GetTransform();
-		auto& material = entity->GetMaterial();
-		auto& mesh = entity->GetMesh();
+		if (auto renderable = entity->GetRenderableComponent())
+		{
+			auto& transform = entity->GetTransform();
+			auto& material = renderable->GetMaterial();
+			auto& mesh = renderable->GetMesh();
 
-		material.UpdateUniforms(*this, transform, camera);
-		mesh.Render();
+			material.UpdateUniforms(*this, transform, camera);
+			mesh.Render();
+		}
 	}
 
 	//
@@ -117,7 +121,10 @@ void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::
 			for (auto entity = entities.begin(); entity != entities.end(); ++entity)
 			{
 				shadowMapGenerator.SetUniform("u_model_matrix", (*entity)->GetTransform().GetModelMatrix());
-				(*entity)->GetMesh().Render();
+				if (auto renderable = (*entity)->GetRenderableComponent())
+				{
+					renderable->GetMesh().Render();
+				}
 			}
 
 			glCullFace(GL_BACK);
