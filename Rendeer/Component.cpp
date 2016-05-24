@@ -2,6 +2,11 @@
 
 #include "Renderable.h"
 
+Component::Component()
+	: ownerEntity{ nullptr }
+{
+}
+
 Entity& Component::GetOwnerEntity()
 {
 	return *ownerEntity;

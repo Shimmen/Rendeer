@@ -72,7 +72,7 @@ void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::
 	for (auto entityIt = entities.begin(); entityIt != entities.end(); ++entityIt)
 	{
 		Entity *entity = (*entityIt);
-		if (auto renderable = entity->GetRenderableComponent())
+		if (auto renderable = entity->GetComponent<Renderable>())
 		{
 			auto& transform = entity->GetTransform();
 			auto& material = renderable->GetMaterial();
@@ -121,7 +121,7 @@ void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::
 			for (auto entity = entities.begin(); entity != entities.end(); ++entity)
 			{
 				shadowMapGenerator.SetUniform("u_model_matrix", (*entity)->GetTransform().GetModelMatrix());
-				if (auto renderable = (*entity)->GetRenderableComponent())
+				if (auto renderable = (*entity)->GetComponent<Renderable>())
 				{
 					renderable->GetMesh().Render();
 				}

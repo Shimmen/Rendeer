@@ -14,7 +14,7 @@ public:
 
 public:
 
-	Component() {};
+	Component();
 	virtual ~Component() {};
 
 protected:
@@ -28,6 +28,6 @@ private:
 	virtual void Init() = 0;
 
 	virtual void SetOwnerEntity(Entity *ownerEntity) final;
-	Entity *ownerEntity;
+	Entity *ownerEntity{ nullptr };
 
 };
