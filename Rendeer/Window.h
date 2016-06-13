@@ -19,6 +19,7 @@ public:
 	~Window();
 
 	static const Window& FromGlfwWindow(GLFWwindow *glfwWindowPointer);
+	static const Window& GetLastCreated();
 
 	void PollEvents() const;
 	void SwapBuffers() const;
@@ -61,7 +62,9 @@ private:
 private:
 
 	GLFWwindow *windowHandle;
+
 	static int windowCount;
+	static const Window *lastCreatedWindow;
 
 	bool isFullscreen;
 	bool isVsyncEnabled;

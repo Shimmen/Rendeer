@@ -78,7 +78,7 @@ Camera DirectionalLight::GetLightCamera(const Camera& mainCamera, int shadowMapS
 	}
 
 	return Camera(worldLightPosition, worldLightOrientation,
-	              1.0f, cameraNear, cameraFar, cameraScale, Camera::CameraType::ORTHOGRAPHIC);
+	              1.0f, cameraNear, cameraFar, cameraScale, CameraComponent::CameraType::ORTHOGRAPHIC);
 }
 
 PointLight::PointLight(const glm::vec3 position, glm::vec3 color, float intensity)
@@ -108,7 +108,7 @@ Camera PointLight::GetLightCamera(const Camera& mainCamera, int shadowMapSize) c
 	// TODO: This doesn't make sense since it's omnidirectional
 	return Camera(this->GetTransform().GetPosition(),
 	              this->GetTransform().GetOrientation(),
-	              1.0f, 1.0f, 100.0f, glm::radians(90.0f), Camera::CameraType::PERSPECTIVE);
+	              1.0f, 1.0f, 100.0f, glm::radians(90.0f), CameraComponent::CameraType::PERSPECTIVE);
 }
 
 SpotLight::SpotLight(const glm::vec3 position, const glm::quat orientation, glm::vec3 color, float intensity, float outerConeAngle, float innerConeAngle)
@@ -153,5 +153,5 @@ Camera SpotLight::GetLightCamera(const Camera& mainCamera, int shadowMapSize) co
 {
 	return Camera(this->GetTransform().GetPosition(),
 	              this->GetTransform().GetOrientation(),
-	              1.0f, 1.0f, 100.0f, outerConeAngle, Camera::CameraType::PERSPECTIVE);
+	              1.0f, 1.0f, 100.0f, outerConeAngle, CameraComponent::CameraType::PERSPECTIVE);
 }

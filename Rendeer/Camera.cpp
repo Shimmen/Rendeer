@@ -1,5 +1,7 @@
 #include "Camera.h"
 
+#include "Window.h"
+
 #include <assert.h>
 
 #include <glm/glm.hpp>
@@ -7,9 +9,8 @@
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-Camera::Camera(const glm::vec3 position, const glm::quat& orientation,
-	float aspectRatio, float nearPlane, float farPlane, float fovOrSize, Camera::CameraType type)
-	: transform{ position, orientation }
+CameraComponent::CameraComponent(float aspectRatio, float nearPlane, float farPlane, float fovOrSize, CameraComponent::CameraType type)
+	: Component{}
 	, aspectRatio{ aspectRatio }
 	, nearClippingPlane{ nearPlane }
 	, farClippingPlane{ farPlane }
@@ -20,40 +21,31 @@ Camera::Camera(const glm::vec3 position, const glm::quat& orientation,
 	assert(fovOrSize > 0.0f);
 }
 
-void Camera::Init()
+void CameraComponent::Init()
 {
 
 }
 
-Transform& Camera::GetTransform()
+Transform& CameraComponent::GetTransform()
 {
-	// TODO: Use this!
-	//return GetOwnerEntity().GetTransform();
-	// ---------------
-
-	return transform;
+	return GetOwnerEntity().GetTransform();
 }
 
-const Transform& Camera::GetTransform() const
+const Transform& CameraComponent::GetTransform() const
 {
-	// TODO: Use this!
-	//return GetOwnerEntity().GetTransform();
-	// ---------------
-
-	return transform;
+	return GetOwnerEntity().GetTransform();
 }
 
-glm::mat4 Camera::GetViewMatrix() const
+glm::mat4 CameraComponent::GetViewMatrix() const
 {
-	// TODO: Use correct transform!
-	const Transform& transform = /*GetOwnerEntity().*/GetTransform();
+	const Transform& transform = GetTransform();
 	glm::mat4 negativePosition = glm::translate(glm::mat4(1.0), -transform.GetPosition());
 	glm::mat4 negativeRotation = glm::toMat4(glm::conjugate(transform.GetOrientation()));
 
 	return negativeRotation * negativePosition;
 }
 
-glm::mat4 Camera::GetProjectionMatrix() const
+glm::mat4 CameraComponent::GetProjectionMatrix() const
 {
 	glm::mat4 projection = glm::mat4(0.0);
 
@@ -95,4 +87,36 @@ glm::mat4 Camera::GetProjectionMatrix() const
 	}
 
 	return projection;
+}
+
+
+Camera::Camera()
+	: Camera{glm::vec3{0, 0, 0}, glm::quat{}}
+{
+}
+
+Camera::Camera(glm::vec3 position, glm::quat orientation)
+	: Camera{position, orientation, Window::GetLastCreated().GetAspectRatio(), 1.0f, 1000.0f, glm::radians(75.0f), CameraComponent::CameraType::PERSPECTIVE}
+{
+}
+
+Camera::Camera(glm::vec3 position, glm::quat orientation, float aspectRatio, float nearPlane, float farPlane, float fovOrSize, CameraComponent::CameraType type)
+{
+	GetTransform().SetPosition(position).SetOrientation(orientation);
+
+	AddComponent(
+		std::make_shared<CameraComponent>(aspectRatio, nearPlane, farPlane, fovOrSize, type)
+	);
+}
+
+glm::mat4 Camera::GetViewMatrix() const
+{
+	// Simply delegate to the CameraComponent
+	return GetComponent<CameraComponent>()->GetViewMatrix();
+}
+
+glm::mat4 Camera::GetProjectionMatrix() const
+{
+	// Simply delegate to the CameraComponent
+	return GetComponent<CameraComponent>()->GetProjectionMatrix();
 }

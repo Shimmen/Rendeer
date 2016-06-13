@@ -2,8 +2,8 @@
 
 #include "Logger.h"
 
-// GLFW context managament
 /* static */ int Window::windowCount{ 0 };
+/* static */ const Window *Window::lastCreatedWindow;
 
 Window::Window(int width, int height, const std::string & title, bool vSync)
 	: isFullscreen{ false }
@@ -15,6 +15,7 @@ Window::Window(int width, int height, const std::string & title, bool vSync)
 	// Create a windowed window with the requested size.
 	this->windowHandle = CreateWindowedWindow(width, height, title);
 	windowCount++;
+	lastCreatedWindow = this;
 
 	MakeContextCurrent();
 	LoadOpenGLForCurrentContext();
@@ -36,6 +37,7 @@ Window::Window(const std::string & title, bool vSync)
 	// Create a fullscreen window with the size of the sceen.
 	this->windowHandle = CreateFullscreenWindow(title);
 	windowCount++;
+	lastCreatedWindow = this;
 
 	MakeContextCurrent();
 	LoadOpenGLForCurrentContext();
@@ -65,6 +67,12 @@ Window::~Window()
 /* static */ const Window& Window::FromGlfwWindow(GLFWwindow *glfwWindowPointer)
 {
 	return *static_cast<Window *>(glfwGetWindowUserPointer(glfwWindowPointer));
+}
+
+/* static */ const Window& Window::GetLastCreated()
+{
+	assert(lastCreatedWindow != nullptr);
+	return *lastCreatedWindow;
 }
 
 void Window::PollEvents() const

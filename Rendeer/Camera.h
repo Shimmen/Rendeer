@@ -5,7 +5,7 @@
 #include "Transform.h"
 #include "Component.h"
 
-class Camera: Component
+class CameraComponent: public Component
 {
 public:
 
@@ -17,8 +17,7 @@ public:
 
 public:
 
-	Camera(const glm::vec3 position, const glm::quat& orientation,
-		float aspectRatio, float nearPlane, float farPlane, float fovOrSize, CameraType type = CameraType::PERSPECTIVE);
+	CameraComponent(float aspectRatio, float nearPlane, float farPlane, float fovOrSize, CameraType type = CameraType::PERSPECTIVE);
 
 	virtual void Init();
 
@@ -30,10 +29,6 @@ public:
 
 private:
 
-	// TODO: Remove this, it exists in the component owner
-	Transform transform;
-	// -----------------------------------------------------
-
 	float aspectRatio;
 	
 	float nearClippingPlane;
@@ -41,5 +36,20 @@ private:
 	
 	CameraType type;
 	float fovOrSize;
+
+};
+
+class Camera: public Entity
+{
+public:
+
+	Camera();
+	Camera(glm::vec3 position, glm::quat orientation);
+	Camera(glm::vec3 position, glm::quat orientation,
+		float aspectRatio, float nearPlane, float farPlane, float fovOrSize, CameraComponent::CameraType type = CameraComponent::CameraType::PERSPECTIVE);
+
+	// Delegates to the CameraComponent
+	glm::mat4 GetViewMatrix() const;
+	glm::mat4 GetProjectionMatrix() const;
 
 };
