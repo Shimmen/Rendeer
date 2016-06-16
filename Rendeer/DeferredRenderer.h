@@ -53,6 +53,7 @@ private:
 	Shader shadowMapGenerator{ "Shadowing/ShadowMapGenerator.vsh", "Shadowing/ShadowMapGenerator.fsh" };
 
 	// Skybox related
+/*
 	Shader skyboxShader{"Generic/Skybox.vsh", "Generic/Skybox.fsh"};
 	SkyboxCube skyboxMesh;
 	TextureCube hdrSkyboxTexture{ Bitmap{ "textures/grove.env.hdr" } };
@@ -64,7 +65,7 @@ private:
 		Bitmap{"textures/skybox_sunset/front.png"},
 		Bitmap{"textures/skybox_sunset/back.png"}
 	};
-
+*/
 	// Filters and general shaders, etc.
 	Shader highPassFilter{"Generic/ScreenSpaceQuad.vsh", "Filtering/HighPassFilter.fsh"};
 	Shader gaussianBlurVertical{"Filtering/GaussianBlurV.vsh", "Filtering/GaussianBlur.fsh"};

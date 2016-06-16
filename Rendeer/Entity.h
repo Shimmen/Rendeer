@@ -13,7 +13,7 @@ class Entity
 {
 public:
 	
-	Entity(const Transform& transform = Transform())
+	Entity(const Transform& transform = Transform(glm::vec3{ 0, 0, 0 }, glm::vec3{ 0, 0, 0 }))
 		: transform{ transform }
 	{
 	}

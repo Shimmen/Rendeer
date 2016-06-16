@@ -9,9 +9,16 @@ class Transform
 {
 public:
 
-	Transform(glm::vec3 position = glm::vec3{ 0.0, 0.0, 0.0 },
-	          glm::quat orientation = glm::angleAxis(1.0f, glm::vec3{ 0.0 }),
-	          glm::vec3 scale = glm::vec3{ 1.0f, 1.0f, 1.0f });
+	Transform(
+		glm::vec3 position = glm::vec3{ 0, 0, 0 },
+		glm::vec3 eulerAngles = glm::vec3{ 0, 0, 0 }
+	);
+
+	Transform(
+		glm::vec3 position = glm::vec3{ 0.0, 0.0, 0.0 },
+		glm::quat orientation = glm::angleAxis(1.0f, glm::vec3{ 0.0 }),
+		glm::vec3 scale = glm::vec3{ 1.0f, 1.0f, 1.0f }
+	);
 
 	glm::mat4 GetModelMatrix() const;
 
@@ -91,8 +98,8 @@ public:
 		return *this;
 	}
 
-	glm::vec3 RotateVector(const glm::vec3& vector3) const;
-	glm::vec3 RotateVector(const glm::vec4& vector) const;
+	glm::vec3 RotateVector(const glm::vec3& vector) const;
+	glm::vec4 RotateVector(const glm::vec4& vector) const;
 
 	glm::vec3 GetRight() const;
 	glm::vec3 GetForward() const;
