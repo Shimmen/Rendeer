@@ -19,10 +19,7 @@ public:
 
 	CameraComponent(float aspectRatio, float nearPlane, float farPlane, float fovOrSize, CameraType type = CameraType::PERSPECTIVE);
 
-	virtual void Init();
-
-	Transform& GetTransform();
-	const Transform& GetTransform() const;
+	virtual void Init() {};
 
 	glm::mat4 GetViewMatrix() const;
 	glm::mat4 GetProjectionMatrix() const;

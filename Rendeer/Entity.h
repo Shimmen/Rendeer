@@ -18,8 +18,11 @@ public:
 	{
 	}
 
-	inline Transform& GetTransform() { return transform; }
-	inline const Transform& GetTransform() const { return transform; }
+	// Get immutable global transform
+	const Transform& GetTransform() const;
+
+	// Get mutable local transform
+	inline Transform& GetLocalTransform() { return transform; }
 
 	// Add the component and return this.
 	Entity& AddComponent(const std::shared_ptr<Component> component);
@@ -30,8 +33,6 @@ public:
 private:
 
 	Transform transform;
-
-	// List of entity components
 	std::vector<std::shared_ptr<Component>> components;
 
 };
@@ -46,7 +47,7 @@ inline std::shared_ptr<const T> Entity::GetComponent() const
 	// Iterate all components (the list probably will never be longer than 10 or so)
 	for (std::shared_ptr<Component> component : components)
 	{
-		// Try to cast the 
+		// Try to cast the component to the specific component. If successful, return it.
 		std::shared_ptr<const T> correctType = std::dynamic_pointer_cast<const T>(component);
 		if (correctType != nullptr)
 		{

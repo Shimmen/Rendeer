@@ -6,8 +6,6 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
-#include <glm/gtx/quaternion.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 
 CameraComponent::CameraComponent(float aspectRatio, float nearPlane, float farPlane, float fovOrSize, CameraComponent::CameraType type)
 	: Component{}
@@ -21,24 +19,9 @@ CameraComponent::CameraComponent(float aspectRatio, float nearPlane, float farPl
 	assert(fovOrSize > 0.0f);
 }
 
-void CameraComponent::Init()
-{
-
-}
-
-Transform& CameraComponent::GetTransform()
-{
-	return GetOwnerEntity().GetTransform();
-}
-
-const Transform& CameraComponent::GetTransform() const
-{
-	return GetOwnerEntity().GetTransform();
-}
-
 glm::mat4 CameraComponent::GetViewMatrix() const
 {
-	const Transform& transform = GetTransform();
+	const Transform& transform = GetOwnerEntity().GetTransform();
 	glm::mat4 negativePosition = glm::translate(glm::mat4(1.0), -transform.GetPosition());
 	glm::mat4 negativeRotation = glm::toMat4(glm::conjugate(transform.GetOrientation()));
 
@@ -102,7 +85,7 @@ Camera::Camera(glm::vec3 position, glm::quat orientation)
 
 Camera::Camera(glm::vec3 position, glm::quat orientation, float aspectRatio, float nearPlane, float farPlane, float fovOrSize, CameraComponent::CameraType type)
 {
-	GetTransform().SetPosition(position).SetOrientation(orientation);
+	GetLocalTransform().SetPosition(position).SetOrientation(orientation);
 
 	AddComponent(
 		std::make_shared<CameraComponent>(aspectRatio, nearPlane, farPlane, fovOrSize, type)

@@ -57,8 +57,8 @@ int main(int argc, char *argv[])
 	teapotMaterial.shininess = 100.0f;
 	Entity teapot;
 	teapot.AddComponent(std::make_shared<Renderable>(teapotMesh, teapotMaterial));
-	teapot.GetTransform().SetScale(0.01f).Scale(glm::vec3{ 0.5f, 1, 1 });
-	teapot.GetTransform().SetPosition(glm::vec3{ 0, 0.5f, 1 });
+	teapot.GetLocalTransform().SetScale(0.01f).Scale(glm::vec3{ 0.5f, 1, 1 });
+	teapot.GetLocalTransform().SetPosition(glm::vec3{ 0, 0.5f, 1 });
 
 	// PANEL
 	Mesh panelMesh{ "models/cube.obj", false };
@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
 	panelMaterial.shininess = 20.0f;
 	Entity panel;
 	panel.AddComponent(std::make_shared<Renderable>(panelMesh, panelMaterial));
-	panel.GetTransform().SetScale(glm::vec3{3.0f, 0.008f, 1.5f});
+	panel.GetLocalTransform().SetScale(glm::vec3{3.0f, 0.008f, 1.5f});
 	
 	// FLOOR
 	Mesh floorMesh{"models/curved_plane.obj"};
@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
 	floorMaterial.shininess = 10.0f;
 	Entity floor;
 	floor.AddComponent(std::make_shared<Renderable>(floorMesh, floorMaterial));
-	floor.GetTransform().SetPosition(glm::vec3{0, -0.5f, 4});
+	floor.GetLocalTransform().SetPosition(glm::vec3{0, -0.5f, 4});
 
 	// ENTITIES
 	std::vector<Entity *> entities;
@@ -168,7 +168,7 @@ int main(int argc, char *argv[])
 
 		// Rotate translation to model space and translate
 		translation = camera.GetTransform().RotateVector(translation);
-		camera.GetTransform().Translate(translation);
+		camera.GetLocalTransform().Translate(translation);
 
 		// If cursor is hidden, rotate camera
 		if (window.IsCursorHidden())
@@ -176,14 +176,14 @@ int main(int argc, char *argv[])
 			float mouseSensitivity = 0.0005f;
 			glm::vec2 mouseDelta = window.GetMouse().GetMouseDelta();
 
-			camera.GetTransform().Rotate(glm::vec3(0, 1, 0), mouseDelta.x * mouseSensitivity);
-			camera.GetTransform().Rotate(camera.GetTransform().GetRight(), mouseDelta.y * mouseSensitivity);
+			camera.GetLocalTransform().Rotate(glm::vec3(0, 1, 0), mouseDelta.x * mouseSensitivity);
+			camera.GetLocalTransform().Rotate(camera.GetTransform().GetRight(), mouseDelta.y * mouseSensitivity);
 		}
 
 		timer += 0.03f;
 
-		teapot.GetTransform().SetOrientation(glm::vec3(0, 1, 0), timer);
-		panel.GetTransform().SetPosition(glm::vec3(0, 0, sinf(timer) * 0.9f + 0.9f));
+		teapot.GetLocalTransform().SetOrientation(glm::vec3(0, 1, 0), timer);
+		panel.GetLocalTransform().SetPosition(glm::vec3(0, 0, sinf(timer) * 0.9f + 0.9f));
 		
 		if (keyboard.WasKeyPressed(GLFW_KEY_LEFT_CONTROL))
 		{
