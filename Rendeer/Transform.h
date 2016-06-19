@@ -119,13 +119,11 @@ public:
 
 	// Scene/world transform
 
-	glm::mat4 GetMatrix() const;
+	glm::mat4 GetWorldMatrix() const;
 
-	// =============================== TODO!
-	// GetPositionInScene()
-	// GetOrientationInScene()
-	// GetScaleInScene()
-	// =============================== TODO!
+	glm::vec3 GetPositionInWorld() const;
+	glm::quat GetOrientationInWorld() const;
+	glm::vec3 GetScaleInWorld() const;
 
 	// Utility
 
@@ -139,6 +137,6 @@ private:
 
 	// Could also be a weak_ptr, but since Transforms are stored as members, there are no shared_ptrs
 	// to them anywhere and weak_ptrs can only be created from shared_ptr, not raw pointers.
-	const Transform *parent;
+	const Transform *parent{ nullptr };
 
 };

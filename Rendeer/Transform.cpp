@@ -41,18 +41,59 @@ glm::vec3 Transform::GetUp() const
 	return glm::normalize(RotateVector(glm::vec3{ 0, 1, 0 }, true));
 }
 
-glm::mat4 Transform::GetMatrix() const
+glm::mat4 Transform::GetWorldMatrix() const
 {
-	glm::mat4 scaleMatrix = glm::scale(glm::mat4(1.0f), this->scale);
-	glm::mat4 rotationMatrix = glm::toMat4(glm::normalize(this->orientation));
-	glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0f), this->position);
+	glm::mat4 scaleMatrix = glm::scale(glm::mat4(1.0f), GetScaleInWorld());
+	glm::mat4 rotationMatrix = glm::toMat4(glm::normalize(GetOrientationInWorld()));
+	glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0f), GetPositionInWorld());
 
-	// TODO: Don't forget about the parent matrix!
 	return translationMatrix * rotationMatrix * scaleMatrix;
+}
+
+glm::vec3 Transform::GetPositionInWorld() const
+{
+	glm::vec3 worldPosition = GetPosition();
+
+	const Transform *currentParent = GetParent();
+	while (currentParent != nullptr)
+	{
+		worldPosition += currentParent->GetPosition();
+		currentParent = currentParent->GetParent();
+	}
+
+	return worldPosition;
+}
+
+glm::quat Transform::GetOrientationInWorld() const
+{
+	glm::quat worldOrientation = GetOrientation();
+
+	const Transform *currentParent = GetParent();
+	while (currentParent != nullptr)
+	{
+		worldOrientation = currentParent->GetOrientation() * worldOrientation;
+		currentParent = currentParent->GetParent();
+	}
+
+	return worldOrientation;
+}
+
+glm::vec3 Transform::GetScaleInWorld() const
+{
+	glm::vec3 worldScale = GetScale();
+
+	const Transform *currentParent = GetParent();
+	while (currentParent != nullptr)
+	{
+		worldScale *= currentParent->GetScale();
+		currentParent = currentParent->GetParent();
+	}
+
+	return worldScale;
 }
 
 glm::vec3 Transform::RotateVector(const glm::vec3& vector, bool local) const
 {
-	auto quaternionToUse = /*(local) ? */GetOrientation()/* : GetOrientationInScene()*/;
+	auto quaternionToUse = (local) ? GetOrientation() : GetOrientationInWorld();
 	return glm::rotate(quaternionToUse, vector);
 }
