@@ -129,8 +129,7 @@ public:
 
 	// Utility
 
-	glm::vec3 RotateVector(const glm::vec3& vector) const;
-	glm::vec4 RotateVector(const glm::vec4& vector) const;
+	glm::vec3 RotateVector(const glm::vec3& vector, bool local = true) const;
 
 private:
 

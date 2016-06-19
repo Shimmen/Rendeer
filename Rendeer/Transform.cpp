@@ -28,17 +28,17 @@ void Transform::SetParent(const Transform *parent)
 
 glm::vec3 Transform::GetRight() const
 {
-	return glm::normalize(RotateVector(glm::vec3(1, 0, 0)));
+	return glm::normalize(RotateVector(glm::vec3{ 1, 0, 0 }, true));
 }
 
 glm::vec3 Transform::GetForward() const
 {
-	return glm::normalize(RotateVector(glm::vec3(0, 0, 1)));
+	return glm::normalize(RotateVector(glm::vec3{ 0, 0, 1 }, true));
 }
 
 glm::vec3 Transform::GetUp() const
 {
-	return glm::normalize(RotateVector(glm::vec3(0, 1, 0)));
+	return glm::normalize(RotateVector(glm::vec3{ 0, 1, 0 }, true));
 }
 
 glm::mat4 Transform::GetMatrix() const
@@ -51,12 +51,8 @@ glm::mat4 Transform::GetMatrix() const
 	return translationMatrix * rotationMatrix * scaleMatrix;
 }
 
-glm::vec3 Transform::RotateVector(const glm::vec3& vector) const
+glm::vec3 Transform::RotateVector(const glm::vec3& vector, bool local) const
 {
-	return glm::rotate(this->orientation, vector);
-}
-
-glm::vec4 Transform::RotateVector(const glm::vec4& vector) const
-{
-	return glm::rotate(this->orientation, vector);
+	auto quaternionToUse = /*(local) ? */GetOrientation()/* : GetOrientationInScene()*/;
+	return glm::rotate(quaternionToUse, vector);
 }
