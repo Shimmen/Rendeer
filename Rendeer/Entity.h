@@ -18,11 +18,8 @@ public:
 	{
 	}
 
-	// Get a copy of the global transform
-	Transform GetTransform() const;
-
-	// Get mutable local transform
-	inline Transform& GetLocalTransform() { return transform; }
+	inline Transform& GetTransform() { return transform; }
+	inline const Transform& GetTransform() const { return transform; }
 
 	// Add the component and return this.
 	Entity& AddComponent(const std::shared_ptr<Component> component);

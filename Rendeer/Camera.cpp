@@ -85,7 +85,7 @@ Camera::Camera(glm::vec3 position, glm::quat orientation)
 
 Camera::Camera(glm::vec3 position, glm::quat orientation, float aspectRatio, float nearPlane, float farPlane, float fovOrSize, CameraComponent::CameraType type)
 {
-	GetLocalTransform().SetPosition(position).SetOrientation(orientation);
+	GetTransform().SetPosition(position).SetOrientation(orientation);
 
 	AddComponent(
 		std::make_shared<CameraComponent>(aspectRatio, nearPlane, farPlane, fovOrSize, type)
