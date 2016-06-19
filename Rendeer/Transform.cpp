@@ -26,16 +26,6 @@ void Transform::SetParent(const Transform *parent)
 	this->parent = parent;
 }
 
-glm::mat4 Transform::GetMatrix() const
-{
-	glm::mat4 scaleMatrix = glm::scale(glm::mat4(1.0f), this->scale);
-	glm::mat4 rotationMatrix = glm::toMat4(glm::normalize(this->orientation));
-	glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0f), this->position);
-
-	// TODO: Don't forget about the parent matrix!
-	return translationMatrix * rotationMatrix * scaleMatrix;
-}
-
 glm::vec3 Transform::GetRight() const
 {
 	return glm::normalize(RotateVector(glm::vec3(1, 0, 0)));
@@ -51,12 +41,14 @@ glm::vec3 Transform::GetUp() const
 	return glm::normalize(RotateVector(glm::vec3(0, 1, 0)));
 }
 
-Transform Transform::GetInverse() const
+glm::mat4 Transform::GetMatrix() const
 {
-	auto inversePosition = -this->position;
-	auto conjugateOrientation = glm::conjugate(this->orientation);
-	auto inverseScale = 1.0f / this->scale;
-	return Transform(inversePosition, conjugateOrientation, inverseScale);
+	glm::mat4 scaleMatrix = glm::scale(glm::mat4(1.0f), this->scale);
+	glm::mat4 rotationMatrix = glm::toMat4(glm::normalize(this->orientation));
+	glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0f), this->position);
+
+	// TODO: Don't forget about the parent matrix!
+	return translationMatrix * rotationMatrix * scaleMatrix;
 }
 
 glm::vec3 Transform::RotateVector(const glm::vec3& vector) const

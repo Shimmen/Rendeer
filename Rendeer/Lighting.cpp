@@ -44,7 +44,10 @@ void DirectionalLight::SetUniforms(const DeferredRenderer& renderer, Camera& cam
 	ILight::SetUniforms(renderer, camera);
 
 	auto lightForward = this->transform.GetForward();
-	auto viewSpaceLightForward = camera.GetTransform().GetInverse().RotateVector(lightForward);
+
+	glm::quat conjugateCameraOrientation = glm::conjugate(camera.GetTransform().GetOrientation());
+	auto viewSpaceLightForward = glm::rotate(conjugateCameraOrientation, lightForward);
+	
 	directionUniform->Set(viewSpaceLightForward);
 
 	inverseProjectionUniform->Set(glm::inverse((camera.GetProjectionMatrix())));
@@ -139,7 +142,9 @@ void SpotLight::SetUniforms(const DeferredRenderer& renderer, Camera& camera) co
 	auto viewSpaceLightPosition = glm::vec3(camera.GetViewMatrix() * glm::vec4(this->transform.GetPosition(), 1.0f));
 
 	auto lightForward = this->transform.GetForward();
-	auto viewSpaceLightForward = camera.GetTransform().GetInverse().RotateVector(lightForward);
+
+	glm::quat conjugateCameraOrientation = glm::conjugate(camera.GetTransform().GetOrientation());
+	auto viewSpaceLightForward = glm::rotate(conjugateCameraOrientation, lightForward);
 
 	positionUniform->Set(viewSpaceLightPosition);
 	directionUniform->Set(viewSpaceLightForward);

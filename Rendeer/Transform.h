@@ -113,6 +113,10 @@ public:
 		return *this;
 	}
 
+	glm::vec3 GetRight() const;
+	glm::vec3 GetForward() const;
+	glm::vec3 GetUp() const;
+
 	// Scene/world transform
 
 	glm::mat4 GetMatrix() const;
@@ -122,14 +126,6 @@ public:
 	// GetOrientationInScene()
 	// GetScaleInScene()
 	// =============================== TODO!
-
-	glm::vec3 GetRight() const;
-	glm::vec3 GetForward() const;
-	glm::vec3 GetUp() const;
-
-	// TODO: Make sure this works when added into scene graph. Hovever, NOTE that only the inversed rotation is used
-	// from this inverse Transform. This could be replaced all together.
-	Transform GetInverse() const;
 
 	// Utility
 
