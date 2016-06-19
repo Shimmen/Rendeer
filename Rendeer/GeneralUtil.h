@@ -16,4 +16,17 @@ namespace nonstd
 	{
 		return std::ifstream(filePath.c_str()).good();
 	}
+
+	inline
+	std::string trim_whitespace(const std::string& string)
+	{
+		if (string.length() <= 0)
+		{
+			return "";
+		}
+
+		size_t first = string.find_first_not_of(' ');
+		size_t last = string.find_last_not_of(' ');
+		return string.substr(first, (last - first + 1));
+	}
 }

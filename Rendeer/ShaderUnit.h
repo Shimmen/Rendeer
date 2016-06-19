@@ -4,6 +4,8 @@
 
 #include <glad/glad.h>
 
+#define INCLUDE_DIRECTIVE (std::string("#include "))
+
 class ShaderUnit
 {
 public:
@@ -25,13 +27,17 @@ public:
 
 private:
 
-	// Reads in a shader source file and includes "#included" files.
-	static std::string ReadShaderSourceFile(const std::string& filePath);
-	static const std::string INCLUDE_DIRECTIVE;
-
 	// Non-copyable
 	ShaderUnit(ShaderUnit& other) = delete;
 	ShaderUnit& operator=(ShaderUnit& other) = delete;
+
+private:
+
+	// Reads and preprocesses a shader source file into a string
+	static std::string ReadShaderSourceFile(const std::string& filePath);
+
+	static bool IsIncludeLine(const std::string& line);
+	static std::string GetFileNameFromIncludeLine(const std::string& line);
 
 private:
 
