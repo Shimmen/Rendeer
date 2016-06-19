@@ -106,6 +106,7 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="PrimitiveDrawables.cpp" />
+    <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderUnit.cpp" />
     <ClCompile Include="TextureBase.cpp" />
@@ -127,6 +128,7 @@
     <ClInclude Include="Component.h" />
     <ClInclude Include="ModelLoader.h" />
     <ClInclude Include="Renderable.h" />
+    <ClInclude Include="Scene.h" />
     <ClInclude Include="TextureBase.h" />
     <ClInclude Include="Keyboard.h" />
     <ClInclude Include="Lighting.h" />
