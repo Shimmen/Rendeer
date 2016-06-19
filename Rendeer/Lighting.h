@@ -13,6 +13,7 @@ class DeferredRenderer;
 class Uniform;
 class Camera;
 
+// TODO: Rename to LightComponent and extend Component
 class ILight
 {
 public:

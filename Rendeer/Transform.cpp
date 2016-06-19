@@ -4,9 +4,6 @@
 
 #include "Shader.h"
 
-/*
- * Create a transform from a position and euler angles (pitch, yaw, roll)
- */
 Transform::Transform(glm::vec3 position, glm::vec3 eulerAngles)
 	: Transform{ position, glm::quat{ eulerAngles } }
 {
@@ -19,23 +16,24 @@ Transform::Transform(glm::vec3 position, glm::quat orientation, glm::vec3 scale)
 {
 }
 
-glm::mat4 Transform::GetModelMatrix() const
+const Transform* Transform::GetParent() const
+{
+	return this->parent;
+}
+
+void Transform::SetParent(const Transform *parent)
+{
+	this->parent = parent;
+}
+
+glm::mat4 Transform::GetMatrix() const
 {
 	glm::mat4 scaleMatrix = glm::scale(glm::mat4(1.0f), this->scale);
 	glm::mat4 rotationMatrix = glm::toMat4(glm::normalize(this->orientation));
 	glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0f), this->position);
 
+	// TODO: Don't forget about the parent matrix!
 	return translationMatrix * rotationMatrix * scaleMatrix;
-}
-
-glm::vec3 Transform::RotateVector(const glm::vec3& vector) const
-{
-	return glm::rotate(this->orientation, vector);
-}
-
-glm::vec4 Transform::RotateVector(const glm::vec4& vector) const
-{
-	return glm::rotate(this->orientation, vector);
 }
 
 glm::vec3 Transform::GetRight() const
@@ -61,12 +59,12 @@ Transform Transform::GetInverse() const
 	return Transform(inversePosition, conjugateOrientation, inverseScale);
 }
 
-const Transform* Transform::GetParent() const
+glm::vec3 Transform::RotateVector(const glm::vec3& vector) const
 {
-	return this->parent;
+	return glm::rotate(this->orientation, vector);
 }
 
-void Transform::SetParent(const Transform *parent)
+glm::vec4 Transform::RotateVector(const glm::vec4& vector) const
 {
-	this->parent = parent;
+	return glm::rotate(this->orientation, vector);
 }

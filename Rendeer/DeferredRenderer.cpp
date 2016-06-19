@@ -120,7 +120,7 @@ void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::
 
 			for (auto entity = entities.begin(); entity != entities.end(); ++entity)
 			{
-				shadowMapGenerator.SetUniform("u_model_matrix", (*entity)->GetTransform().GetModelMatrix());
+				shadowMapGenerator.SetUniform("u_model_matrix", (*entity)->GetTransform().GetMatrix());
 				if (auto renderable = (*entity)->GetComponent<Renderable>())
 				{
 					renderable->GetMesh().Render();

@@ -46,7 +46,11 @@ int main(int argc, char *argv[])
 	logger.LogEmptyLine();
 
 	// CAMERA
-	Camera camera{ glm::vec3{ 0, 1.5f, -2.8f }, glm::angleAxis(0.5f, glm::vec3{ 1, 0, 0 }) };
+	Camera camera{
+		glm::vec3{ 0, 1.5f, -2.8f },
+		glm::angleAxis(0.5f,
+		glm::vec3{ 1, 0, 0 })
+	};
 
 	// TEAPOT
 	Mesh teapotMesh{ "models/teapot.obj" };
@@ -57,8 +61,8 @@ int main(int argc, char *argv[])
 	teapotMaterial.shininess = 100.0f;
 	Entity teapot;
 	teapot.AddComponent(std::make_shared<Renderable>(teapotMesh, teapotMaterial));
-	teapot.GetTransform().SetScale(0.01f).Scale(glm::vec3{ 0.5f, 1, 1 });
-	teapot.GetTransform().SetPosition(glm::vec3{ 0, 0.5f, 1 });
+	teapot.GetTransform().SetScale(0.01f).Scale(0.5f, 1, 1);
+	teapot.GetTransform().SetPosition(0, 0.5f, 1);
 
 	// PANEL
 	Mesh panelMesh{ "models/cube.obj", false };
@@ -71,7 +75,7 @@ int main(int argc, char *argv[])
 	panelMaterial.shininess = 20.0f;
 	Entity panel;
 	panel.AddComponent(std::make_shared<Renderable>(panelMesh, panelMaterial));
-	panel.GetTransform().SetScale(glm::vec3{3.0f, 0.008f, 1.5f});
+	panel.GetTransform().SetScale(3.0f, 0.008f, 1.5f);
 	
 	// FLOOR
 	Mesh floorMesh{"models/curved_plane.obj"};
@@ -84,7 +88,7 @@ int main(int argc, char *argv[])
 	floorMaterial.shininess = 10.0f;
 	Entity floor;
 	floor.AddComponent(std::make_shared<Renderable>(floorMesh, floorMaterial));
-	floor.GetTransform().SetPosition(glm::vec3{0, -0.5f, 4});
+	floor.GetTransform().SetPosition(0, -0.5f, 4);
 
 	// ENTITIES
 	std::vector<Entity *> entities;
@@ -183,7 +187,7 @@ int main(int argc, char *argv[])
 		timer += 0.03f;
 
 		teapot.GetTransform().SetOrientation(glm::vec3(0, 1, 0), timer);
-		panel.GetTransform().SetPosition(glm::vec3(0, 0, sinf(timer) * 0.9f + 0.9f));
+		panel.GetTransform().SetPosition(0, 0, sinf(timer) * 0.9f + 0.9f);
 		
 		if (keyboard.WasKeyPressed(GLFW_KEY_LEFT_CONTROL))
 		{
