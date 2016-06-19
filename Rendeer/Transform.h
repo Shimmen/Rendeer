@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/quaternion.hpp>
 
@@ -21,7 +23,6 @@ public:
 	);
 
 	glm::mat4 GetModelMatrix() const;
-
 
 	inline glm::vec3 GetPosition() const
 	{
@@ -107,10 +108,17 @@ public:
 
 	Transform GetInverse() const;
 
+	const Transform *GetParent() const;
+	void SetParent(const Transform *parent);
+
 private:
 
 	glm::vec3 position;
 	glm::quat orientation;
 	glm::vec3 scale;
+
+	// Could also be a weak_ptr, but since Transforms are stored as members, there are no shared_ptrs
+	// to them anywhere and weak_ptrs can only be created from shared_ptr, not raw pointers.
+	const Transform *parent;
 
 };

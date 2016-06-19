@@ -18,8 +18,8 @@ public:
 	{
 	}
 
-	// Get immutable global transform
-	const Transform& GetTransform() const;
+	// Get a copy of the global transform
+	Transform GetTransform() const;
 
 	// Get mutable local transform
 	inline Transform& GetLocalTransform() { return transform; }
@@ -30,10 +30,15 @@ public:
 	template<typename T>
 	std::shared_ptr<const T> GetComponent() const;
 
+	// Add the child entity and return this.
+	Entity& AddChild(const std::shared_ptr<Entity> child);
+
 private:
 
 	Transform transform;
 	std::vector<std::shared_ptr<Component>> components;
+
+	std::vector<std::shared_ptr<Entity>> children;
 
 };
 

@@ -60,3 +60,13 @@ Transform Transform::GetInverse() const
 	auto inverseScale = 1.0f / this->scale;
 	return Transform(inversePosition, conjugateOrientation, inverseScale);
 }
+
+const Transform* Transform::GetParent() const
+{
+	return this->parent;
+}
+
+void Transform::SetParent(const Transform *parent)
+{
+	this->parent = parent;
+}
