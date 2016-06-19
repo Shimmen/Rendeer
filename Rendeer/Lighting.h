@@ -4,6 +4,7 @@
 
 #include <memory>
 
+#include "Camera.h"
 #include "Shader.h"
 #include "Texture2D.h"
 #include "Transform.h"
@@ -11,7 +12,6 @@
 
 class DeferredRenderer;
 class Uniform;
-class Camera;
 
 // TODO: Rename to LightComponent and extend Component
 class ILight
@@ -21,8 +21,8 @@ public:
 	ILight(Shader *shader, const Transform& transform, glm::vec3 color, float intensity);
 	virtual ~ILight() {}
 
-	virtual void SetUniforms(const DeferredRenderer& renderer, Camera& camera) const;
-	virtual Camera GetLightCamera(const Camera& mainCamera, int shadowMapSize) const = 0;
+	virtual void SetUniforms(const DeferredRenderer& renderer, const CameraComponent& camera) const;
+	virtual Camera GetLightCamera(const CameraComponent& mainCamera, int shadowMapSize) const = 0;
 
 	const Shader& GetShader() const { return *shader; }
 
@@ -53,8 +53,8 @@ public:
 	DirectionalLight(const glm::quat& directionRotation, glm::vec3 color, float intensity, bool usingDynamicCameraPositioning = false);
 	virtual ~DirectionalLight() {}
 
-	void SetUniforms(const DeferredRenderer& renderer, Camera& camera) const;
-	Camera GetLightCamera(const Camera& mainCamera, int shadowMapSize) const;
+	void SetUniforms(const DeferredRenderer& renderer, const CameraComponent& camera) const;
+	Camera GetLightCamera(const CameraComponent& mainCamera, int shadowMapSize) const;
 
 private:
 
@@ -72,8 +72,8 @@ public:
 	PointLight(const glm::vec3 position, glm::vec3 color, float intensity);
 	virtual ~PointLight() {}
 
-	void SetUniforms(const DeferredRenderer& renderer, Camera& camera) const;
-	Camera GetLightCamera(const Camera& mainCamera, int shadowMapSize) const;
+	void SetUniforms(const DeferredRenderer& renderer, const CameraComponent& camera) const;
+	Camera GetLightCamera(const CameraComponent& mainCamera, int shadowMapSize) const;
 
 private:
 
@@ -89,8 +89,8 @@ public:
 	SpotLight(const glm::vec3 position, const glm::quat orientation, glm::vec3 color, float intensity, float outerConeAngle, float innerConeAngle);
 	virtual ~SpotLight() {}
 
-	void SetUniforms(const DeferredRenderer& renderer, Camera& camera) const;
-	Camera GetLightCamera(const Camera& mainCamera, int shadowMapSize) const;
+	void SetUniforms(const DeferredRenderer& renderer, const CameraComponent& camera) const;
+	Camera GetLightCamera(const CameraComponent& mainCamera, int shadowMapSize) const;
 
 private:
 

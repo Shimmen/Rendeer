@@ -8,6 +8,7 @@
 #include "Transform.h"
 
 class Component;
+class Scene;
 
 class Entity
 {
@@ -27,8 +28,8 @@ public:
 	template<typename T>
 	std::shared_ptr<const T> GetComponent() const;
 
-	// Add the child entity and return this.
-	Entity& AddChild(const std::shared_ptr<Entity> child);
+	// Add the child entity and return the added child.
+	std::shared_ptr<Entity> AddChild(const std::shared_ptr<Entity> child);
 
 private:
 

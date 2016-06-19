@@ -2,6 +2,7 @@
 
 #include <vector>
 
+#include "Scene.h"
 #include "Shader.h"
 #include "Entity.h"
 #include "Camera.h"
@@ -22,7 +23,7 @@ public:
 	~DeferredRenderer();
 
 	void BindForUsage() const;
-	void Render(const std::vector<Entity *>& entities, const std::vector<ILight *>& lights, Camera& camera);
+	void Render(const std::vector<Entity *>& entities, const std::vector<ILight *>& lights, const Scene& scene);
 
 	// Default textures etc.
 	Texture2D defaultNormalMap{"textures/default_normal.jpg", false};

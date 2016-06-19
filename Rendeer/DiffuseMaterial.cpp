@@ -12,7 +12,7 @@ DiffuseMaterial::DiffuseMaterial()
 
 void DiffuseMaterial::UpdateUniforms(const DeferredRenderer& renderer,
                                      const Transform& transform,
-                                     const Camera& camera) const
+                                     const CameraComponent& camera) const
 {
 	shader->Bind();
 

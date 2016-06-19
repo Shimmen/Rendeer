@@ -20,11 +20,12 @@ public:
 
 	Scene();
 
-	std::weak_ptr<CameraComponent> GetMainCamera() const;
+	std::shared_ptr<const CameraComponent> GetMainCamera() const;
+	void SetMainCamera(std::shared_ptr<const CameraComponent> cameraComponent);
 
 private:
 
-	std::weak_ptr<CameraComponent> mainCamera;
+	std::weak_ptr<const CameraComponent> mainCamera;
 
 	// Add scene related items like:
 	//  - Skybox

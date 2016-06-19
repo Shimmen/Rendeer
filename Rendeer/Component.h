@@ -17,8 +17,6 @@ public:
 	Component();
 	virtual ~Component() {};
 
-protected:
-
 	Entity& GetOwnerEntity();
 	const Entity& GetOwnerEntity() const;
 

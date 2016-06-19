@@ -6,7 +6,7 @@
 
 class Transform;
 class DeferredRenderer;
-class Camera;
+class CameraComponent;
 
 class IMaterial
 {
@@ -23,7 +23,7 @@ public:
 
 	virtual void UpdateUniforms(const DeferredRenderer& renderer,
 	                            const Transform& transform,
-	                            const Camera& camera) const = 0;
+	                            const CameraComponent& camera) const = 0;
 
 protected:
 

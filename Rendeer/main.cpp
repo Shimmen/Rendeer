@@ -11,6 +11,8 @@
 
 #include "Mesh.h"
 #include "Model.h"
+#include "Scene.h"
+#include "Camera.h"
 #include "Shader.h"
 #include "Entity.h"
 #include "Window.h"
@@ -20,7 +22,6 @@
 #include "Renderable.h"
 #include "DiffuseMaterial.h"
 #include "DeferredRenderer.h"
-#include "Camera.h"
 
 int main(int argc, char *argv[])
 {
@@ -45,12 +46,19 @@ int main(int argc, char *argv[])
 	logger.LogTimestamp();
 	logger.LogEmptyLine();
 
-	// CAMERA
-	Camera camera{
+	//
+	// Define scene
+	//
+	Scene scene;
+
+	auto camera = scene.AddChild(std::make_shared<Camera>(
 		glm::vec3{ 0, 1.5f, -2.8f },
-		glm::angleAxis(0.5f,
-		glm::vec3{ 1, 0, 0 })
-	};
+		glm::angleAxis(0.5f, glm::vec3{ 1, 0, 0 })
+	));
+
+	// TODO: Make syntax better for these things.
+	scene.SetMainCamera(camera->GetComponent<CameraComponent>());
+
 
 	// TEAPOT
 	Mesh teapotMesh{ "models/teapot.obj" };
@@ -171,8 +179,8 @@ int main(int argc, char *argv[])
 		}
 
 		// Rotate translation to model space and translate
-		translation = camera.GetTransform().RotateVector(translation);
-		camera.GetTransform().Translate(translation);
+		translation = camera->GetTransform().RotateVector(translation);
+		camera->GetTransform().Translate(translation);
 
 		// If cursor is hidden, rotate camera
 		if (window.IsCursorHidden())
@@ -180,8 +188,8 @@ int main(int argc, char *argv[])
 			float mouseSensitivity = 0.0005f;
 			glm::vec2 mouseDelta = window.GetMouse().GetMouseDelta();
 
-			camera.GetTransform().Rotate(glm::vec3(0, 1, 0), mouseDelta.x * mouseSensitivity);
-			camera.GetTransform().Rotate(camera.GetTransform().GetRight(), mouseDelta.y * mouseSensitivity);
+			camera->GetTransform().Rotate(glm::vec3(0, 1, 0), mouseDelta.x * mouseSensitivity);
+			camera->GetTransform().Rotate(camera->GetTransform().GetRight(), mouseDelta.y * mouseSensitivity);
 		}
 
 		timer += 0.03f;
@@ -197,12 +205,12 @@ int main(int argc, char *argv[])
 		if (stickDirectionalLightToCamera)
 		{
 			// Spot light must be attached directly to root node
-			auto cameraPosition = camera.GetTransform().GetPositionInWorld();
-			auto cameraOrientation = camera.GetTransform().GetOrientationInWorld();
+			auto cameraPosition = camera->GetTransform().GetPositionInWorld();
+			auto cameraOrientation = camera->GetTransform().GetOrientationInWorld();
 			spotLight.GetTransform().SetPosition(cameraPosition).SetOrientation(cameraOrientation);
 		}
 
-		deferredRenderer.Render(entities, lights, camera);
+		deferredRenderer.Render(entities, lights, scene);
 
 	}
 

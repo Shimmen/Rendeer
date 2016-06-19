@@ -54,8 +54,10 @@ void DeferredRenderer::BindForUsage() const
 }
 
 
-void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::vector<ILight *>& lights, Camera& camera)
+void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::vector<ILight *>& lights, const Scene& scene)
 {
+	auto camera = scene.GetMainCamera();
+
 	//
 	// Render geometry
 	//
@@ -78,7 +80,7 @@ void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::
 			auto& material = renderable->GetMaterial();
 			auto& mesh = renderable->GetMesh();
 
-			material.UpdateUniforms(*this, transform, camera);
+			material.UpdateUniforms(*this, transform, *camera);
 			mesh.Render();
 		}
 	}
@@ -104,7 +106,7 @@ void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::
 
 		bool TEMP_usingShadowMap = false;
 		assert(shadowMap.GetWidth() == shadowMap.GetHeight());
-		auto lightCamera = (*light)->GetLightCamera(camera, shadowMap.GetWidth());
+		auto lightCamera = (*light)->GetLightCamera(*camera, shadowMap.GetWidth());
 		glm::mat4 lightViewProjection = lightCamera.GetProjectionMatrix() * lightCamera.GetViewMatrix();
 
 		if ((*light)->CastsShadows())
@@ -149,14 +151,14 @@ void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::
 		gBuffer.BindAsUniform(lightShader);
 
 		// Ask the light to sets its shader's uniforms
-		(*light)->SetUniforms(*this, camera);
+		(*light)->SetUniforms(*this, *camera);
 
 		// Set shadow map related uniforms
 		if (TEMP_usingShadowMap)
 		{
 			this->shadowMap.Bind(8);
 			lightShader.SetUniform("u_shadow_map", 8);
-			lightShader.SetUniform("u_inverse_view_matrix", glm::inverse(camera.GetViewMatrix()));
+			lightShader.SetUniform("u_inverse_view_matrix", glm::inverse(camera->GetViewMatrix()));
 			lightShader.SetUniform("u_light_view_projection", lightViewProjection);
 		}
 
