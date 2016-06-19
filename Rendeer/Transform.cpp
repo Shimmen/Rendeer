@@ -92,6 +92,21 @@ glm::vec3 Transform::GetScaleInWorld() const
 	return worldScale;
 }
 
+glm::vec3 Transform::GetRightInWorld() const
+{
+	return glm::normalize(RotateVector(glm::vec3{ 1, 0, 0 }, false));
+}
+
+glm::vec3 Transform::GetForwardInWorld() const
+{
+	return glm::normalize(RotateVector(glm::vec3{ 0, 0, 1 }, false));
+}
+
+glm::vec3 Transform::GetUpInWorld() const
+{
+	return glm::normalize(RotateVector(glm::vec3{ 0, 1, 0 }, false));
+}
+
 glm::vec3 Transform::RotateVector(const glm::vec3& vector, bool local) const
 {
 	auto quaternionToUse = (local) ? GetOrientation() : GetOrientationInWorld();

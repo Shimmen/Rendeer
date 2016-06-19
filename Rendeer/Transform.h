@@ -125,6 +125,10 @@ public:
 	glm::quat GetOrientationInWorld() const;
 	glm::vec3 GetScaleInWorld() const;
 
+	glm::vec3 GetRightInWorld() const;
+	glm::vec3 GetForwardInWorld() const;
+	glm::vec3 GetUpInWorld() const;
+
 	// Utility
 
 	glm::vec3 RotateVector(const glm::vec3& vector, bool local = true) const;

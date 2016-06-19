@@ -45,7 +45,7 @@ void DirectionalLight::SetUniforms(const DeferredRenderer& renderer, Camera& cam
 
 	auto lightForward = this->transform.GetForward();
 
-	glm::quat conjugateCameraOrientation = glm::conjugate(camera.GetTransform().GetOrientation());
+	glm::quat conjugateCameraOrientation = glm::conjugate(camera.GetTransform().GetOrientationInWorld());
 	auto viewSpaceLightForward = glm::rotate(conjugateCameraOrientation, lightForward);
 	
 	directionUniform->Set(viewSpaceLightForward);
@@ -59,14 +59,14 @@ Camera DirectionalLight::GetLightCamera(const Camera& mainCamera, int shadowMapS
 	const float cameraFar = 100.0f;
 	const float cameraScale = 10.0f;
 
-	glm::quat worldLightOrientation = this->GetTransform().GetOrientation();
-	glm::vec3 worldLightPosition = this->GetTransform().GetPosition();
+	glm::quat worldLightOrientation = this->GetTransform().GetOrientationInWorld();
+	glm::vec3 worldLightPosition = this->GetTransform().GetPositionInWorld();
 
 	if (usingDynamicCameraPositioning)
 	{
 		// Place the directional light camera at the main camera position and offset it by the looking direction
 		// and the light camera near plane, so that the near plane essantially lies at the main camera.
-		worldLightPosition = mainCamera.GetTransform().GetPosition() + mainCamera.GetTransform().GetForward() * -cameraNear;
+		worldLightPosition = mainCamera.GetTransform().GetPositionInWorld() + mainCamera.GetTransform().GetForwardInWorld() * -cameraNear;
 
 		// Rotate position into light space
 		glm::vec4 lightSpaceLightPosition = glm::rotate(glm::conjugate(worldLightOrientation), glm::vec4(worldLightPosition, 1.0f));
@@ -109,8 +109,8 @@ void PointLight::SetUniforms(const DeferredRenderer& renderer, Camera& camera) c
 Camera PointLight::GetLightCamera(const Camera& mainCamera, int shadowMapSize) const
 {
 	// TODO: This doesn't make sense since it's omnidirectional
-	return Camera(this->GetTransform().GetPosition(),
-	              this->GetTransform().GetOrientation(),
+	return Camera(this->GetTransform().GetPositionInWorld(),
+	              this->GetTransform().GetOrientationInWorld(),
 	              1.0f, 1.0f, 100.0f, glm::radians(90.0f), CameraComponent::CameraType::PERSPECTIVE);
 }
 
@@ -143,7 +143,7 @@ void SpotLight::SetUniforms(const DeferredRenderer& renderer, Camera& camera) co
 
 	auto lightForward = this->transform.GetForward();
 
-	glm::quat conjugateCameraOrientation = glm::conjugate(camera.GetTransform().GetOrientation());
+	glm::quat conjugateCameraOrientation = glm::conjugate(camera.GetTransform().GetOrientationInWorld());
 	auto viewSpaceLightForward = glm::rotate(conjugateCameraOrientation, lightForward);
 
 	positionUniform->Set(viewSpaceLightPosition);
@@ -156,7 +156,7 @@ void SpotLight::SetUniforms(const DeferredRenderer& renderer, Camera& camera) co
 
 Camera SpotLight::GetLightCamera(const Camera& mainCamera, int shadowMapSize) const
 {
-	return Camera(this->GetTransform().GetPosition(),
-	              this->GetTransform().GetOrientation(),
+	return Camera(this->GetTransform().GetPositionInWorld(),
+	              this->GetTransform().GetOrientationInWorld(),
 	              1.0f, 1.0f, 100.0f, outerConeAngle, CameraComponent::CameraType::PERSPECTIVE);
 }

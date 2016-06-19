@@ -22,8 +22,8 @@ CameraComponent::CameraComponent(float aspectRatio, float nearPlane, float farPl
 glm::mat4 CameraComponent::GetViewMatrix() const
 {
 	const Transform& transform = GetOwnerEntity().GetTransform();
-	glm::mat4 negativePosition = glm::translate(glm::mat4(1.0), -transform.GetPosition());
-	glm::mat4 negativeRotation = glm::toMat4(glm::conjugate(transform.GetOrientation()));
+	glm::mat4 negativePosition = glm::translate(glm::mat4(1.0), -transform.GetPositionInWorld());
+	glm::mat4 negativeRotation = glm::toMat4(glm::conjugate(transform.GetOrientationInWorld()));
 
 	return negativeRotation * negativePosition;
 }

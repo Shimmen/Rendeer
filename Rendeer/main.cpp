@@ -196,8 +196,9 @@ int main(int argc, char *argv[])
 
 		if (stickDirectionalLightToCamera)
 		{
-			auto cameraPosition = camera.GetTransform().GetPosition();
-			auto cameraOrientation = camera.GetTransform().GetOrientation();
+			// Spot light must be attached directly to root node
+			auto cameraPosition = camera.GetTransform().GetPositionInWorld();
+			auto cameraOrientation = camera.GetTransform().GetOrientationInWorld();
 			spotLight.GetTransform().SetPosition(cameraPosition).SetOrientation(cameraOrientation);
 		}
 
