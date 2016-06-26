@@ -37,7 +37,7 @@ dlldata.c
 *_i.h
 *.ilk
 *.meta
-*.obj
+#*.obj # removed, since all the obj-model files were ignored
 *.pch
 *.pdb
 *.pgc
