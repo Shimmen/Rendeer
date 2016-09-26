@@ -38,7 +38,7 @@ endif ()
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     message(STATUS "Building in debug mode")
 else ()
-	message(FATAL_ERROR "Non-debug build not yet supported (GLFW and assimp are built in debug)!")
+	#message(FATAL_ERROR "Non-debug build not yet supported (GLFW and assimp are built in debug)!")
 endif ()
 
 #------------------------------------------------------------------------
@@ -52,15 +52,20 @@ file(GLOB RENDEER_SOURCES "src/*.h" "src/*.c" "src/*.cpp")
 add_executable(${RENDEER} ${RENDEER_SOURCES})
 target_include_directories(${RENDEER} PRIVATE "src/")
 
-target_compile_options(${RENDEER} PRIVATE -Wall)
+target_compile_options(${RENDEER} PRIVATE -std=c++11)
 
 #------------------------------------------------------------------------
 # Include dependencies
 #------------------------------------------------------------------------
-add_subdirectory("dependencies/assimp")
+# Header only libraries
 add_subdirectory("dependencies/glad")
-add_subdirectory("dependencies/glfw")
 add_subdirectory("dependencies/glm")
 add_subdirectory("dependencies/stb")
+
+add_subdirectory("dependencies/assimp")
+target_link_libraries(${RENDEER} PRIVATE ${ASSIMP_LIB})
+
+add_subdirectory("dependencies/glfw")
+target_link_libraries(${RENDEER} PRIVATE ${GLFW_LIB})
 
 #------------------------------------------------------------------------
