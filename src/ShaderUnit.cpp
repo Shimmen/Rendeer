@@ -74,7 +74,7 @@ const std::string & ShaderUnit::GetSourceFilePath() const
 		}
 		else
 		{
-			result.append(line + '\n');
+			result.append(line + "\n");
 		}
 	}
 	

@@ -32,6 +32,7 @@ Model::Model(const std::string& fileName, bool genSmoothNormals)
 
 	// Get the first mesh (we sort of assume there is only one)
 	// TODO: Don't assume this, it's very wrong in most cases...
+	assert(scene != nullptr);
 	const aiMesh* model = scene->mMeshes[0];
 
 	// Construct vertices

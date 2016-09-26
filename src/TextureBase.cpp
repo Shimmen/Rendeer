@@ -17,7 +17,7 @@ TextureBase::~TextureBase()
 	glDeleteTextures(1, &this->textureHandle);
 }
 
-void TextureBase::Bind(GLenum textureBinding, int textureTarget) const
+void TextureBase::Bind(GLenum textureBinding, GLuint textureTarget) const
 {
 	assert(textureTarget >= 0 && textureTarget < GetMaxNumberOfCombinedTextureUnits());
 	glActiveTexture(GL_TEXTURE0 + textureTarget);

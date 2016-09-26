@@ -1,11 +1,8 @@
 #include "Mesh.h"
 
 #include <iostream>
-#include <vector>
 
 #include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
 
 #include "Buffer.h"
 #include "GeneralUtil.h"
@@ -21,7 +18,8 @@ Mesh::Mesh(const Model& model)
 {
 	vertexArray.Bind();
 
-	auto buffers = Buffer::GenerateBuffers(nonstd::as_integer(MeshBuffers::MESH_BUFFER_COUNT));
+	int numBuffers = nonstd::as_integer(MeshBuffers::MESH_BUFFER_COUNT);
+	auto buffers = Buffer::GenerateBuffers(static_cast<GLuint>(numBuffers));
 
 	// TODO: Use stride and offset!
 	int stride = 0;

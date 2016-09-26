@@ -8,15 +8,15 @@ class Renderable : public Component
 {
 public:
 
-	Renderable(Mesh& mesh, IMaterial& material)
+	Renderable(std::shared_ptr<Mesh> mesh, std::shared_ptr<IMaterial> material)
 		: Component{}
 		, material{ material }
 		, mesh{ mesh }
 	{
 	}
 
-	const IMaterial& GetMaterial() const { return material; }
-	const Mesh& GetMesh() const { return mesh; }
+	const std::shared_ptr<IMaterial> GetMaterial() const { return material; }
+	const std::shared_ptr<Mesh> GetMesh() const { return mesh; }
 
 private:
 
@@ -24,7 +24,7 @@ private:
 
 private:
 
-	IMaterial& material;
-	Mesh& mesh;
+	std::shared_ptr<IMaterial> material;
+	std::shared_ptr<Mesh> mesh;
 
 };

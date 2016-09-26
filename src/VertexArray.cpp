@@ -40,8 +40,10 @@ void VertexArray::AddVertexAttribute(int index, int valueCount, GLenum valueType
 	// (At least not for a floating point processor like for a PC).
 	static const GLboolean normalizeFixedPointValues = GL_FALSE;
 
-	glEnableVertexAttribArray(index);
-	glVertexAttribPointer(index, valueCount, valueType, normalizeFixedPointValues, stride, offset);
+	GLuint idx = static_cast<GLuint>(index);
+
+	glEnableVertexAttribArray(idx);
+	glVertexAttribPointer(idx, valueCount, valueType, normalizeFixedPointValues, stride, offset);
 }
 
 int VertexArray::GetMaxNumberOfVertexAttributes()

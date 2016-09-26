@@ -13,7 +13,7 @@ public:
 		const Bitmap& front, const Bitmap& back);
 	~TextureCube();
 
-	void Bind(int textureTarget) const;
+	void Bind(GLuint textureTarget) const;
 
 private:
 

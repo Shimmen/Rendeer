@@ -1,7 +1,5 @@
 #include "Transform.h"
 
-#include <glm/gtc/quaternion.hpp>
-
 #include "Shader.h"
 
 Transform::Transform(glm::vec3 position, glm::vec3 eulerAngles)

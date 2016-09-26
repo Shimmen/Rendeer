@@ -1,7 +1,7 @@
 #include "Bitmap.h"
 
 #define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
+#include <stb/stb_image.h>
 
 #include "Logger.h"
 #include "GeneralUtil.h"
@@ -21,7 +21,7 @@ Bitmap::Bitmap(const std::string& filePath)
 	// Flip images to make complient with OpenGL texture handling
 	stbi_set_flip_vertically_on_load(false);
 
-	if (nonstd::file_is_readable(filePath) == false)
+	if (!nonstd::file_is_readable(filePath))
 	{
 		Logger::GetDefaultLogger().Log("Error: can't read file with name: " + filePath + ".");
 	}
@@ -52,7 +52,7 @@ Bitmap::Bitmap(const std::string& filePath)
 		// Copy data from stbi's memory into owned memory
 		size_t dataSize = GetDataSize();
 		this->pixelData.resize(dataSize);
-		memcpy_s(&this->pixelData[0], dataSize, stbiOwnedData, dataSize);
+		memcmp(&this->pixelData[0], stbiOwnedData, dataSize);
 
 		// Tell stbi to free it's own data
 		stbi_image_free(stbiOwnedData);
@@ -65,11 +65,11 @@ Bitmap::Bitmap(int width, int height, int pixelComponentCount, const std::vector
 	, pixelComponentCount{ pixelComponentCount }
 	, isHdr{ false }
 	, pixelSize{ pixelComponentCount }
-	, pixelData(width * height * pixelSize)
+	, pixelData{ static_cast<unsigned int>(width * height * pixelSize) }
 {
 	// It could also be smaller, but this could possible avoid some bugs where you miss a row, or similar.
 	assert(data.size() == pixelData.size());
-	memcpy_s(&pixelData[0], pixelData.size(), &data[0], pixelData.size());
+	memcpy(&pixelData[0], &data[0], pixelData.size());
 }
 
 Bitmap::~Bitmap()
@@ -96,14 +96,14 @@ bool Bitmap::IsHdr() const
 	return isHdr;
 }
 
-size_t Bitmap::GetPixelSize() const
+int Bitmap::GetPixelSize() const
 {
 	return pixelSize;
 }
 
 size_t Bitmap::GetDataSize() const
 {
-	return GetWidth() * GetHeight() * GetPixelSize();
+	return static_cast<size_t >(GetWidth() * GetHeight() * GetPixelSize());
 }
 
 const std::vector<void *>& Bitmap::GetData() const

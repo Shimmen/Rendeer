@@ -17,7 +17,7 @@ public:
 	int GetPixelComponentCount() const;
 	bool IsHdr() const;
 
-	size_t GetPixelSize() const;
+	int GetPixelSize() const;
 	size_t GetDataSize() const;
 	const std::vector<void *>& GetData() const;
 

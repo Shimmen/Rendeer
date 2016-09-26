@@ -11,7 +11,7 @@
 	// TODO: Implement!
 
 	Entity entity;
-	entity.AddComponent(std::make_shared<Renderable>(Mesh{ "Test" }, DiffuseMaterial{}));
+	entity.AddComponent(std::make_shared<Renderable>(std::make_shared<Mesh>("Test"), std::make_shared<DiffuseMaterial>()));
 
 	return entity;
 }

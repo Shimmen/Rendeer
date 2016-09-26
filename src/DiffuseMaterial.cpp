@@ -1,9 +1,7 @@
 #include "DiffuseMaterial.h"
 
-#include "Texture2D.h"
 #include "Transform.h"
 #include "DeferredRenderer.h"
-#include "Camera.h"
 
 DiffuseMaterial::DiffuseMaterial()
 	: IMaterial{ new Shader{"Materials/Diffuse.vsh", "Materials/Diffuse.fsh"} }

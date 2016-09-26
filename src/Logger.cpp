@@ -4,7 +4,6 @@
 #include <sstream>
 #include <iomanip>
 #include <cassert>
-#include <ctime>
 
 /* static */ Logger& Logger::GetDefaultLogger()
 {
@@ -34,7 +33,7 @@ Logger::Logger(std::string logFilePath, bool logToTerminal)
 	{
 		std::cout
 			<< "Error: could not open log file with name: \""
-			<< logFilePath << "\" (error code " << failure.code() << "). "
+			<< logFilePath << "\" (error code " << failure.what() << "). "
 			<< "Reason: " << failure.what() << "."
 		<< std::endl;
 	}

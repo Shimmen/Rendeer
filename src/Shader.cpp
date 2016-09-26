@@ -1,14 +1,11 @@
 ﻿#include "Shader.h"
 
-#include <vector>
-
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Logger.h"
 #include "Buffer.h"
 #include "Uniform.h"
-#include "Texture2D.h"
 #include "ShaderUnit.h"
 
 /* static */ int Shader::maxNumberOfUniformBufferBindings{ -1 };
@@ -189,7 +186,7 @@ void Shader::CheckShaderErrors(GLuint shaderProgram, GLenum stage) const
 		const Logger& logger = Logger::GetDefaultLogger();
 		if (stage == GL_LINK_STATUS)
 		{
-			logger.Log("Shader error: shader program could not be liked.");
+			logger.Log("Shader error: shader program could not be linked.");
 		}
 		else if (stage == GL_VALIDATE_STATUS)
 		{
@@ -223,13 +220,20 @@ void Shader::LocateAndRegisterUniforms()
 		std::string name{uniformName};
 
 		// Get uniform location
-		GLuint location = glGetUniformLocation(shaderProgram, uniformName);
+		GLint location = glGetUniformLocation(shaderProgram, uniformName);
 
 		// There should definitly be no uniform name duplicates
 		assert(uniforms.find(name) == uniforms.end());
 
-		Uniform uniform{*this, name, location};
-		uniforms.emplace(std::make_pair(name, uniform));
+		if (location != -1)
+		{
+			Uniform uniform{*this, name, static_cast<GLuint>(location)};
+			uniforms.emplace(std::make_pair(name, uniform));
+		}
+		else
+		{
+			Logger::GetDefaultLogger().Log("Tried to add uniform with name '" + name + "' which isn't active / doesn't exist!");
+		}
 	}
 	
 	int activeUniformBlockCount = 0;

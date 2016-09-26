@@ -1,7 +1,5 @@
 #include "Component.h"
 
-#include "Renderable.h"
-
 Component::Component()
 	: ownerEntity{ nullptr }
 {

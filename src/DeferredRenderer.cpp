@@ -1,11 +1,6 @@
 #include "DeferredRenderer.h"
 
-#include "Window.h"
-#include "Entity.h"
-#include "Lighting.h"
-#include "Texture2D.h"
 #include "Renderable.h"
-#include "DiffuseMaterial.h"
 
 DeferredRenderer::DeferredRenderer(const Window *window)
 	: window{ window }
@@ -14,6 +9,10 @@ DeferredRenderer::DeferredRenderer(const Window *window)
 	, auxTexture1{ window->GetFramebufferWidth(), window->GetFramebufferHeight(), GL_RGBA, GL_RGBA16F, GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR }
 	, auxTextureLow1{ window->GetFramebufferWidth() / 2, window->GetFramebufferHeight() / 2, GL_RGBA, GL_RGBA16F, GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR }
 	, auxTextureLow2{ window->GetFramebufferWidth() / 2, window->GetFramebufferHeight() / 2, GL_RGBA, GL_RGBA16F, GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR }
+	, shadowMap{ 2048, 2048, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT16, GL_CLAMP_TO_BORDER, GL_NEAREST, GL_NEAREST }
+	, shadowMapGenerator{ "Shadowing/ShadowMapGenerator.vsh", "Shadowing/ShadowMapGenerator.fsh" }
+	, postProcessShader{ "Generic/ScreenSpaceQuad.vsh", "Postprocess/Postprocess.fsh" }
+	, defaultNormalMap{"textures/default_normal.jpg", false}
 {
 	assert(window != nullptr);
 
@@ -80,8 +79,8 @@ void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::
 			auto& material = renderable->GetMaterial();
 			auto& mesh = renderable->GetMesh();
 
-			material.UpdateUniforms(*this, transform, *camera);
-			mesh.Render();
+			material->UpdateUniforms(*this, transform, *camera);
+			mesh->Render();
 		}
 	}
 
@@ -125,7 +124,7 @@ void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::
 				shadowMapGenerator.SetUniform("u_model_matrix", (*entity)->GetTransform().GetWorldMatrix());
 				if (auto renderable = (*entity)->GetComponent<Renderable>())
 				{
-					renderable->GetMesh().Render();
+					renderable->GetMesh()->Render();
 				}
 			}
 
@@ -267,6 +266,7 @@ void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::
 	window->SwapBuffers();
 }
 
+/*
 void DeferredRenderer::RenderTextureToScreen(const Texture2D& texture)
 {
 	window->BindAsDrawFramebuffer();
@@ -280,3 +280,4 @@ void DeferredRenderer::RenderTextureToScreen(const Texture2D& texture)
 	glClear(GL_COLOR_BUFFER_BIT);
 	quad.Render();
 }
+*/

@@ -1,12 +1,7 @@
 #include "Lighting.h"
 
-#include <glm/glm.hpp>
-#include <glm/gtx/quaternion.hpp>
-
-#include "Shader.h"
 #include "Uniform.h"
 #include "DeferredRenderer.h"
-#include "Camera.h"
 
 ILight::ILight(Shader *shader, const Transform& transform, glm::vec3 color, float intensity)
 	: shader{ shader }

@@ -16,8 +16,8 @@ public:
 
 	// No real need to restrict access to these
 
-	Texture2D *diffuseTexture;
-	Texture2D *normalMap;
+	std::shared_ptr<Texture2D> diffuseTexture;
+	std::shared_ptr<Texture2D> normalMap;
 
 	float specularIntensity{1.0f};
 	float shininess{0.0f};

@@ -6,19 +6,12 @@
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 
-#include <glad/glad.h>
+#define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
 #include "Mesh.h"
-#include "Model.h"
 #include "Scene.h"
-#include "Camera.h"
-#include "Shader.h"
-#include "Entity.h"
 #include "Window.h"
-#include "Logger.h"
-#include "Lighting.h"
-#include "Texture2D.h"
 #include "Renderable.h"
 #include "DiffuseMaterial.h"
 #include "DeferredRenderer.h"
@@ -61,39 +54,39 @@ int main(int argc, char *argv[])
 
 
 	// TEAPOT
-	Mesh teapotMesh{ "models/teapot.obj" };
-	Texture2D teapotTexture{ "textures/default.png", true };
-	DiffuseMaterial teapotMaterial;
-	teapotMaterial.diffuseTexture = &teapotTexture;
-	teapotMaterial.specularIntensity = 1.0f;
-	teapotMaterial.shininess = 100.0f;
+	auto teapotMesh = std::make_shared<Mesh>("models/teapot.obj");
+	auto teapotTexture = std::make_shared<Texture2D>("textures/default.png", true);
+	auto teapotMaterial = std::make_shared<DiffuseMaterial>();
+	teapotMaterial->diffuseTexture = teapotTexture;
+	teapotMaterial->specularIntensity = 1.0f;
+	teapotMaterial->shininess = 100.0f;
 	Entity teapot;
 	teapot.AddComponent(std::make_shared<Renderable>(teapotMesh, teapotMaterial));
 	teapot.GetTransform().SetScale(0.01f).Scale(0.5f, 1, 1);
 	teapot.GetTransform().SetPosition(0, 0.5f, 1);
 
 	// PANEL
-	Mesh panelMesh{ "models/cube.obj", false };
-	Texture2D panelTexture{ "textures/bricks/bricks_col.jpg", true };
-	Texture2D panelNormalMap{ "textures/bricks/bricks_norm.jpg", false };
-	DiffuseMaterial panelMaterial;
-	panelMaterial.diffuseTexture = &panelTexture;
-	panelMaterial.normalMap = &panelNormalMap;
-	panelMaterial.specularIntensity = 0.05f;
-	panelMaterial.shininess = 20.0f;
+	auto panelMesh = std::make_shared<Mesh>("models/cube.obj", false);
+	auto panelTexture = std::make_shared<Texture2D>("textures/bricks/bricks_col.jpg", true);
+	auto panelNormalMap = std::make_shared<Texture2D>("textures/bricks/bricks_norm.jpg", false);
+	auto panelMaterial = std::make_shared<DiffuseMaterial>();
+	panelMaterial->diffuseTexture = panelTexture;
+	panelMaterial->normalMap = panelNormalMap;
+	panelMaterial->specularIntensity = 0.05f;
+	panelMaterial->shininess = 20.0f;
 	Entity panel;
 	panel.AddComponent(std::make_shared<Renderable>(panelMesh, panelMaterial));
 	panel.GetTransform().SetScale(3.0f, 0.008f, 1.5f);
 	
 	// FLOOR
-	Mesh floorMesh{"models/curved_plane.obj"};
-	Texture2D gravelColor{"textures/gravel/gravel_col.jpg", true};
-	Texture2D gravelNormal{ "textures/gravel/gravel_norm.jpg", false };
-	DiffuseMaterial floorMaterial;
-	floorMaterial.diffuseTexture = &gravelColor;
-	floorMaterial.normalMap = &gravelNormal;
-	floorMaterial.specularIntensity = 0.05f;
-	floorMaterial.shininess = 10.0f;
+	auto floorMesh = std::make_shared<Mesh>("models/curved_plane.obj");
+	auto gravelColor = std::make_shared<Texture2D>("textures/gravel/gravel_col.jpg", true);
+	auto gravelNormal = std::make_shared<Texture2D>("textures/gravel/gravel_norm.jpg", false);
+	auto floorMaterial = std::make_shared<DiffuseMaterial>();
+	floorMaterial->diffuseTexture = gravelColor;
+	floorMaterial->normalMap = gravelNormal;
+	floorMaterial->specularIntensity = 0.05f;
+	floorMaterial->shininess = 10.0f;
 	Entity floor;
 	floor.AddComponent(std::make_shared<Renderable>(floorMesh, floorMaterial));
 	floor.GetTransform().SetPosition(0, -0.5f, 4);

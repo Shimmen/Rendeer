@@ -1,7 +1,5 @@
 #include "Texture2D.h"
 
-#include <cassert>
-
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Bitmap.h"
@@ -25,7 +23,7 @@ Texture2D::Texture2D(const Bitmap& image, bool srgb, GLint magFilter, GLint wrap
 	SetWrapS(wrapMode);
 	SetWrapT(wrapMode);
 
-	GLint sourceFormat = CalculateSourceFormat(image);
+	GLenum sourceFormat = CalculateSourceFormat(image);
 	GLenum sourceType = CalculateSourceType(image);
 	GLint internalFormat = CalculateInternalFormat(sourceFormat, srgb, image.IsHdr());
 	const void *sourceData = &image.GetData()[0];
@@ -58,27 +56,27 @@ Texture2D::Texture2D(int width, int height, GLenum format, GLenum internalFormat
 	SetMaxAnisotropy();
 }
 
-void Texture2D::Bind(int textureTarget) const
+void Texture2D::Bind(GLuint textureTarget) const
 {
 	TextureBase::Bind(GL_TEXTURE_2D, textureTarget);
 }
 
-void Texture2D::SetMinFilter(GLenum minFilter)
+void Texture2D::SetMinFilter(GLint minFilter)
 {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
 }
 
-void Texture2D::SetMagFilter(GLenum magFilter)
+void Texture2D::SetMagFilter(GLint magFilter)
 {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
 }
 
-void Texture2D::SetWrapS(GLenum wrapS)
+void Texture2D::SetWrapS(GLint wrapS)
 {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapS);
 }
 
-void Texture2D::SetWrapT(GLenum wrapT)
+void Texture2D::SetWrapT(GLint wrapT)
 {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapT);
 }
@@ -88,7 +86,7 @@ void Texture2D::SetBorderColor(const glm::vec4& color)
 	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, glm::value_ptr(color));
 }
 
-GLint Texture2D::CalculateSourceFormat(const Bitmap& bitmap) const
+GLenum Texture2D::CalculateSourceFormat(const Bitmap& bitmap) const
 {
 	int pixelComponentCount = bitmap.GetPixelComponentCount();
 	assert(pixelComponentCount > 0 && pixelComponentCount <= 4);
@@ -143,9 +141,6 @@ GLint Texture2D::CalculateInternalFormat(GLint externalFormat, bool srgb, bool h
 			if (externalFormat == GL_RGBA) return GL_RGBA8;
 		}
 	}
-
-	Logger::GetDefaultLogger().Log("Error: couldn't find an internal format!");
-	return 0;
 }
 
 void Texture2D::GenerateMipmapsIfCompatible(GLint minFilter) const

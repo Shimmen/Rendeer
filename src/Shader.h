@@ -53,7 +53,7 @@ private:
 
 	std::map<std::string, Uniform> uniforms;
 	std::map<std::string, GLuint> uniformBlockIndicies;
-	mutable int nextUniformBlockBinding;
+	mutable GLuint nextUniformBlockBinding;
 
 public:
 

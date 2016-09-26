@@ -2,11 +2,6 @@
 
 #include "Window.h"
 
-#include <assert.h>
-
-#include <glm/glm.hpp>
-#include <glm/gtc/quaternion.hpp>
-
 CameraComponent::CameraComponent(float aspectRatio, float nearPlane, float farPlane, float fovOrSize, CameraComponent::CameraType type)
 	: Component{}
 	, aspectRatio{ aspectRatio }
@@ -40,7 +35,7 @@ glm::mat4 CameraComponent::GetProjectionMatrix() const
 			// which I don't want, so below is my own version in
 			// a left handed coordinate system.
 
-			float const tanHalfFovY = tan(fovOrSize / 2.0f);
+			float const tanHalfFovY = tanf(fovOrSize / 2.0f);
 
 			projection[0][0] = 1.0f / (aspectRatio * tanHalfFovY);
 			projection[1][1] = 1.0f / (tanHalfFovY);
@@ -61,12 +56,6 @@ glm::mat4 CameraComponent::GetProjectionMatrix() const
 			projection[3][3] = 1.0f;
 
 		} break;
-
-		default:
-		{
-			assert(false);
-			break;
-		}
 	}
 
 	return projection;

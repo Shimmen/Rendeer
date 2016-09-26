@@ -222,7 +222,6 @@ void Window::InitializeGlfwIfNeeded() const
 		if (result == GL_FALSE)
 		{
 			Logger::GetDefaultLogger().Log("Error: could not initialize glfw! Application must terminate.");
-			exit(EXIT_FAILURE);
 		}
 	}
 }
@@ -243,8 +242,8 @@ void Window::SetUpGlobalWindowHints() const
 	// Set context related hints
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE);
 	glfwWindowHint(GLFW_SRGB_CAPABLE, GL_TRUE);
 	glfwWindowHint(GLFW_RED_BITS, 8);
@@ -258,7 +257,7 @@ void Window::SetUpGlobalWindowHints() const
 void Window::SetUpWindowUserPointer(GLFWwindow *window)
 {
 	// Store a pointer to the C++ Window instance in the user pointer of the GLFW window handle.
-	glfwSetWindowUserPointer(windowHandle, static_cast<void *>(this));
+	glfwSetWindowUserPointer(window, static_cast<void *>(this));
 }
 
 void Window::CreateInputHandlers(GLFWwindow *window)

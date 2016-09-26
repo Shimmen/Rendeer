@@ -5,7 +5,7 @@
 #define INCREMENT_REFERENCE_COUNT(bufferHandle) (referenceCountForBufferHandle[bufferHandle]++);
 #define DECREMENT_REFERENCE_COUNT(bufferHandle) (referenceCountForBufferHandle[bufferHandle]--);
 
-/*static*/ GLuint Buffer::currentlyBoundBufferHandle = UINT_MAX;
+/*static*/ GLuint Buffer::currentlyBoundBufferHandle = UINT32_MAX;
 /*static*/ std::map<GLuint, int> Buffer::referenceCountForBufferHandle;
 
 Buffer::Buffer()
@@ -20,23 +20,23 @@ Buffer::Buffer(GLuint bufferHandle)
 {
 	INCREMENT_REFERENCE_COUNT(bufferHandle);
 }
-
+/*
 Buffer::Buffer(Buffer& other)
 	: bufferHandle(other.bufferHandle)
 	, lastBoundTarget(other.lastBoundTarget)
 {
 	INCREMENT_REFERENCE_COUNT(bufferHandle);
 }
-
-/*static*/ std::vector<Buffer> Buffer::GenerateBuffers(int count)
+*/
+/*static*/ std::vector<Buffer> Buffer::GenerateBuffers(GLuint count)
 {
 	std::vector<GLuint> bufferHandles(count);
 	glGenBuffers(count, &bufferHandles[0]);
 
 	std::vector<Buffer> buffers;
-	for (auto handle = bufferHandles.begin(); handle != bufferHandles.end(); ++handle)
+	for (GLuint handle : bufferHandles)
 	{
-		buffers.push_back(Buffer(*handle));
+		buffers.push_back(Buffer(handle));
 	}
 
 	return buffers;

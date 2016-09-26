@@ -2,8 +2,6 @@
 
 #include <cassert>
 
-#include "glad/glad.h"
-
 #include "Texture2D.h"
 
 FrameBuffer::FrameBuffer()
@@ -35,7 +33,7 @@ void FrameBuffer::AttachTexture(const Texture2D& texture, GLenum attatchment) co
 	glBindFramebuffer(GL_FRAMEBUFFER, frameBufferHandle);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, attatchment, GL_TEXTURE_2D, texture.GetTextureHandle(), 0);
 
-	glBindFramebuffer(GL_FRAMEBUFFER, lastBoundFramebuffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, static_cast<GLuint>(lastBoundFramebuffer));
 
 	attachedTexturesCount++;
 }

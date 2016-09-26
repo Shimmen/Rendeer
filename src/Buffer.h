@@ -11,9 +11,9 @@ public:
 
 	Buffer();
 	Buffer(GLuint bufferHandle);
-	Buffer(Buffer& other);
+	//Buffer(Buffer& other);
 
-	static std::vector<Buffer> GenerateBuffers(int count);
+	static std::vector<Buffer> GenerateBuffers(GLuint count);
 
 	~Buffer();
 

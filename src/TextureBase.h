@@ -16,7 +16,7 @@ protected:
 	TextureBase();
 	virtual ~TextureBase();
 
-	void Bind(GLenum textureBinding, int textureTarget) const;
+	void Bind(GLenum textureBinding, GLuint textureTarget) const;
 
 private:
 
