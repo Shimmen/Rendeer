@@ -96,7 +96,7 @@ GLenum Texture2D::CalculateSourceFormat(const Bitmap& bitmap) const
 	if (pixelComponentCount == 4) return GL_RGBA;
 	else
 	{
-		Logger::GetDefaultLogger().Log("Error: couldn't find an source format for the pixel component count " + pixelComponentCount);
+		Logger::GetDefaultLogger().Log("Error: couldn't find an source format for the pixel component count " + std::to_string(pixelComponentCount));
 		return 0;
 	}
 }
@@ -141,6 +141,9 @@ GLint Texture2D::CalculateInternalFormat(GLint externalFormat, bool srgb, bool h
 			if (externalFormat == GL_RGBA) return GL_RGBA8;
 		}
 	}
+
+	// This should never happen...
+	return -1;
 }
 
 void Texture2D::GenerateMipmapsIfCompatible(GLint minFilter) const

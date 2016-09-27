@@ -3,7 +3,7 @@
 #include <vector>
 #include <map>
 
-#include "glad/glad.h"
+#include <glad2/glad.h>
 
 class Buffer
 {

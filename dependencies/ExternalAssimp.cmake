@@ -1,0 +1,42 @@
+#
+# Modified version of https://github.com/ivansafrin/Polycode/blob/master/CMake/ExternalAssimp.cmake
+#
+
+#set(assimp_PREFIX ${CMAKE_CURRENT_BINARY_DIR}/assimp)
+
+set(assimp_CMAKE_ARGS
+    -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
+    -DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>
+    -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+    -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}
+    -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
+    -DCMAKE_DEBUG_POSTFIX=d
+    -DENABLE_BOOST_WORKAROUND=ON
+    -DBUILD_SHARED_LIBS=OFF
+    -DBUILD_ASSIMP_TOOLS=OFF
+    -DBUILD_TESTS=OFF
+)
+
+if (APPLE)
+    # Work around a compiler crash building assimp on Mac
+    STRING(REPLACE "-O3" "-O2" assimp_CXX_FLAGS ${CMAKE_CXX_FLAGS_RELEASE})
+    LIST(APPEND assimp_CMAKE_ARGS -DCMAKE_CXX_FLAGS_RELEASE=${assimp_CXX_FLAGS})
+endif ()
+
+ExternalProject_Add(assimp
+
+    GIT_REPOSITORY "https://github.com/assimp/assimp.git"
+    GIT_TAG "v3.3.1"
+
+    PREFIX ${assimp_PREFIX}
+
+    CMAKE_ARGS ${assimp_CMAKE_ARGS}
+
+    CMAKE_CACHE_ARGS
+        "-DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}"
+        "-DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}"
+)
+
+ExternalProject_Get_Property(assimp INSTALL_DIR)
+set(ASSIMP_INCLUDE_DIR ${INSTALL_DIR}/include)
+set(ASSIMP_LIBRARIES ${INSTALL_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}assimpd${CMAKE_STATIC_LIBRARY_SUFFIX})

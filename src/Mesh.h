@@ -4,7 +4,7 @@
 #include <vector>
 
 #include <glm/glm.hpp>
-#include <glad/glad.h>
+#include <glad2/glad.h>
 
 #include "Model.h"
 #include "VertexArray.h"

@@ -1,0 +1,24 @@
+#
+# GLFW
+#
+
+ExternalProject_Add(glfw
+
+    GIT_REPOSITORY "https://github.com/glfw/glfw.git"
+    GIT_TAG 3.2.1
+
+    CMAKE_ARGS
+        "-DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>"
+        "-DCMAKE_BUILD_TYPE=Debug"
+        "-DGLFW_BUILD_EXAMPLES=OFF"
+        "-DGLFW_BUILD_TESTS=OFF"
+        "-DGLFW_BUILD_DOCS=OFF"
+
+    CMAKE_CACHE_ARGS
+        "-DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}"
+        "-DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}"
+)
+
+ExternalProject_Get_Property(glfw INSTALL_DIR)
+set(GLFW_INCLUDE_DIR ${INSTALL_DIR}/include)
+set(GLFW_LIBRARIES ${INSTALL_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}glfw3${CMAKE_STATIC_LIBRARY_SUFFIX})

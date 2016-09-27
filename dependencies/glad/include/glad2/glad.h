@@ -12694,13 +12694,6 @@ typedef void* (* GLADloadproc)(const char *name);
 GLAPI int gladLoadGL(GLADloadproc);
 
 
-
-
-#ifdef __cplusplus
-}
-#endif
-#endif
-
 #ifdef GLAD_IMPLEMENTATION
 
 /* Source */
@@ -21206,3 +21199,9 @@ int gladLoadGL( GLADloadproc load) {
 }
 
 #endif // GLAD_IMPLEMENTATION
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif // __glad_gl_h_

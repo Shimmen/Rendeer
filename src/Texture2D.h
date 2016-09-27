@@ -5,7 +5,7 @@
 #include "glm/fwd.hpp"
 
 #include <string>
-#include <glad/glad.h>
+#include <glad2/glad.h>
 
 class Bitmap;
 

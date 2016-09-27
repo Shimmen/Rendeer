@@ -229,7 +229,7 @@ void Window::InitializeGlfwIfNeeded() const
 void Window::LoadOpenGLForCurrentContext() const
 {
 	// Use the glfw loader with glad (this way the glad source doesn't need to include its own loader).
-	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+	gladLoadGL((GLADloadproc)glfwGetProcAddress);
 }
 
 void Window::SetUpGlobalWindowHints() const

@@ -1,7 +1,7 @@
 #pragma once
 
-//#define GLAD_IMPLEMENTATION
-#include <glad/glad.h>
+#define GLAD_IMPLEMENTATION
+#include <glad2/glad.h>
 #include <GLFW/glfw3.h>
 
 #include <string>

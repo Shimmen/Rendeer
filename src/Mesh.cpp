@@ -2,8 +2,6 @@
 
 #include <iostream>
 
-#include <assimp/Importer.hpp>
-
 #include "Buffer.h"
 #include "GeneralUtil.h"
 
@@ -23,7 +21,7 @@ Mesh::Mesh(const Model& model)
 
 	// TODO: Use stride and offset!
 	int stride = 0;
-	INT64 offset = 0;
+	int64_t offset = 0;
 
 	// Positions
 	buffers[nonstd::as_integer(MeshBuffers::POSITION_BUFFER)].Bind(GL_ARRAY_BUFFER).SetData(model.positions, GL_STATIC_DRAW);
