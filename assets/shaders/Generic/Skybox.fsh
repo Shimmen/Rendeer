@@ -1,4 +1,4 @@
-#version 420 core
+#version 330
 
 smooth in vec3 v_tex_coord;
 

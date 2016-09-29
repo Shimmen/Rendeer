@@ -1,4 +1,4 @@
-#version 420 core
+#version 330
 
 #include "Filtering/Filtering.glsl"
 #include "Filtering/ToneMapping.glsl"

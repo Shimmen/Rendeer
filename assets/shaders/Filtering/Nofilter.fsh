@@ -1,4 +1,4 @@
-#version 420 core
+#version 330
 
 // Filter output color
 layout(location=0) out vec4 o_fragment_color;

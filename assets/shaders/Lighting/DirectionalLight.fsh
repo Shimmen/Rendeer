@@ -1,4 +1,4 @@
-#version 420 core
+#version 330
 
 #include "Generic/GenericFunctions.glsl"
 

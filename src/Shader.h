@@ -6,7 +6,7 @@
 #include <map>
 #include <vector>
 
-#include <glad2/glad.h>
+#include <glad/glad.h>
 #include <glm/fwd.hpp>
 
 class Transform;

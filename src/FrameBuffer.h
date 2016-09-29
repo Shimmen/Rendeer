@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include <glad2/glad.h>
+#include <glad/glad.h>
 
 class Texture2D;
 

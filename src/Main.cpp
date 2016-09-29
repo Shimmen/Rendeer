@@ -3,10 +3,9 @@
 #include <vector>
 #include <memory>
 
-#define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 
-#define GLFW_INCLUDE_NONE
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #include "Mesh.h"
@@ -19,10 +18,11 @@
 int main(int argc, char *argv[])
 {
 	// DISPLAY & RENDERER
-	const int WINDOW_WIDTH = 1920;
-	const int WINDOW_HEIGHT = 1080;
+	const int WINDOW_WIDTH = 1280;
+	const int WINDOW_HEIGHT = 720;
 	Window window{ WINDOW_WIDTH, WINDOW_HEIGHT, "Rendeer" };
 	DeferredRenderer deferredRenderer{ &window };
+	window.BindAsDrawFramebuffer();
 
 	// Log default startup stuff
 	Logger& logger = Logger::GetDefaultLogger();

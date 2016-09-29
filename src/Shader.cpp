@@ -27,8 +27,8 @@ Shader::Shader(const std::string& vertexShaderFilePath, const std::string& fragm
 	CheckShaderErrors(shaderProgram, GL_LINK_STATUS);
 
 	// Validate program
-	glValidateProgram(shaderProgram);
-	CheckShaderErrors(shaderProgram, GL_VALIDATE_STATUS);
+	//glValidateProgram(shaderProgram);
+	//CheckShaderErrors(shaderProgram, GL_VALIDATE_STATUS);
 
 	// Release shader components from the program
 	glDetachShader(shaderProgram, vertexShader.shaderUnitHandle);
@@ -197,7 +197,7 @@ void Shader::CheckShaderErrors(GLuint shaderProgram, GLenum stage) const
 		memset(errorMessage, '\0', sizeof(errorMessage));
 		glGetProgramInfoLog(shaderProgram, sizeof(errorMessage), nullptr, errorMessage);
 
-		logger.Log("\terror message:" + std::string(errorMessage));
+		logger.Log("\terror message: " + std::string(errorMessage));
 	}
 }
 

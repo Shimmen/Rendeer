@@ -57,18 +57,17 @@ target_compile_options(${RENDEER} PRIVATE -std=c++11)
 #------------------------------------------------------------------------
 # Include dependencies
 #------------------------------------------------------------------------
-
-#
-# Header only libraries
-#
-add_subdirectory("dependencies/glad")
-add_subdirectory("dependencies/glm")
-add_subdirectory("dependencies/stb")
-
-#
-# Libraries that requires building
-#
 include(ExternalProject)
+
+# glad
+add_subdirectory("dependencies/glad")
+target_link_libraries(${RENDEER} PRIVATE glad)
+
+# glm
+add_subdirectory("dependencies/glm")
+
+# stb (image)
+add_subdirectory("dependencies/stb")
 
 # glfw
 include(dependencies/ExternalGLFW.cmake)

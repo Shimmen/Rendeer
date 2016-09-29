@@ -1,4 +1,4 @@
-#version 420 core
+#version 330
 
 #define MATERIAL_SHADER
 #include "GBuffer/g_buffer.glsl"

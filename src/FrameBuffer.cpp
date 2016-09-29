@@ -1,7 +1,5 @@
 #include "FrameBuffer.h"
 
-#include <cassert>
-
 #include "Texture2D.h"
 
 FrameBuffer::FrameBuffer()
@@ -40,7 +38,10 @@ void FrameBuffer::AttachTexture(const Texture2D& texture, GLenum attatchment) co
 
 void FrameBuffer::SetDrawBuffers(const std::vector<GLenum> drawBuffers) const
 {
-	glNamedFramebufferDrawBuffers(frameBufferHandle, (GLsizei)drawBuffers.size(), &drawBuffers[0]);
+	BindAsDrawFrameBuffer();
+	glDrawBuffers((GLsizei)drawBuffers.size(), &drawBuffers[0]);
+	// Previous call, make sure to keep track of the currently bound framebuffer!
+	//glNamedFramebufferDrawBuffers(frameBufferHandle, (GLsizei)drawBuffers.size(), &drawBuffers[0]);
 }
 
 bool FrameBuffer::IsComplete(GLenum *statusIfNotComplete) const

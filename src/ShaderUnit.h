@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include <glad2/glad.h>
+#include <glad/glad.h>
 
 #define INCLUDE_DIRECTIVE (std::string("#include "))
 
