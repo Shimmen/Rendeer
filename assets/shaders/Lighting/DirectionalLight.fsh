@@ -27,7 +27,7 @@ void main()
 
 	// Calculate diffuse light
 	float diffuseIntensity = u_light_intensity * lambertianFactor(gBuffer.normal, lightDirection);
-	vec4 diffuseColor = vec4(gBuffer.albedo, 1.0) * vec4(u_light_color, 1.0) * diffuseIntensity;
+	vec3 diffuseColor = gBuffer.albedo * u_light_color * diffuseIntensity;
 
 	// Calculate specular light
 	vec3 fragPos = gBuffer.position;
@@ -36,11 +36,11 @@ void main()
 	vec3 reflectedLight = normalize(reflect(lightToFrag, gBuffer.normal));
 	float specularFactor = max(dot(reflectedLight, fragToCamera), 0.0);
 	specularFactor = pow(specularFactor, gBuffer.shininess);
-	vec4 specularColor =  vec4(u_light_color, 1.0) * specularFactor * gBuffer.specularIntensity;
+	vec3 specularColor =  u_light_color * specularFactor * gBuffer.specularIntensity;
 
 	float shadowMapInfluence = calculateShadowMapInfluence(gBuffer.position, u_inverse_view_matrix,
 	                                                       u_light_view_projection, u_shadow_map);
 
 	// Calculate the final fragment color
-	o_fragment_color = (diffuseColor + specularColor) * shadowMapInfluence;
+	o_fragment_color = vec4((diffuseColor + specularColor) * shadowMapInfluence, 1.0);
 }
