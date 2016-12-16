@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
 	// LIGHTS
     // TODO: Fix strange behaviour when calculating light where there is nothing renderered to in the GBuffer. Or something like that...
 	std::vector<ILight *> lights;
-	//lights.push_back(&directionalLight);
+	lights.push_back(&directionalLight);
 	lights.push_back(&pointLight);
 	lights.push_back(&spotLight);
 
