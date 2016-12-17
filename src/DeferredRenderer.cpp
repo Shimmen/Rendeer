@@ -165,36 +165,38 @@ void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::
 		quad.Render();
 	}
 
-/*
-
 	//
 	// Render skybox into auxTexture1
 	//
 
 	auxFramebuffer1.BindAsDrawFrameBuffer();
+    glClearColor(0, 0, 0, 0);
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
 
+    // TODO: Make sure that the skybox is rendered too!
 	skyboxShader.Bind();
-	skyboxShader.SetUniform("u_view_rotation_matrix", glm::mat4(glm::mat3(camera.GetViewMatrix()))); // remove translation part
-	skyboxShader.SetUniform("u_projection_matrix", camera.GetProjectionMatrix());
+	skyboxShader.SetUniform("u_view_rotation_matrix", glm::mat4(glm::mat3(camera->GetViewMatrix()))); // remove translation part
+	skyboxShader.SetUniform("u_projection_matrix", camera->GetProjectionMatrix());
 	skyboxTexture.Bind(35);
 	skyboxShader.SetUniform("u_skybox_texture", 35);
 	skyboxMesh.Render();
 
 	//
-	// Render light accumulation buffer into auxTexture1
+	// Render light accumulation buffer into auxTexture1 (on top of skybox as of now)
 	//
+    
+	//auxFramebuffer1.BindAsDrawFrameBuffer();
+	//glDisable(GL_DEPTH_TEST);
+	//glDisable(GL_BLEND);
 
-	auxFramebuffer1.BindAsDrawFrameBuffer();
-	glDisable(GL_DEPTH_TEST);
-	glDisable(GL_BLEND);
-
+    nofilterFilter.Bind();
 	lightAccumulationTexture.Bind(0);
-	nofilterFilter.Bind();
 	nofilterFilter.SetUniform("u_texture", 0);
 	quad.Render();
-
+    
+/*
+    
 	//
 	// Perform bloom
 	//
@@ -254,17 +256,15 @@ void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::
 	// Final post-processing
 	//
 
-    //RenderTextureToScreen(lightAccumulationTexture);
-    //window->SwapBuffers();
-    //return;
+    //RenderTextureToScreen(auxTexture1); window->SwapBuffers(); return;
     
 	// Render light accumulation buffer onto screen with final post processing step(like tone mapping etc.)
 	window->BindAsDrawFramebuffer();
 	glDisable(GL_BLEND);
 
 	postProcessShader.Bind();
-//	auxTexture1.Bind(0); TODO: Use skybox and bloom
-	lightAccumulationTexture.Bind(0);
+    auxTexture1.Bind(0);
+    //lightAccumulationTexture.Bind(0);
 	postProcessShader.SetUniform("u_texture", 0);
 	quad.Render();
 
