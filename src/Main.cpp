@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
 	Entity panel;
 	panel.AddComponent(std::make_shared<Renderable>(panelMesh, panelMaterial));
 	panel.GetTransform().SetScale(3.0f, 0.008f, 1.5f);
-	
+
 	// FLOOR
 	auto floorMesh = std::make_shared<Mesh>("models/curved_plane.obj");
 	auto gravelColor = std::make_shared<Texture2D>("textures/gravel/gravel_col.jpg", true);
@@ -107,7 +107,7 @@ int main(int argc, char *argv[])
 	SpotLight spotLight{glm::vec3{0, -0.65f, 4}, glm::quat{glm::normalize(glm::vec3{1, -3, 0})}, glm::vec3{1.0f, 0.8f, 0.8f}, 30.0f, glm::radians(40.0f), glm::radians(15.0f)};
 
 	// LIGHTS
-    // TODO: Fix strange behaviour when calculating light where there is nothing renderered to in the GBuffer. Or something like that...
+	// TODO: Fix strange behaviour when calculating light where there is nothing renderered to in the GBuffer. Or something like that...
 	std::vector<ILight *> lights;
 	lights.push_back(&directionalLight);
 	lights.push_back(&pointLight);
@@ -190,7 +190,7 @@ int main(int argc, char *argv[])
 
 		teapot.GetTransform().SetOrientation(glm::vec3(0, 1, 0), timer);
 		panel.GetTransform().SetPosition(0, 0, sinf(timer) * 0.9f + 0.9f);
-		
+
 		if (keyboard.WasKeyPressed(GLFW_KEY_LEFT_CONTROL))
 		{
 			stickDirectionalLightToCamera = !stickDirectionalLightToCamera;

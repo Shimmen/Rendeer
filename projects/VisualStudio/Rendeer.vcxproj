@@ -1,0 +1,115 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{BF043C60-E867-418C-BB95-D515B9086CCB}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>$(ProjectDir)..\..\deps\glad\include;$(ProjectDir)..\..\deps\glfw\include;$(ProjectDir)..\..\deps\assimp\include;$(ProjectDir)..\..\deps\stb\include;$(ProjectDir)..\..\deps\glm\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)..\..\deps\assimp\lib\win64;$(ProjectDir)..\..\deps\glfw\lib\win64;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Link>
+      <AdditionalDependencies>glfw3.lib;assimp-vc140-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\deps\glad\src\glad.c" />
+    <ClCompile Include="..\..\src\Bitmap.cpp" />
+    <ClCompile Include="..\..\src\Buffer.cpp" />
+    <ClCompile Include="..\..\src\Camera.cpp" />
+    <ClCompile Include="..\..\src\Component.cpp" />
+    <ClCompile Include="..\..\src\DeferredRenderer.cpp" />
+    <ClCompile Include="..\..\src\DiffuseMaterial.cpp" />
+    <ClCompile Include="..\..\src\Entity.cpp" />
+    <ClCompile Include="..\..\src\FrameBuffer.cpp" />
+    <ClCompile Include="..\..\src\GBuffer.cpp" />
+    <ClCompile Include="..\..\src\Keyboard.cpp" />
+    <ClCompile Include="..\..\src\Lighting.cpp" />
+    <ClCompile Include="..\..\src\Logger.cpp" />
+    <ClCompile Include="..\..\src\Main.cpp" />
+    <ClCompile Include="..\..\src\Mesh.cpp" />
+    <ClCompile Include="..\..\src\Model.cpp" />
+    <ClCompile Include="..\..\src\ModelLoader.cpp" />
+    <ClCompile Include="..\..\src\Mouse.cpp" />
+    <ClCompile Include="..\..\src\PrimitiveDrawables.cpp" />
+    <ClCompile Include="..\..\src\Scene.cpp" />
+    <ClCompile Include="..\..\src\Shader.cpp" />
+    <ClCompile Include="..\..\src\ShaderUnit.cpp" />
+    <ClCompile Include="..\..\src\Texture2D.cpp" />
+    <ClCompile Include="..\..\src\TextureBase.cpp" />
+    <ClCompile Include="..\..\src\TextureCube.cpp" />
+    <ClCompile Include="..\..\src\Transform.cpp" />
+    <ClCompile Include="..\..\src\Uniform.cpp" />
+    <ClCompile Include="..\..\src\VertexArray.cpp" />
+    <ClCompile Include="..\..\src\Window.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\Bitmap.h" />
+    <ClInclude Include="..\..\src\Buffer.h" />
+    <ClInclude Include="..\..\src\Camera.h" />
+    <ClInclude Include="..\..\src\Component.h" />
+    <ClInclude Include="..\..\src\DeferredRenderer.h" />
+    <ClInclude Include="..\..\src\DiffuseMaterial.h" />
+    <ClInclude Include="..\..\src\Entity.h" />
+    <ClInclude Include="..\..\src\FrameBuffer.h" />
+    <ClInclude Include="..\..\src\GBuffer.h" />
+    <ClInclude Include="..\..\src\GeneralUtil.h" />
+    <ClInclude Include="..\..\src\IMaterial.h" />
+    <ClInclude Include="..\..\src\Keyboard.h" />
+    <ClInclude Include="..\..\src\Lighting.h" />
+    <ClInclude Include="..\..\src\Logger.h" />
+    <ClInclude Include="..\..\src\Mesh.h" />
+    <ClInclude Include="..\..\src\Model.h" />
+    <ClInclude Include="..\..\src\ModelLoader.h" />
+    <ClInclude Include="..\..\src\Mouse.h" />
+    <ClInclude Include="..\..\src\PrimitiveDrawables.h" />
+    <ClInclude Include="..\..\src\Renderable.h" />
+    <ClInclude Include="..\..\src\Scene.h" />
+    <ClInclude Include="..\..\src\Shader.h" />
+    <ClInclude Include="..\..\src\ShaderUnit.h" />
+    <ClInclude Include="..\..\src\Texture2D.h" />
+    <ClInclude Include="..\..\src\TextureBase.h" />
+    <ClInclude Include="..\..\src\TextureCube.h" />
+    <ClInclude Include="..\..\src\Transform.h" />
+    <ClInclude Include="..\..\src\Uniform.h" />
+    <ClInclude Include="..\..\src\VertexArray.h" />
+    <ClInclude Include="..\..\src\Window.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

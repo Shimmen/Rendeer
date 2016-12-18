@@ -6,3 +6,7 @@ rendeer.log
 .DS_Store
 xcuserdata
 
+# Windows & Visual Studio files
+projects/VisualStudio/.vs
+projects/VisualStudio/x64
+projects/VisualStudio/*.VC.*

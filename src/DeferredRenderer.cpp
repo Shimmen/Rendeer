@@ -90,7 +90,7 @@ void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::
 
 	lightAccumulationBuffer.BindAsDrawFrameBuffer();
 	//glClearColor(1, 0, 1, 1);
-    glClearColor(0, 0, 0, 0);
+	glClearColor(0, 0, 0, 0);
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	for (auto light = lights.begin(); light != lights.end(); ++light)
@@ -185,18 +185,14 @@ void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::
 	//
 	// Render light accumulation buffer into auxTexture1 (on top of skybox as of now)
 	//
-    
-	//auxFramebuffer1.BindAsDrawFrameBuffer();
-	//glDisable(GL_DEPTH_TEST);
-	//glDisable(GL_BLEND);
 
-    nofilterFilter.Bind();
+	nofilterFilter.Bind();
 	lightAccumulationTexture.Bind(0);
 	nofilterFilter.SetUniform("u_texture", 0);
 	quad.Render();
-    
+
 /*
-    
+
 	//
 	// Perform bloom
 	//
@@ -256,15 +252,15 @@ void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::
 	// Final post-processing
 	//
 
-    //RenderTextureToScreen(auxTexture1); window->SwapBuffers(); return;
-    
+	//RenderTextureToScreen(auxTexture1); window->SwapBuffers(); return;
+
 	// Render light accumulation buffer onto screen with final post processing step(like tone mapping etc.)
 	window->BindAsDrawFramebuffer();
 	glDisable(GL_BLEND);
 
 	postProcessShader.Bind();
-    auxTexture1.Bind(0);
-    //lightAccumulationTexture.Bind(0);
+	auxTexture1.Bind(0);
+	//lightAccumulationTexture.Bind(0);
 	postProcessShader.SetUniform("u_texture", 0);
 	quad.Render();
 
