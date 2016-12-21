@@ -95,20 +95,21 @@ int main(int argc, char *argv[])
 	scene.AddChild(floor);
 
 	// DIRECTIONAL LIGHT
-	DirectionalLight directionalLight{glm::quat{1, 1, 0, 1}, glm::vec3{0.92f, 0.95f, 0.88f}, 1.5f};
+	auto directionalLight = scene.NewChild();
+	directionalLight->GetTransform().SetOrientation(glm::quat{ 1, 1, 0, 1 });
+	directionalLight->AddComponent(std::make_shared<DirectionalLight>(glm::vec3{ 0.92f, 0.95f, 0.88f }, 1.5f));
 
 	// POINT LIGHT
-	PointLight pointLight{glm::vec3{0, 0.5f, 0}, glm::vec3{1.0f, 0.1f, 0.15f}, 1.35f};
+	auto pointLight = scene.NewChild();
+	pointLight->GetTransform().SetPosition(glm::vec3{ 0.0f, 0.5f, 0.0f });
+	pointLight->AddComponent(std::make_shared<PointLight>(glm::vec3{ 1.0f, 0.1f, 0.15f }, 1.35f));
 
 	// SPOT LIGHT
-	SpotLight spotLight{glm::vec3{0, -0.65f, 4}, glm::quat{glm::normalize(glm::vec3{1, -3, 0})}, glm::vec3{1.0f, 0.8f, 0.8f}, 30.0f, glm::radians(40.0f), glm::radians(15.0f)};
-
-	// LIGHTS
-	// TODO: Fix strange behaviour when calculating light where there is nothing renderered to in the GBuffer. Or something like that...
-	std::vector<ILight *> lights;
-	lights.push_back(&directionalLight);
-	lights.push_back(&pointLight);
-	lights.push_back(&spotLight);
+	auto spotLight = scene.NewChild();
+	spotLight->GetTransform()
+		.SetPosition(glm::vec3{ 0, -0.65f, 4 })
+		.SetOrientation(glm::quat{ glm::normalize(glm::vec3{ 1, -3, 0 }) });
+	spotLight->AddComponent(std::make_shared<SpotLight>(glm::vec3{ 1.0f, 0.8f, 0.8f }, 30.0f, glm::radians(40.0f), glm::radians(15.0f)));
 
 	//////////
 	// LOOP //
@@ -198,10 +199,10 @@ int main(int argc, char *argv[])
 			// Spot light must be attached directly to root node
 			auto cameraPosition = camera->GetTransform().GetPositionInWorld();
 			auto cameraOrientation = camera->GetTransform().GetOrientationInWorld();
-			spotLight.GetTransform().SetPosition(cameraPosition).SetOrientation(cameraOrientation);
+			spotLight->GetTransform().SetPosition(cameraPosition).SetOrientation(cameraOrientation);
 		}
 
-		deferredRenderer.Render(lights, scene);
+		deferredRenderer.Render(scene);
 
 	}
 

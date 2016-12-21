@@ -13,28 +13,31 @@
 class DeferredRenderer;
 class Uniform;
 
-// TODO: Rename to LightComponent and extend Component
-class ILight
+class LightComponent: public Component
 {
 public:
 
-	ILight(Shader *shader, const Transform& transform, glm::vec3 color, float intensity);
-	virtual ~ILight() {}
+	LightComponent(Shader *shader, glm::vec3 color, float intensity);
+	virtual ~LightComponent() {}
 
 	virtual void SetUniforms(const DeferredRenderer& renderer, const CameraComponent& camera) const;
 	virtual Camera GetLightCamera(const CameraComponent& mainCamera, int shadowMapSize) const = 0;
 
 	const Shader& GetShader() const { return *shader; }
 
-	Transform& GetTransform() { return transform; }
-	const Transform& GetTransform() const { return transform; }
+	//Transform& GetTransform() { return transform; }
+	//const Transform& GetTransform() const { return transform; }
 
 	bool CastsShadows() const { return castsShadows; }
 
 protected:
 
+	virtual void Init() {};
+
+protected:
+
 	const std::shared_ptr<Shader> shader;
-	Transform transform;
+	//Transform transform;
 
 	bool castsShadows{false};
 
@@ -46,11 +49,11 @@ protected:
 
 };
 
-class DirectionalLight : public ILight
+class DirectionalLight : public LightComponent
 {
 public:
 
-	DirectionalLight(const glm::quat& directionRotation, glm::vec3 color, float intensity, bool usingDynamicCameraPositioning = false);
+	DirectionalLight(glm::vec3 color, float intensity, bool usingDynamicCameraPositioning = false);
 	virtual ~DirectionalLight() {}
 
 	void SetUniforms(const DeferredRenderer& renderer, const CameraComponent& camera) const;
@@ -65,11 +68,11 @@ private:
 
 };
 
-class PointLight : public ILight
+class PointLight : public LightComponent
 {
 public:
 
-	PointLight(const glm::vec3 position, glm::vec3 color, float intensity);
+	PointLight(glm::vec3 color, float intensity);
 	virtual ~PointLight() {}
 
 	void SetUniforms(const DeferredRenderer& renderer, const CameraComponent& camera) const;
@@ -82,11 +85,11 @@ private:
 
 };
 
-class SpotLight : public ILight
+class SpotLight : public LightComponent
 {
 public:
 
-	SpotLight(const glm::vec3 position, const glm::quat orientation, glm::vec3 color, float intensity, float outerConeAngle, float innerConeAngle);
+	SpotLight(glm::vec3 color, float intensity, float outerConeAngle, float innerConeAngle);
 	virtual ~SpotLight() {}
 
 	void SetUniforms(const DeferredRenderer& renderer, const CameraComponent& camera) const;

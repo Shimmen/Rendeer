@@ -16,6 +16,12 @@ std::shared_ptr<Entity> Entity::AddChild(const std::shared_ptr<Entity> child)
 	return child;
 }
 
+std::shared_ptr<Entity> Entity::NewChild()
+{
+	auto child = std::make_shared<Entity>();
+	return AddChild(child);
+}
+
 const std::vector<std::shared_ptr<Entity>>& Entity::GetDirectChildren() const
 {
 	return this->children;

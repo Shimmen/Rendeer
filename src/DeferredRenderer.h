@@ -13,7 +13,7 @@
 #include "TextureCube.h"
 #include "PrimitiveDrawables.h"
 
-class ILight;
+class LightComponent;
 
 class DeferredRenderer
 {
@@ -23,7 +23,7 @@ public:
 	~DeferredRenderer();
 
 	void BindForUsage() const;
-	void Render(const std::vector<ILight *>& lights, const Scene& scene);
+	void Render(const Scene& scene);
 
 	// Default textures etc.
 	Texture2D defaultNormalMap{"textures/default_normal.jpg", false};

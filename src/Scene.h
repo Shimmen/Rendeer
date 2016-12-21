@@ -23,7 +23,8 @@ public:
 	std::shared_ptr<const CameraComponent> GetMainCamera() const;
 	void SetMainCamera(std::shared_ptr<const CameraComponent> cameraComponent);
 
-	// Collect all entities into a flat list of items
+	// Collect entities matching the filter (i.e. has the specified component) into a flat list of items
+	template<typename Filter>
 	void GetEntities(std::vector<std::shared_ptr<Entity>>& entities) const;
 
 private:
@@ -37,3 +38,17 @@ private:
 
 };
 
+template<typename Filter>
+inline void Scene::GetEntities(std::vector<std::shared_ptr<Entity>>& entities) const
+{
+	for (auto child : GetDirectChildren())
+	{
+		if (child->GetComponent<Filter>() != nullptr)
+		{
+			entities.emplace_back(child);
+		}
+
+		auto childAsScene = static_cast<Scene *>(child.get());
+		childAsScene->GetEntities<Filter>(entities);
+	}
+}

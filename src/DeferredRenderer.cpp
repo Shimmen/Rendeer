@@ -53,14 +53,18 @@ void DeferredRenderer::BindForUsage() const
 }
 
 
-void DeferredRenderer::Render(const std::vector<ILight *>& lights, const Scene& scene)
+void DeferredRenderer::Render(const Scene& scene)
 {
 	auto camera = scene.GetMainCamera();
 
-	std::vector<std::shared_ptr<Entity>> entities{};
-	scene.GetEntities(entities);
+	// All entities that are renderable are considered to be geometry (for now)
+	std::vector<std::shared_ptr<Entity>> geometry{};
+	scene.GetEntities<Renderable>(geometry);
 
-	GeometryPass(entities, *camera);
+	std::vector<std::shared_ptr<Entity>> lights{};
+	scene.GetEntities<LightComponent>(lights);
+
+	GeometryPass(geometry, *camera);
 
 	//
 	// Set up the gl state to render the light pass
@@ -71,8 +75,10 @@ void DeferredRenderer::Render(const std::vector<ILight *>& lights, const Scene& 
 	glClearColor(0, 0, 0, 0);
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	for (auto light = lights.begin(); light != lights.end(); ++light)
+	for (auto lightEntity : lights)
 	{
+		auto light = lightEntity->GetComponent<LightComponent>();
+
 		//
 		// Render geometry into shadow map
 		//
@@ -84,10 +90,10 @@ void DeferredRenderer::Render(const std::vector<ILight *>& lights, const Scene& 
 
 		bool TEMP_usingShadowMap = false;
 		assert(shadowMap.GetWidth() == shadowMap.GetHeight());
-		auto lightCamera = (*light)->GetLightCamera(*camera, shadowMap.GetWidth());
+		auto lightCamera = light->GetLightCamera(*camera, shadowMap.GetWidth());
 		glm::mat4 lightViewProjection = lightCamera.GetProjectionMatrix() * lightCamera.GetViewMatrix();
 
-		if ((*light)->CastsShadows())
+		if (light->CastsShadows())
 		{
 			TEMP_usingShadowMap = true;
 
@@ -98,13 +104,10 @@ void DeferredRenderer::Render(const std::vector<ILight *>& lights, const Scene& 
 			shadowMapGenerator.Bind();
 			shadowMapGenerator.SetUniform("u_view_projecion_matrix", lightViewProjection);
 
-			for (auto entity : entities)
+			for (auto entity : geometry)
 			{
 				shadowMapGenerator.SetUniform("u_model_matrix", entity->GetTransform().GetWorldMatrix());
-				if (auto renderable = entity->GetComponent<Renderable>())
-				{
-					renderable->GetMesh()->Render();
-				}
+				entity->GetComponent<Renderable>()->GetMesh()->Render();
 			}
 
 			glCullFace(GL_BACK);
@@ -123,13 +126,13 @@ void DeferredRenderer::Render(const std::vector<ILight *>& lights, const Scene& 
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_ONE, GL_ONE);
 
-		auto& lightShader = (*light)->GetShader();
+		auto& lightShader = light->GetShader();
 
 		// Bind the gBuffer related uniforms
 		gBuffer.BindAsUniform(lightShader);
 
 		// Ask the light to sets its shader's uniforms
-		(*light)->SetUniforms(*this, *camera);
+		light->SetUniforms(*this, *camera);
 
 		// Set shadow map related uniforms
 		if (TEMP_usingShadowMap)
