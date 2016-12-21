@@ -25,9 +25,6 @@ public:
 
 	const Shader& GetShader() const { return *shader; }
 
-	//Transform& GetTransform() { return transform; }
-	//const Transform& GetTransform() const { return transform; }
-
 	bool CastsShadows() const { return castsShadows; }
 
 protected:
@@ -37,7 +34,6 @@ protected:
 protected:
 
 	const std::shared_ptr<Shader> shader;
-	//Transform transform;
 
 	bool castsShadows{false};
 
