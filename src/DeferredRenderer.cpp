@@ -170,11 +170,12 @@ void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::
 	//
 
 	auxFramebuffer1.BindAsDrawFrameBuffer();
-    glClearColor(0, 0, 0, 0);
+	glClearColor(0, 0, 0, 0);
+	glClear(GL_COLOR_BUFFER_BIT);
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
 
-    // TODO: Make sure that the skybox is rendered too!
+	// TODO: Make sure that the skybox is rendered too!
 	skyboxShader.Bind();
 	skyboxShader.SetUniform("u_view_rotation_matrix", glm::mat4(glm::mat3(camera->GetViewMatrix()))); // remove translation part
 	skyboxShader.SetUniform("u_projection_matrix", camera->GetProjectionMatrix());
@@ -189,7 +190,7 @@ void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::
 	nofilterFilter.Bind();
 	lightAccumulationTexture.Bind(0);
 	nofilterFilter.SetUniform("u_texture", 0);
-	quad.Render();
+	//quad.Render();
 
 /*
 

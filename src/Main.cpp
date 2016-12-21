@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
 	// DISPLAY & RENDERER
 	const int WINDOW_WIDTH = 1280;
 	const int WINDOW_HEIGHT = 720;
-	Window window{ WINDOW_WIDTH, WINDOW_HEIGHT, "Rendeer", false };
+	Window window{ WINDOW_WIDTH, WINDOW_HEIGHT, "Rendeer", true };
 	DeferredRenderer deferredRenderer{ &window };
 	window.BindAsDrawFramebuffer();
 

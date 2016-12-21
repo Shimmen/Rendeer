@@ -60,8 +60,8 @@ TextureCube::TextureCube(const Bitmap& left, const Bitmap& right, const Bitmap& 
 	glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GL_RGB, right.GetWidth(), right.GetHeight(), 0, GL_RGB, GL_UNSIGNED_BYTE, &right.GetData()[0]);
 	//glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, GL_RGB, down.GetWidth(), down.GetHeight(), 0, GL_RGB, GL_UNSIGNED_BYTE, &down.GetData()[0]);
 	//glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, GL_RGB, up.GetWidth(), up.GetHeight(), 0, GL_RGB, GL_UNSIGNED_BYTE, &up.GetData()[0]); // FIXME: why is everything reversed? See shader as well.
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, GL_RGB, up.GetWidth(), up.GetHeight(), 0, GL_RGB, GL_UNSIGNED_BYTE, &up.GetData()[0]);
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, GL_RGB, down.GetWidth(), down.GetHeight(), 0, GL_RGB, GL_UNSIGNED_BYTE, &down.GetData()[0]);
+	glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, GL_RGB, up.GetWidth(), up.GetHeight(), 0, GL_RGB, GL_UNSIGNED_BYTE, &up.GetData()[0]);
+	glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, GL_RGB, down.GetWidth(), down.GetHeight(), 0, GL_RGB, GL_UNSIGNED_BYTE, &down.GetData()[0]);
 	glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, GL_RGB, front.GetWidth(), front.GetHeight(), 0, GL_RGB, GL_UNSIGNED_BYTE, &front.GetData()[0]);
 	glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, GL_RGB, back.GetWidth(), back.GetHeight(), 0, GL_RGB, GL_UNSIGNED_BYTE, &back.GetData()[0]);
 
