@@ -1,5 +1,7 @@
 #include "Scene.h"
 
+#include "Renderable.h"
+
 Scene::Scene()
 {
 }
@@ -15,4 +17,15 @@ std::shared_ptr<const CameraComponent> Scene::GetMainCamera() const
 void Scene::SetMainCamera(std::shared_ptr<const CameraComponent> cameraComponent)
 {
 	this->mainCamera = cameraComponent;
+}
+
+void Scene::GetEntities(std::vector<std::shared_ptr<Entity>>& entities) const
+{
+	for (auto child : GetDirectChildren())
+	{
+		entities.emplace_back(child);
+
+		auto childAsScene = static_cast<Scene *>(child.get());
+		childAsScene->GetEntities(entities);
+	}	
 }

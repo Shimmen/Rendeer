@@ -23,10 +23,14 @@ public:
 	~DeferredRenderer();
 
 	void BindForUsage() const;
-	void Render(const std::vector<Entity *>& entities, const std::vector<ILight *>& lights, const Scene& scene);
+	void Render(const std::vector<ILight *>& lights, const Scene& scene);
 
 	// Default textures etc.
 	Texture2D defaultNormalMap{"textures/default_normal.jpg", false};
+
+private:
+
+	void GeometryPass(const std::vector<std::shared_ptr<Entity>>& entities, const CameraComponent& camera) const;
 
 private:
 

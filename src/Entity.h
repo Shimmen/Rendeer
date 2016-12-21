@@ -31,6 +31,8 @@ public:
 	// Add the child entity and return the added child.
 	std::shared_ptr<Entity> AddChild(const std::shared_ptr<Entity> child);
 
+	const std::vector<std::shared_ptr<Entity>>& GetDirectChildren() const;
+
 private:
 
 	Transform transform;

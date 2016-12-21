@@ -23,6 +23,9 @@ public:
 	std::shared_ptr<const CameraComponent> GetMainCamera() const;
 	void SetMainCamera(std::shared_ptr<const CameraComponent> cameraComponent);
 
+	// Collect all entities into a flat list of items
+	void GetEntities(std::vector<std::shared_ptr<Entity>>& entities) const;
+
 private:
 
 	std::weak_ptr<const CameraComponent> mainCamera;

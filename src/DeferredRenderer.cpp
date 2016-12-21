@@ -53,36 +53,14 @@ void DeferredRenderer::BindForUsage() const
 }
 
 
-void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::vector<ILight *>& lights, const Scene& scene)
+void DeferredRenderer::Render(const std::vector<ILight *>& lights, const Scene& scene)
 {
 	auto camera = scene.GetMainCamera();
 
-	//
-	// Render geometry
-	//
+	std::vector<std::shared_ptr<Entity>> entities{};
+	scene.GetEntities(entities);
 
-	gBuffer.BindAsRenderTarget();
-	glClearDepth(1.0);
-	glClearColor(0, 0, 0, 0);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
-	glDisable(GL_BLEND);
-
-	for (auto entityIt = entities.begin(); entityIt != entities.end(); ++entityIt)
-	{
-		Entity *entity = (*entityIt);
-		if (auto renderable = entity->GetComponent<Renderable>())
-		{
-			auto& transform = entity->GetTransform();
-			auto& material = renderable->GetMaterial();
-			auto& mesh = renderable->GetMesh();
-
-			material->UpdateUniforms(*this, transform, *camera);
-			mesh->Render();
-		}
-	}
+	GeometryPass(entities, *camera);
 
 	//
 	// Set up the gl state to render the light pass
@@ -120,10 +98,10 @@ void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::
 			shadowMapGenerator.Bind();
 			shadowMapGenerator.SetUniform("u_view_projecion_matrix", lightViewProjection);
 
-			for (auto entity = entities.begin(); entity != entities.end(); ++entity)
+			for (auto entity : entities)
 			{
-				shadowMapGenerator.SetUniform("u_model_matrix", (*entity)->GetTransform().GetWorldMatrix());
-				if (auto renderable = (*entity)->GetComponent<Renderable>())
+				shadowMapGenerator.SetUniform("u_model_matrix", entity->GetTransform().GetWorldMatrix());
+				if (auto renderable = entity->GetComponent<Renderable>())
 				{
 					renderable->GetMesh()->Render();
 				}
@@ -190,7 +168,7 @@ void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::
 	nofilterFilter.Bind();
 	lightAccumulationTexture.Bind(0);
 	nofilterFilter.SetUniform("u_texture", 0);
-	//quad.Render();
+	quad.Render();
 
 /*
 
@@ -266,6 +244,32 @@ void DeferredRenderer::Render(const std::vector<Entity *>& entities, const std::
 	quad.Render();
 
 	window->SwapBuffers();
+}
+
+void DeferredRenderer::GeometryPass(const std::vector<std::shared_ptr<Entity>>& entities, const CameraComponent& camera) const
+{
+	gBuffer.BindAsRenderTarget();
+	glClearDepth(1.0);
+	glClearColor(0, 0, 0, 0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+	glDisable(GL_BLEND);
+
+	for (auto entity : entities)
+	{
+		if (auto renderable = entity->GetComponent<Renderable>())
+		{
+			auto& transform = entity->GetTransform();
+
+			auto& material = renderable->GetMaterial();
+			material->UpdateUniforms(*this, transform, camera);
+
+			auto& mesh = renderable->GetMesh();
+			mesh->Render();
+		}
+	}
 }
 
 void DeferredRenderer::RenderTextureToScreen(const Texture2D& texture)

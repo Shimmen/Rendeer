@@ -60,10 +60,11 @@ int main(int argc, char *argv[])
 	teapotMaterial->diffuseTexture = teapotTexture;
 	teapotMaterial->specularIntensity = 1.0f;
 	teapotMaterial->shininess = 100.0f;
-	Entity teapot;
-	teapot.AddComponent(std::make_shared<Renderable>(teapotMesh, teapotMaterial));
-	teapot.GetTransform().SetScale(0.01f).Scale(0.5f, 1, 1);
-	teapot.GetTransform().SetPosition(0, 0.5f, 1);
+	auto teapot = std::make_shared<Entity>();
+	teapot->AddComponent(std::make_shared<Renderable>(teapotMesh, teapotMaterial));
+	teapot->GetTransform().SetScale(0.01f).Scale(0.5f, 1, 1);
+	teapot->GetTransform().SetPosition(0, 0.5f, 1);
+	scene.AddChild(teapot);
 
 	// PANEL
 	auto panelMesh = std::make_shared<Mesh>("models/cube.obj", false);
@@ -74,9 +75,10 @@ int main(int argc, char *argv[])
 	panelMaterial->normalMap = panelNormalMap;
 	panelMaterial->specularIntensity = 0.05f;
 	panelMaterial->shininess = 20.0f;
-	Entity panel;
-	panel.AddComponent(std::make_shared<Renderable>(panelMesh, panelMaterial));
-	panel.GetTransform().SetScale(3.0f, 0.008f, 1.5f);
+	auto panel = std::make_shared<Entity>();
+	panel->AddComponent(std::make_shared<Renderable>(panelMesh, panelMaterial));
+	panel->GetTransform().SetScale(3.0f, 0.008f, 1.5f);
+	scene.AddChild(panel);
 
 	// FLOOR
 	auto floorMesh = std::make_shared<Mesh>("models/curved_plane.obj");
@@ -87,15 +89,10 @@ int main(int argc, char *argv[])
 	floorMaterial->normalMap = gravelNormal;
 	floorMaterial->specularIntensity = 0.05f;
 	floorMaterial->shininess = 10.0f;
-	Entity floor;
-	floor.AddComponent(std::make_shared<Renderable>(floorMesh, floorMaterial));
-	floor.GetTransform().SetPosition(0, -0.5f, 4);
-
-	// ENTITIES
-	std::vector<Entity *> entities;
-	entities.push_back(&teapot);
-	entities.push_back(&panel);
-	entities.push_back(&floor);
+	auto floor = std::make_shared<Entity>();
+	floor->AddComponent(std::make_shared<Renderable>(floorMesh, floorMaterial));
+	floor->GetTransform().SetPosition(0, -0.5f, 4);
+	scene.AddChild(floor);
 
 	// DIRECTIONAL LIGHT
 	DirectionalLight directionalLight{glm::quat{1, 1, 0, 1}, glm::vec3{0.92f, 0.95f, 0.88f}, 1.5f};
@@ -188,8 +185,8 @@ int main(int argc, char *argv[])
 
 		timer += 0.03f;
 
-		teapot.GetTransform().SetOrientation(glm::vec3(0, 1, 0), timer);
-		panel.GetTransform().SetPosition(0, 0, sinf(timer) * 0.9f + 0.9f);
+		teapot->GetTransform().SetOrientation(glm::vec3(0, 1, 0), timer);
+		panel->GetTransform().SetPosition(0, 0, sinf(timer) * 0.9f + 0.9f);
 
 		if (keyboard.WasKeyPressed(GLFW_KEY_LEFT_CONTROL))
 		{
@@ -204,7 +201,7 @@ int main(int argc, char *argv[])
 			spotLight.GetTransform().SetPosition(cameraPosition).SetOrientation(cameraOrientation);
 		}
 
-		deferredRenderer.Render(entities, lights, scene);
+		deferredRenderer.Render(lights, scene);
 
 	}
 

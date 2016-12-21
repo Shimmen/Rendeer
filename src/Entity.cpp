@@ -15,3 +15,9 @@ std::shared_ptr<Entity> Entity::AddChild(const std::shared_ptr<Entity> child)
 	child->transform.SetParent(&this->transform);
 	return child;
 }
+
+const std::vector<std::shared_ptr<Entity>>& Entity::GetDirectChildren() const
+{
+	return this->children;
+}
+
