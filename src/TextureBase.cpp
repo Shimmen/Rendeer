@@ -28,8 +28,9 @@ int TextureBase::GetMaxNumberOfCombinedTextureUnits()
 {
 	if (TextureBase::maxNumberOfCombinedTextureUnits == -1)
 	{
-		GLint64 count;
-		glGetInteger64v(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &count);
+		GLint count;
+        glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &count);
+		//glGetInteger64v(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &count); // TODO/BUG: Is this available on Windows now?
 		TextureBase::maxNumberOfCombinedTextureUnits = static_cast<int>(count);
 	}
 

@@ -11,7 +11,7 @@ public:
 	ScreenAlignedQuad();
 	~ScreenAlignedQuad();
 	
-	void Render();
+	void Render() const;
 
 private:
 
@@ -31,7 +31,7 @@ public:
 	SkyboxCube();
 	~SkyboxCube();
 
-	void Render();
+	void Render() const;
 
 private:
 

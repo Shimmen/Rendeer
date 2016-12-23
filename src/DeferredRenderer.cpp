@@ -40,8 +40,6 @@ DeferredRenderer::~DeferredRenderer()
 
 void DeferredRenderer::BindForUsage() const
 {
-	glClearColor(0, 0, 0, 0);
-
 	glFrontFace(GL_CW);
 	glCullFace(GL_BACK);
 
@@ -65,87 +63,8 @@ void DeferredRenderer::Render(const Scene& scene)
 	scene.GetEntities<LightComponent>(lights);
 
 	GeometryPass(geometry, *camera);
-
-	//
-	// Set up the gl state to render the light pass
-	//
-
-	lightAccumulationBuffer.BindAsDrawFrameBuffer();
-	//glClearColor(1, 0, 1, 1);
-	glClearColor(0, 0, 0, 0);
-	glClear(GL_COLOR_BUFFER_BIT);
-
-	for (auto lightEntity : lights)
-	{
-		auto light = lightEntity->GetComponent<LightComponent>();
-
-		//
-		// Render geometry into shadow map
-		//
-
-		shadowMapFramebuffer.BindAsDrawFrameBuffer();
-
-		glClearDepth(1.0);
-		glClear(GL_DEPTH_BUFFER_BIT);
-
-		bool TEMP_usingShadowMap = false;
-		assert(shadowMap.GetWidth() == shadowMap.GetHeight());
-		auto lightCamera = light->GetLightCamera(*camera, shadowMap.GetWidth());
-		glm::mat4 lightViewProjection = lightCamera.GetProjectionMatrix() * lightCamera.GetViewMatrix();
-
-		if (light->CastsShadows())
-		{
-			TEMP_usingShadowMap = true;
-
-			glEnable(GL_DEPTH_TEST);
-			glEnable(GL_CULL_FACE);
-			glCullFace(GL_FRONT);
-
-			shadowMapGenerator.Bind();
-			shadowMapGenerator.SetUniform("u_view_projecion_matrix", lightViewProjection);
-
-			for (auto entity : geometry)
-			{
-				shadowMapGenerator.SetUniform("u_model_matrix", entity->GetTransform().GetWorldMatrix());
-				entity->GetComponent<Renderable>()->GetMesh()->Render();
-			}
-
-			glCullFace(GL_BACK);
-		}
-
-		//
-		// Render lights
-		//
-
-		lightAccumulationBuffer.BindAsDrawFrameBuffer();
-
-		glDisable(GL_DEPTH_TEST);
-		glDisable(GL_CULL_FACE);
-
-		glEnable(GL_BLEND);
-		glBlendEquation(GL_FUNC_ADD);
-		glBlendFunc(GL_ONE, GL_ONE);
-
-		auto& lightShader = light->GetShader();
-
-		// Bind the gBuffer related uniforms
-		gBuffer.BindAsUniform(lightShader);
-
-		// Ask the light to sets its shader's uniforms
-		light->SetUniforms(*this, *camera);
-
-		// Set shadow map related uniforms
-		if (TEMP_usingShadowMap)
-		{
-			this->shadowMap.Bind(8);
-			lightShader.SetUniform("u_shadow_map", 8);
-			lightShader.SetUniform("u_inverse_view_matrix", glm::inverse(camera->GetViewMatrix()));
-			lightShader.SetUniform("u_light_view_projection", lightViewProjection);
-		}
-
-		quad.Render();
-	}
-
+    LightPass(geometry, lights, *camera);
+	
 	//
 	// Render skybox into auxTexture1
 	//
@@ -273,6 +192,64 @@ void DeferredRenderer::GeometryPass(const std::vector<std::shared_ptr<Entity>>& 
 			mesh->Render();
 		}
 	}
+}
+
+void DeferredRenderer::LightPass(const std::vector<std::shared_ptr<Entity>>& geometry, const std::vector<std::shared_ptr<Entity>>& lights, const CameraComponent& camera) const
+{
+    lightAccumulationBuffer.BindAsDrawFrameBuffer();
+    glClearColor(0, 0, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    
+    for (auto lightEntity : lights)
+    {
+        auto light = lightEntity->GetComponent<LightComponent>();
+        
+        auto lightCamera = light->GetLightCamera(camera, shadowMap.GetSize());
+        glm::mat4 lightViewProjection = lightCamera.GetProjectionMatrix() * lightCamera.GetViewMatrix();
+        
+        // Render shadow maps if applicable
+        if (light->CastsShadows())
+        {
+            shadowMapFramebuffer.BindAsDrawFrameBuffer();
+            glClearDepth(1.0);
+            glClear(GL_DEPTH_BUFFER_BIT);
+            
+            glEnable(GL_DEPTH_TEST);
+            glEnable(GL_CULL_FACE);
+            
+            shadowMapGenerator.Bind();
+            shadowMapGenerator.SetUniform("u_view_projecion_matrix", lightViewProjection);
+            
+            for (auto entity : geometry)
+            {
+                shadowMapGenerator.SetUniform("u_model_matrix", entity->GetTransform().GetWorldMatrix());
+                entity->GetComponent<Renderable>()->GetMesh()->Render();
+            }
+        }
+        
+        lightAccumulationBuffer.BindAsDrawFrameBuffer();
+        
+        glDisable(GL_DEPTH_TEST);
+        glDisable(GL_CULL_FACE);
+        
+        glEnable(GL_BLEND);
+        glBlendEquation(GL_FUNC_ADD);
+        glBlendFunc(GL_ONE, GL_ONE);
+        
+        auto& lightShader = light->GetShader();
+        gBuffer.BindAsUniform(lightShader);
+        light->SetUniforms(*this, camera);
+        
+        if (light->CastsShadows())
+        {
+            this->shadowMap.Bind(8);
+            lightShader.SetUniform("u_shadow_map", 8);
+            lightShader.SetUniform("u_inverse_view_matrix", glm::inverse(camera.GetViewMatrix()));
+            lightShader.SetUniform("u_light_view_projection", lightViewProjection);
+        }
+        
+        quad.Render();
+    }
 }
 
 void DeferredRenderer::RenderTextureToScreen(const Texture2D& texture)

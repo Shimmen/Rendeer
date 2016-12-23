@@ -6,6 +6,7 @@ class TextureBase
 {
 public:
 
+    void Bind(GLenum textureBinding, GLuint textureTarget) const;
 	GLuint GetTextureHandle() const;
 
 protected:
@@ -15,8 +16,6 @@ protected:
 
 	TextureBase();
 	virtual ~TextureBase();
-
-	void Bind(GLenum textureBinding, GLuint textureTarget) const;
 
 private:
 

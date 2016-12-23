@@ -40,7 +40,6 @@ void DirectionalLight::SetUniforms(const DeferredRenderer& renderer, const Camer
 
 	glm::quat conjugateCameraOrientation = glm::conjugate(camera.GetOwnerEntity().GetTransform().GetOrientationInWorld());
 	auto viewSpaceLightForward = glm::rotate(conjugateCameraOrientation, lightForward);
-	
 	directionUniform->Set(viewSpaceLightForward);
 
 	inverseProjectionUniform->Set(glm::inverse((camera.GetProjectionMatrix())));

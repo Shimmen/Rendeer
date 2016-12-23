@@ -7,6 +7,7 @@
 #include "Buffer.h"
 #include "Uniform.h"
 #include "ShaderUnit.h"
+#include "TextureBase.h"
 
 /* static */ int Shader::maxNumberOfUniformBufferBindings{ -1 };
 /* static */ GLuint Shader::currentlyBoundShaderProgram{ 0 };
@@ -146,6 +147,23 @@ bool Shader::SetUniform(const std::string& uniformName, const glm::mat4& matrix4
 		return false;
 	}
 }
+
+/*
+bool Shader::SetUniform(const std::string& uniformName, const TextureBase& texture, int binding) const
+{
+    if (auto uniform = GetUniformWithName(uniformName))
+    {
+        // TODO: Make texture binding more generic (or similar) so that we can bind from the base class!
+        texture.Bind(binding);
+        uniform->Set(binding);
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+*/
 
 bool Shader::SetUniformBlock(const std::string& uniformBlockName, const Buffer& buffer) const
 {

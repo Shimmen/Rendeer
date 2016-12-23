@@ -28,7 +28,7 @@ ScreenAlignedQuad::~ScreenAlignedQuad()
 {
 }
 
-void ScreenAlignedQuad::Render()
+void ScreenAlignedQuad::Render() const
 {
 	vertexArray.Bind();
 	vertexArray.RenderWithArrayBuffer(GL_TRIANGLES, 6);
@@ -95,7 +95,7 @@ SkyboxCube::~SkyboxCube()
 {
 }
 
-void SkyboxCube::Render()
+void SkyboxCube::Render() const
 {
 	// 6 quads * 6 vertices/quad
 	static constexpr int vertexCount = 6 * 6;

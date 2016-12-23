@@ -11,7 +11,7 @@
 
 class Transform;
 class Material;
-class Texture;
+class TextureBase;
 class Uniform;
 class Buffer;
 
@@ -33,6 +33,10 @@ public:
 	bool SetUniform(const std::string& uniformName, const glm::vec3& vector3) const;
 	bool SetUniform(const std::string& uniformName, const glm::mat3& matrix3) const;
 	bool SetUniform(const std::string& uniformName, const glm::mat4& matrix4) const;
+    
+    /* TODO: Implement!
+    bool SetUniform(const std::string& uniformName, const TextureBase& texture, int binding) const;
+    */
 
 	bool SetUniformBlock(const std::string& uniformBlockName, const Buffer& buffer) const;
 	GLuint GetNextUniformBlockBinding() const;
