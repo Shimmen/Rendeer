@@ -15,7 +15,7 @@ public:
 	void BindAsRenderTarget() const;
 	void BindAsUniform(const Shader& lightShader) const;
 
-private: // TODO: Make private?
+private:
 
 	FrameBuffer frameBuffer;
 	Texture2D albedo;

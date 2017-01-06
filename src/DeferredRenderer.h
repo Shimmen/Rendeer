@@ -31,7 +31,7 @@ public:
 private:
 
 	void GeometryPass(const std::vector<std::shared_ptr<Entity>>& entities, const CameraComponent& camera) const;
-    void LightPass(const std::vector<std::shared_ptr<Entity>>& geometry, const std::vector<std::shared_ptr<Entity>>& lights, const CameraComponent& camera) const;
+	void LightPass(const std::vector<std::shared_ptr<Entity>>& geometry, const std::vector<std::shared_ptr<Entity>>& lights, const CameraComponent& camera) const;
 
 private:
 
@@ -46,13 +46,14 @@ private:
 	Texture2D lightAccumulationTexture;
 
 	// Extra frame buffers and textures
+/*
 	Texture2D auxTexture1;
 	FrameBuffer auxFramebuffer1;
 	Texture2D auxTextureLow1;
 	FrameBuffer auxFramebufferLow1;
 	Texture2D auxTextureLow2;
 	FrameBuffer auxFramebufferLow2;
-
+*/
 	// Shadow map related
 	Texture2D shadowMap{ 2048, 2048, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT16, GL_CLAMP_TO_BORDER, GL_NEAREST, GL_NEAREST };
 	FrameBuffer shadowMapFramebuffer;
