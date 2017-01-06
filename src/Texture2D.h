@@ -17,7 +17,7 @@ public:
 	Texture2D(const Bitmap& image, bool srgb, GLint magFilter = GL_LINEAR, GLint wrapMode = GL_REPEAT);
 
 	// Construct empty Texture2D for use as a render target, etc.
-	Texture2D(int width, int height, GLenum format, GLenum internalFormat, GLint wrapMode, GLint magFilter, GLint minFilter);
+	Texture2D(int width, int height, GLenum format, GLenum internalFormat, GLint wrapMode, GLint magFilter, GLint minFilter, GLenum type = GL_UNSIGNED_BYTE);
 	
 	void Bind(GLuint textureTarget) const;
 
@@ -29,7 +29,7 @@ public:
 
 	inline int GetWidth() const { return width; }
 	inline int GetHeight() const { return height; }
-    inline int GetSize() const { assert(width == height); return width; }
+	inline int GetSize() const { assert(width == height); return width; }
 
 private:
 

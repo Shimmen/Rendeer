@@ -34,7 +34,7 @@ Texture2D::Texture2D(const Bitmap& image, bool srgb, GLint magFilter, GLint wrap
 	SetMaxAnisotropy();
 }
 
-Texture2D::Texture2D(int width, int height, GLenum format, GLenum internalFormat, GLint wrapMode, GLint magFilter, GLint minFilter)
+Texture2D::Texture2D(int width, int height, GLenum format, GLenum internalFormat, GLint wrapMode, GLint magFilter, GLint minFilter, GLenum type)
 	: TextureBase()
 	, width{ width }
 	, height{ height }
@@ -46,11 +46,10 @@ Texture2D::Texture2D(int width, int height, GLenum format, GLenum internalFormat
 	SetWrapS(wrapMode);
 	SetWrapT(wrapMode);
 
-	// Since the texture is created empty these work fine.
+	// Since the texture is created empty this works fine.
 	static const void *NO_DATA = nullptr;
-	static const GLenum NO_TYPE = GL_UNSIGNED_BYTE;
 
-	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, NO_TYPE, NO_DATA);
+	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, type, NO_DATA);
 
 	GenerateMipmapsIfCompatible(minFilter);
 	SetMaxAnisotropy();
