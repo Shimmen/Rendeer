@@ -18,7 +18,7 @@ void main()
 	//float lum = luminance(fragment.rgb);
 	//fragment = vec4(lum, lum, lum, 1.0);
 
-  //vec3 ldrFragment = simpleReinhardToneMap(fragment.rgb);
+	//vec3 ldrFragment = simpleReinhardToneMap(fragment.rgb);
 	vec3 ldrFragment = uncharted2_ToneMap(fragment.rgb);
 
 	// Write out color value

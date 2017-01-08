@@ -15,12 +15,15 @@ public:
 	void BindAsRenderTarget() const;
 	void BindAsUniform(const Shader& lightShader) const;
 
-private:
+public:
 
-	FrameBuffer frameBuffer;
 	Texture2D albedo;
 	Texture2D normal;
 	Texture2D material;
 	Texture2D depth;
+
+private:
+
+	FrameBuffer frameBuffer;
 
 };

@@ -17,6 +17,7 @@ DeferredRenderer::DeferredRenderer(const Window *window)
 	assert(window != nullptr);
 
 	lightAccumulationBuffer.Attach(&lightAccumulationTexture, GL_COLOR_ATTACHMENT0);
+	lightAccumulationBuffer.Attach(&gBuffer.depth, GL_DEPTH_ATTACHMENT);
 	assert(lightAccumulationBuffer.IsComplete());
 /*
 	auxFramebuffer1.AttachTexture(&auxTexture1, GL_COLOR_ATTACHMENT0);
@@ -64,44 +65,9 @@ void DeferredRenderer::Render(const Scene& scene)
 
 	GeometryPass(geometry, *camera);
 	LightPass(geometry, lights, *camera);
-	
-	//
-	// Render skybox into auxTexture1
-	//
-/*
-	auxFramebuffer1.BindAsDrawFrameBuffer();
-	glClearColor(0, 0, 0, 0);
-	glClear(GL_COLOR_BUFFER_BIT);
-	glDisable(GL_DEPTH_TEST);
-	glDisable(GL_BLEND);
-*/
+	DrawSkybox(*camera);
 
 /*
-	// TODO: Make sure that the skybox is rendered too!
-    lightAccumulationBuffer.BindAsDrawFrameBuffer();
-    glDisable(GL_BLEND);
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_EQUAL);
-    
-	skyboxShader.Bind();
-	skyboxShader.SetUniform("u_view_rotation_matrix", glm::mat4(glm::mat3(camera->GetViewMatrix()))); // remove translation part
-	skyboxShader.SetUniform("u_projection_matrix", camera->GetProjectionMatrix());
-	skyboxTexture.Bind(35);
-	skyboxShader.SetUniform("u_skybox_texture", 35);
-	skyboxMesh.Render();
-*/
-
-	//
-	// Render light accumulation buffer into auxTexture1 (on top of skybox as of now)
-	//
-/*
-	nofilterFilter.Bind();
-	lightAccumulationTexture.Bind(0);
-	nofilterFilter.SetUniform("u_texture", 0);
-	quad.Render();
-*/
-/*
-
 	//
 	// Perform bloom
 	//
@@ -161,7 +127,7 @@ void DeferredRenderer::Render(const Scene& scene)
 	// Final post-processing
 	//
 
-	//RenderTextureToScreen(auxTexture1); window->SwapBuffers(); return;
+	//RenderTextureToScreen(gBuffer.depth); window->SwapBuffers(); return;
 
 	// Render light accumulation buffer onto screen with final post processing step(like tone mapping etc.)
 	window->BindAsDrawFramebuffer();
@@ -186,7 +152,8 @@ void DeferredRenderer::GeometryPass(const std::vector<std::shared_ptr<Entity>>& 
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
-	glDepthMask(true);
+	glDepthMask(GL_TRUE);
+
 	glEnable(GL_CULL_FACE);
 	glDisable(GL_BLEND);
 
@@ -199,8 +166,7 @@ void DeferredRenderer::GeometryPass(const std::vector<std::shared_ptr<Entity>>& 
 			auto& material = renderable->GetMaterial();
 			material->UpdateUniforms(*this, transform, camera);
 
-			auto& mesh = renderable->GetMesh();
-			mesh->Render();
+			renderable->GetMesh()->Render();
 		}
 	}
 }
@@ -209,8 +175,7 @@ void DeferredRenderer::LightPass(const std::vector<std::shared_ptr<Entity>>& geo
 {
 	lightAccumulationBuffer.BindAsDrawFrameBuffer();
 	glClearColor(0, 0, 0, 0);
-	glClearDepth(1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT);
 
 	for (auto lightEntity : lights)
 	{
@@ -226,6 +191,7 @@ void DeferredRenderer::LightPass(const std::vector<std::shared_ptr<Entity>>& geo
 			glClearDepth(1.0);
 			glClear(GL_DEPTH_BUFFER_BIT);
 
+			glDepthMask(GL_TRUE);
 			glEnable(GL_DEPTH_TEST);
 			glDepthFunc(GL_LEQUAL);
 			glEnable(GL_CULL_FACE);
@@ -242,7 +208,11 @@ void DeferredRenderer::LightPass(const std::vector<std::shared_ptr<Entity>>& geo
 
 		lightAccumulationBuffer.BindAsDrawFrameBuffer();
 
+		// TODO: Logically the depth mask should be false, since I don't want to touch the depth at all from the lights, but I get really strage results if it's false!
+		// So I'm not sure... It might be some strange behaviour related to one texture in multiple frame buffers. Find out, somehow...
+		// HOWEVER, since depth test is disabled, depth writing is always disabled too, and this works.
 		glDisable(GL_DEPTH_TEST);
+
 		glDisable(GL_CULL_FACE);
 
 		glEnable(GL_BLEND);
@@ -262,7 +232,26 @@ void DeferredRenderer::LightPass(const std::vector<std::shared_ptr<Entity>>& geo
 		}
 
 		quad.Render();
+
+		glDisable(GL_BLEND);
 	}
+}
+
+void DeferredRenderer::DrawSkybox(const CameraComponent& camera) const
+{
+	lightAccumulationBuffer.BindAsDrawFrameBuffer();
+
+	// Depth map is cleared to 1.0, skybox shader fixes depth to 1.0
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_EQUAL);
+	glDepthMask(GL_TRUE);
+
+	skyboxShader.Bind();
+	skyboxShader.SetUniform("u_view_rotation_matrix", glm::mat4(glm::mat3(camera.GetViewMatrix()))); // remove translation part
+	skyboxShader.SetUniform("u_projection_matrix", camera.GetProjectionMatrix());
+	skyboxTexture.Bind(35);
+	skyboxShader.SetUniform("u_skybox_texture", 35);
+	skyboxMesh.Render();
 }
 
 void DeferredRenderer::RenderTextureToScreen(const Texture2D& texture)
@@ -275,6 +264,7 @@ void DeferredRenderer::RenderTextureToScreen(const Texture2D& texture)
 
 	glDisable(GL_CULL_FACE);
 	glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
 	glClear(GL_COLOR_BUFFER_BIT);
 	quad.Render();
 }
