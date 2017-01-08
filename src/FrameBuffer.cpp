@@ -61,7 +61,7 @@ void FrameBuffer::BindAsDrawFrameBuffer(bool setViewport, bool setDrawBuffers) c
 		glViewport(0, 0, first->GetWidth(), first->GetHeight());
 	}
 
-	if (setDrawBuffers)
+	if (setDrawBuffers && drawBuffers.size() > 0)
 	{
 		glDrawBuffers(static_cast<GLsizei>(drawBuffers.size()), &drawBuffers[0]);
 	}
