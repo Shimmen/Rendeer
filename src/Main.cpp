@@ -52,20 +52,6 @@ int main(int argc, char *argv[])
 	// TODO: Make syntax better for these things.
 	scene.SetMainCamera(camera->GetComponent<CameraComponent>());
 
-
-	// TEAPOT
-	auto teapotMesh = std::make_shared<Mesh>("models/teapot.obj");
-	auto teapotTexture = std::make_shared<Texture2D>("textures/default.png", true);
-	auto teapotMaterial = std::make_shared<DiffuseMaterial>();
-	teapotMaterial->diffuseTexture = teapotTexture;
-	teapotMaterial->specularIntensity = 1.0f;
-	teapotMaterial->shininess = 100.0f;
-	auto teapot = std::make_shared<Entity>();
-	teapot->AddComponent(std::make_shared<Renderable>(teapotMesh, teapotMaterial));
-	teapot->GetTransform().SetScale(0.01f).Scale(0.5f, 1, 1);
-	teapot->GetTransform().SetPosition(0, 0.5f, 1);
-	scene.AddChild(teapot);
-
 	// PANEL
 	auto panelMesh = std::make_shared<Mesh>("models/cube.obj", false);
 	auto panelTexture = std::make_shared<Texture2D>("textures/bricks/bricks_col.jpg", true);
@@ -79,6 +65,18 @@ int main(int argc, char *argv[])
 	panel->AddComponent(std::make_shared<Renderable>(panelMesh, panelMaterial));
 	panel->GetTransform().SetScale(3.0f, 0.008f, 1.5f);
 	scene.AddChild(panel);
+
+	// TEAPOT
+	auto teapotMesh = std::make_shared<Mesh>("models/teapot.obj");
+	auto teapotTexture = std::make_shared<Texture2D>("textures/default.png", true);
+	auto teapotMaterial = std::make_shared<DiffuseMaterial>();
+	teapotMaterial->diffuseTexture = teapotTexture;
+	teapotMaterial->specularIntensity = 1.0f;
+	teapotMaterial->shininess = 100.0f;
+	auto teapot = std::make_shared<Entity>();
+	teapot->AddComponent(std::make_shared<Renderable>(teapotMesh, teapotMaterial));
+	teapot->GetTransform().SetScale(0.04f).Scale(0.5f, 1, 1);
+	panel->AddChild(teapot);
 
 	// FLOOR
 	auto floorMesh = std::make_shared<Mesh>("models/curved_plane.obj");
@@ -96,7 +94,7 @@ int main(int argc, char *argv[])
 
 	// DIRECTIONAL LIGHT
 	auto directionalLight = scene.NewChild();
-	directionalLight->GetTransform().SetOrientation(glm::quat{ 1, 1, 0, 1 });
+	directionalLight->GetTransform().SetOrientation(glm::quat{ 1, 1, 1, 0} );// 0.99996f, 0.00873f, 0.0f, 0.0f });
 	directionalLight->AddComponent(std::make_shared<DirectionalLight>(glm::vec3{ 0.92f, 0.95f, 0.88f }, 1.5f));
 
 	// POINT LIGHT
@@ -186,8 +184,12 @@ int main(int argc, char *argv[])
 
 		timer += 0.03f;
 
-		teapot->GetTransform().SetOrientation(glm::vec3(0, 1, 0), timer);
-		panel->GetTransform().SetPosition(0, 0, sinf(timer) * 0.9f + 0.9f);
+		teapot->GetTransform()
+			.SetOrientation(glm::vec3(0, 1, 0), timer)
+			.SetPosition(0, fabs(sinf(timer * 3.0f)), 0);
+
+		panel->GetTransform()
+			.SetPosition(0, 0, sinf(timer) * 0.9f + 0.9f);
 
 		if (keyboard.WasKeyPressed(GLFW_KEY_LEFT_CONTROL))
 		{
