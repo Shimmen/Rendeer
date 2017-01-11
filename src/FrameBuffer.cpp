@@ -33,6 +33,17 @@ void FrameBuffer::Attach(const Texture2D *texture, GLenum attachment)
 	}
 }
 
+const Texture2D *FrameBuffer::GetAttached(GLenum attachment) const
+{
+	auto result = attachments.find(attachment);
+	if (result != attachments.end())
+	{
+		return result->second;
+	}
+
+	return nullptr;
+}
+
 bool FrameBuffer::IsComplete(GLenum *statusIfNotComplete) const
 {
 	BindAsDrawFrameBuffer(false, false);
@@ -53,7 +64,17 @@ bool FrameBuffer::IsComplete(GLenum *statusIfNotComplete) const
 
 void FrameBuffer::BindAsDrawFrameBuffer(bool setViewport, bool setDrawBuffers) const
 {
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, frameBufferHandle);
+	static GLuint lastBound = 0;
+	if (frameBufferHandle != lastBound)
+	{
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, frameBufferHandle);
+		lastBound = frameBufferHandle;
+	}
+
+	// Always set viewport and draw buffers if requested, even if the correct frame buffer is bound.
+	// We assume that GL_DRAW_FRAMEBUFFER is only bound from this function, but glDrawBuffers and
+	// glViewport are not *directly* connected to the function of a frame buffer, so they might be
+	// manipulated/called outside of our scope.
 
 	if (setViewport)
 	{
@@ -69,16 +90,10 @@ void FrameBuffer::BindAsDrawFrameBuffer(bool setViewport, bool setDrawBuffers) c
 
 void FrameBuffer::BindAsReadFrameBuffer() const
 {
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, frameBufferHandle);
-}
-
-const Texture2D *FrameBuffer::GetAttached(GLenum attachment) const
-{
-	auto result = attachments.find(attachment);
-	if (result != attachments.end())
+	static GLuint lastBound = 0;
+	if (frameBufferHandle != lastBound)
 	{
-		return result->second;
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, frameBufferHandle);
+		lastBound = frameBufferHandle;
 	}
-
-	return nullptr;
 }
