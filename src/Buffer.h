@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stdint.h>
 #include <vector>
 #include <map>
 
@@ -10,15 +11,19 @@ class Buffer
 public:
 
 	Buffer();
-	Buffer(GLuint bufferHandle);
-	//Buffer(Buffer& other);
-
-	static std::vector<Buffer> GenerateBuffers(GLuint count);
-
 	~Buffer();
 
+	static std::vector<std::shared_ptr<Buffer>> GenerateBuffers(GLuint count);
+
+protected:
+
+	// Only required for the GenerateBuffers function
+	Buffer(GLuint bufferHandle);
+
+public:
+
 	const Buffer& Bind(GLenum target) const;
-	const Buffer& BindAsUniformBuffer(GLuint index) const;
+	const Buffer& BindAsUniformBuffer(GLuint binding) const;
 	
 	template <typename T>
 	void SetData(const std::vector<T>& data, GLenum dataUsage) const
@@ -35,21 +40,24 @@ public:
 	void SetData(const void *data, size_t dataSize, GLenum dataUsage) const;
 	void UpdateData(const void *data, size_t dataSize, size_t offset = 0) const;
 
-	std::vector<char> GetData(size_t size, size_t offset = 0) const;
-
-	GLuint GetBufferHandle() const;
+	std::vector<uint8_t> GetData(size_t size, size_t offset = 0) const;
 
 private:
 
-	// Not copy-assignable (for now at least)
+	Buffer(Buffer& other) = delete;
 	Buffer& operator=(Buffer& other) = delete;
 
 private:
 
 	GLuint bufferHandle;
-	mutable GLenum lastBoundTarget;
 
-	static GLuint currentlyBoundBufferHandle;
-	static std::map<GLuint, int> referenceCountForBufferHandle;
+	// The target that this buffer handle was last bound to. It is defined as mutable since it isn't a property
+	// of the buffer but more a management variable like currentlyBound. That one is a class variable so it doesn't
+	// need to be declared as mutable, but this makes sense to store as a member.
+	mutable GLenum lastBoundTargetForInstance{ 0 };
+
+	// Maps a buffer bind target to a buffer handle. If currentlyBound[lastBoundTarget] != bufferHandle
+	// we know that this buffer isn't bound (where we think it is) and should warn about that.
+	static std::map<GLenum, GLuint> currentlyBound;
 
 };

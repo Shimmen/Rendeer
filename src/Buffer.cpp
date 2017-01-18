@@ -2,78 +2,60 @@
 
 #include <assert.h>
 
-#define INCREMENT_REFERENCE_COUNT(bufferHandle) (referenceCountForBufferHandle[bufferHandle]++);
-#define DECREMENT_REFERENCE_COUNT(bufferHandle) (referenceCountForBufferHandle[bufferHandle]--);
-
-/*static*/ GLuint Buffer::currentlyBoundBufferHandle = UINT32_MAX;
-/*static*/ std::map<GLuint, int> Buffer::referenceCountForBufferHandle;
+/*static*/ std::map<GLenum, GLuint> Buffer::currentlyBound{};
 
 Buffer::Buffer()
 {
 	glGenBuffers(1, &bufferHandle);
-	INCREMENT_REFERENCE_COUNT(bufferHandle);
 }
 
 Buffer::Buffer(GLuint bufferHandle)
 	: bufferHandle(bufferHandle)
-	, lastBoundTarget(GL_NONE)
 {
-	INCREMENT_REFERENCE_COUNT(bufferHandle);
 }
-/*
-Buffer::Buffer(Buffer& other)
-	: bufferHandle(other.bufferHandle)
-	, lastBoundTarget(other.lastBoundTarget)
-{
-	INCREMENT_REFERENCE_COUNT(bufferHandle);
-}
-*/
-/*static*/ std::vector<Buffer> Buffer::GenerateBuffers(GLuint count)
-{
-	std::vector<GLuint> bufferHandles(count);
-	glGenBuffers(count, &bufferHandles[0]);
 
-	std::vector<Buffer> buffers;
+Buffer::~Buffer()
+{
+	// Make sure that all cached data on this buffer handle is invalidated, since a new buffer might be created
+	// with the same handle as this one which wouldn't be compatible with the current caching/optimizing.
+	for (auto& pair : currentlyBound)
+	{
+		if (pair.second == bufferHandle)
+		{
+			pair.second = 0;
+		}
+
+	}
+
+	glDeleteBuffers(1, &bufferHandle);
+}
+
+/*static*/
+std::vector<std::shared_ptr<Buffer>> Buffer::GenerateBuffers(GLuint count)
+{
+	GLuint bufferHandles[count];
+	glGenBuffers(count, bufferHandles);
+
+	std::vector<std::shared_ptr<Buffer>> buffers;
+	buffers.reserve(count);
+
 	for (GLuint handle : bufferHandles)
 	{
-		buffers.push_back(Buffer(handle));
+		// Use shared_ptr ctor instead of make_shared so the buffer ctor taking in a handle can be kept private easily
+		buffers.emplace_back(new Buffer{handle});
 	}
 
 	return buffers;
 }
 
-Buffer::~Buffer()
-{
-	DECREMENT_REFERENCE_COUNT(bufferHandle);
-	if (referenceCountForBufferHandle[bufferHandle] <= 0)
-	{
-        printf("Buffer delete trigger (%d)\n", bufferHandle);
-        // TODO: DO DELETE BUFFERS!!! Just not right now...
-		//glDeleteBuffers(1, &bufferHandle);
-	}
-}
-
 const Buffer& Buffer::Bind(GLenum target) const
 {
-	assert(target == GL_ARRAY_BUFFER ||
-		   target == GL_ATOMIC_COUNTER_BUFFER ||
-		   target == GL_COPY_READ_BUFFER ||
-		   target == GL_COPY_WRITE_BUFFER ||
-		   target == GL_DISPATCH_INDIRECT_BUFFER ||
-		   target == GL_DRAW_INDIRECT_BUFFER ||
-		   target == GL_ELEMENT_ARRAY_BUFFER ||
-		   target == GL_PIXEL_PACK_BUFFER ||
-		   target == GL_PIXEL_UNPACK_BUFFER ||
-		   target == GL_QUERY_BUFFER ||
-		   target == GL_SHADER_STORAGE_BUFFER ||
-		   target == GL_TEXTURE_BUFFER ||
-		   target == GL_TRANSFORM_FEEDBACK_BUFFER ||
-		   target == GL_UNIFORM_BUFFER);
-
-	glBindBuffer(target, bufferHandle);
-
-	lastBoundTarget = target;
-	currentlyBoundBufferHandle = this->bufferHandle;
+	if (currentlyBound[target] != bufferHandle)
+	{
+		glBindBuffer(target, bufferHandle);
+		lastBoundTargetForInstance = target;
+		currentlyBound[target] = bufferHandle;
+	}
 
 	return *this;
 }
@@ -81,37 +63,35 @@ const Buffer& Buffer::Bind(GLenum target) const
 const Buffer& Buffer::BindAsUniformBuffer(GLuint binding) const
 {
 	Bind(GL_UNIFORM_BUFFER);
-	glBindBufferBase(GL_UNIFORM_BUFFER, binding, GetBufferHandle());
+	glBindBufferBase(GL_UNIFORM_BUFFER, binding, bufferHandle);
 
 	return *this;
 }
 
 void Buffer::SetData(const void *data, size_t dataSize, GLenum dataUsage) const
 {
-	assert(currentlyBoundBufferHandle == this->bufferHandle);
 	assert(dataUsage == GL_STATIC_DRAW || dataUsage == GL_DYNAMIC_DRAW);
-	glBufferData(lastBoundTarget, dataSize, data, dataUsage);
+	assert(dataSize > 0);
+
+	assert(currentlyBound[lastBoundTargetForInstance] == bufferHandle);
+	glBufferData(lastBoundTargetForInstance, dataSize, data, dataUsage);
 }
 
 void Buffer::UpdateData(const void *data, size_t dataSize, size_t offset) const
 {
-	assert(currentlyBoundBufferHandle == this->bufferHandle);
-	glBufferSubData(lastBoundTarget, offset, dataSize, data);
+	assert(dataSize > 0);
+
+	assert(currentlyBound[lastBoundTargetForInstance] == bufferHandle);
+	glBufferSubData(lastBoundTargetForInstance, offset, dataSize, data);
 }
 
-std::vector<char> Buffer::GetData(size_t size, size_t offset) const
+std::vector<uint8_t> Buffer::GetData(size_t size, size_t offset) const
 {
-	assert(currentlyBoundBufferHandle == this->bufferHandle);
-
-	std::vector<char> data;
+	std::vector<uint8_t> data;
 	data.reserve(size);
 
-	glGetBufferSubData(lastBoundTarget, offset, size, &data[0]);
+	assert(currentlyBound[lastBoundTargetForInstance] == bufferHandle);
+	glGetBufferSubData(lastBoundTargetForInstance, offset, size, &data[0]);
 
 	return data;
-}
-
-GLuint Buffer::GetBufferHandle() const
-{
-	return bufferHandle;
 }
