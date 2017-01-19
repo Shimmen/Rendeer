@@ -4,24 +4,24 @@
 
 GLuint TextureBase::GetTextureHandle() const
 {
-	return this->textureHandle;
+	return handle;
 }
 
 TextureBase::TextureBase()
 {
-	glGenTextures(1, &this->textureHandle);
+	glGenTextures(1, &handle);
 }
 
 TextureBase::~TextureBase()
 {
-	glDeleteTextures(1, &this->textureHandle);
+	glDeleteTextures(1, &handle);
 }
 
 void TextureBase::Bind(GLenum textureBinding, GLuint textureTarget) const
 {
 	assert(textureTarget >= 0 && textureTarget < GetMaxNumberOfCombinedTextureUnits());
 	glActiveTexture(GL_TEXTURE0 + textureTarget);
-	glBindTexture(textureBinding, this->textureHandle);
+	glBindTexture(textureBinding, handle);
 }
 
 int TextureBase::GetMaxNumberOfCombinedTextureUnits()
@@ -29,7 +29,7 @@ int TextureBase::GetMaxNumberOfCombinedTextureUnits()
 	if (TextureBase::maxNumberOfCombinedTextureUnits == -1)
 	{
 		GLint count;
-        glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &count);
+		glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &count);
 		//glGetInteger64v(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &count); // TODO/BUG: Is this available on Windows now?
 		TextureBase::maxNumberOfCombinedTextureUnits = static_cast<int>(count);
 	}

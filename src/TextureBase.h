@@ -2,11 +2,13 @@
 
 #include <glad/glad.h>
 
-class TextureBase
+#include "GLResource.h"
+
+class TextureBase: public GLResource
 {
 public:
 
-    void Bind(GLenum textureBinding, GLuint textureTarget) const;
+	void Bind(GLenum textureBinding, GLuint textureTarget) const;
 	GLuint GetTextureHandle() const;
 
 protected:
@@ -16,10 +18,6 @@ protected:
 
 	TextureBase();
 	virtual ~TextureBase();
-
-private:
-
-	GLuint textureHandle;
 
 public:
 

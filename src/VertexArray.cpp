@@ -4,17 +4,17 @@
 
 VertexArray::VertexArray()
 {
-	glGenVertexArrays(1, &this->vertexArrayHandle);
+	glGenVertexArrays(1, &handle);
 }
 
 VertexArray::~VertexArray()
 {
-	glDeleteVertexArrays(1, &this->vertexArrayHandle);
+	glDeleteVertexArrays(1, &handle);
 }
 
 void VertexArray::Bind() const
 {
-	glBindVertexArray(this->vertexArrayHandle);
+	glBindVertexArray(handle);
 }
 
 void VertexArray::Unbind() const

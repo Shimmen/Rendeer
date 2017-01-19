@@ -21,12 +21,6 @@ public:
 
 private:
 
-	// Non-copyable
-	Mesh(Mesh& other) = delete;
-	Mesh& operator=(Mesh& other) = delete;
-
-private:
-
 	enum class MeshBuffers
 	{
 		POSITION_BUFFER = 0,

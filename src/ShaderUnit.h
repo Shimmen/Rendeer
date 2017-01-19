@@ -4,9 +4,11 @@
 
 #include <glad/glad.h>
 
+#include "GLResource.h"
+
 #define INCLUDE_DIRECTIVE (std::string("#include "))
 
-class ShaderUnit
+class ShaderUnit: public GLResource
 {
 public:
 
@@ -27,12 +29,6 @@ public:
 
 private:
 
-	// Non-copyable
-	ShaderUnit(ShaderUnit& other) = delete;
-	ShaderUnit& operator=(ShaderUnit& other) = delete;
-
-private:
-
 	// Reads and preprocesses a shader source file into a string
 	static std::string ReadShaderSourceFile(const std::string& filePath);
 
@@ -41,14 +37,15 @@ private:
 
 private:
 
-	GLuint shaderUnitHandle;
 	ShaderUnit::Type type;
 
 	// Store the path of the source file to be able to keep track of loaded shaders
 	const std::string sourceFilePath;
 
-	// Only shader is allowed to access the shaderUnitHandle for compiling
+	// Only shader is allowed to access the handle (for compiling and stuff)
 	friend class Shader;
+	GLuint getHandle() const { return handle; }
+
 
 };
 

@@ -5,9 +5,11 @@
 
 #include <glad/glad.h>
 
+#include "GLResource.h"
+
 class Texture2D;
 
-class FrameBuffer
+class FrameBuffer: public GLResource
 {
 public:
 
@@ -24,14 +26,7 @@ public:
 
 protected:
 
-	GLuint frameBufferHandle;
-
 	std::vector<GLenum> drawBuffers;
 	std::map<GLenum, const Texture2D *> attachments;
-
-private:
-
-	FrameBuffer(FrameBuffer& other) = delete;
-	FrameBuffer& operator=(FrameBuffer& other) = delete;
 
 };

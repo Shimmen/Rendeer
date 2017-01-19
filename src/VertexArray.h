@@ -2,7 +2,9 @@
 
 #include <glad/glad.h>
 
-class VertexArray
+#include "GLResource.h"
+
+class VertexArray: public GLResource
 {
 public:
 
@@ -18,10 +20,6 @@ public:
 
 	// This will also enable the relevant vertex attribute array
 	void AddVertexAttribute(int index, int valueCount, GLenum valueType, int stride = 0, void *offset = nullptr);
-
-private:
-
-	GLuint vertexArrayHandle;
 
 public:
 

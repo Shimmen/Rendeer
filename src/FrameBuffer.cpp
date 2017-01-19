@@ -4,12 +4,12 @@
 
 FrameBuffer::FrameBuffer()
 {
-	glGenFramebuffers(1, &frameBufferHandle);
+	glGenFramebuffers(1, &handle);
 }
 
 FrameBuffer::~FrameBuffer()
 {
-	glDeleteFramebuffers(1, &frameBufferHandle);
+	glDeleteFramebuffers(1, &handle);
 }
 
 void FrameBuffer::Attach(const Texture2D *texture, GLenum attachment)
@@ -65,10 +65,10 @@ bool FrameBuffer::IsComplete(GLenum *statusIfNotComplete) const
 void FrameBuffer::BindAsDrawFrameBuffer(bool setViewport, bool setDrawBuffers) const
 {
 	static GLuint lastBound = 0;
-	if (frameBufferHandle != lastBound)
+	if (handle != lastBound)
 	{
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, frameBufferHandle);
-		lastBound = frameBufferHandle;
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, handle);
+		lastBound = handle;
 	}
 
 	// Always set viewport and draw buffers if requested, even if the correct frame buffer is bound.
@@ -91,9 +91,9 @@ void FrameBuffer::BindAsDrawFrameBuffer(bool setViewport, bool setDrawBuffers) c
 void FrameBuffer::BindAsReadFrameBuffer() const
 {
 	static GLuint lastBound = 0;
-	if (frameBufferHandle != lastBound)
+	if (handle != lastBound)
 	{
-		glBindFramebuffer(GL_READ_FRAMEBUFFER, frameBufferHandle);
-		lastBound = frameBufferHandle;
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, handle);
+		lastBound = handle;
 	}
 }

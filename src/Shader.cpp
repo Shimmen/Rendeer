@@ -7,7 +7,6 @@
 #include "Buffer.h"
 #include "Uniform.h"
 #include "ShaderUnit.h"
-#include "TextureBase.h"
 
 /* static */ int Shader::maxNumberOfUniformBufferBindings{ -1 };
 /* static */ GLuint Shader::currentlyBoundShaderProgram{ 0 };
@@ -19,36 +18,37 @@ Shader::Shader(const std::string& vertexShaderFilePath, const std::string& fragm
 	ShaderUnit fragmentShader{ fragmentShaderFilePath, ShaderUnit::Type::FRAGMENT_SHADER };
 
 	// Create program and attach components
-	shaderProgram = glCreateProgram();
-	glAttachShader(shaderProgram, vertexShader.shaderUnitHandle);
-	glAttachShader(shaderProgram, fragmentShader.shaderUnitHandle);
+	handle = glCreateProgram();
+	glAttachShader(handle, vertexShader.getHandle());
+	glAttachShader(handle, fragmentShader.getHandle());
 
 	// Link program
-	glLinkProgram(shaderProgram);
-	CheckShaderErrors(shaderProgram, GL_LINK_STATUS);
+	glLinkProgram(handle);
+	CheckShaderErrors(handle, GL_LINK_STATUS);
 
+	// TODO: Create a Validate function for validating
 	// Validate program
-	//glValidateProgram(shaderProgram);
-	//CheckShaderErrors(shaderProgram, GL_VALIDATE_STATUS);
+	//glValidateProgram(handle);
+	//CheckShaderErrors(handle, GL_VALIDATE_STATUS);
 
 	// Release shader components from the program
-	glDetachShader(shaderProgram, vertexShader.shaderUnitHandle);
-	glDetachShader(shaderProgram, fragmentShader.shaderUnitHandle);
+	glDetachShader(handle, vertexShader.getHandle());
+	glDetachShader(handle, fragmentShader.getHandle());
 	
 	LocateAndRegisterUniforms();
 }
 
 Shader::~Shader()
 {
-	glDeleteProgram(shaderProgram);
+	glDeleteProgram(handle);
 }
 
 void Shader::Bind() const
 {
-	if (this->shaderProgram != currentlyBoundShaderProgram)
+	if (handle != currentlyBoundShaderProgram)
 	{
-		glUseProgram(shaderProgram);
-		currentlyBoundShaderProgram = this->shaderProgram;
+		glUseProgram(handle);
+		currentlyBoundShaderProgram = handle;
 	}
 }
 
@@ -190,7 +190,7 @@ GLuint Shader::GetNextUniformBlockBinding() const
 
 GLuint Shader::GetProgramHandle() const
 {
-	return shaderProgram;
+	return handle;
 }
 
 void Shader::CheckShaderErrors(GLuint shaderProgram, GLenum stage) const
@@ -226,19 +226,19 @@ void Shader::LocateAndRegisterUniforms()
 	this->Bind();
 
 	int activeUniformCount = 0;
-	glGetProgramiv(shaderProgram, GL_ACTIVE_UNIFORMS, &activeUniformCount);
+	glGetProgramiv(handle, GL_ACTIVE_UNIFORMS, &activeUniformCount);
 
 	for (int i = 0; i < activeUniformCount; ++i)
 	{
 		// Get uniform name
 		char uniformName[NAME_BUFFER_LENGTH];
 		int uniformNameLength;
-		glGetActiveUniformName(shaderProgram, GLuint(i), NAME_BUFFER_LENGTH - 1, &uniformNameLength, uniformName);
+		glGetActiveUniformName(handle, GLuint(i), NAME_BUFFER_LENGTH - 1, &uniformNameLength, uniformName);
 		uniformName[uniformNameLength] = '\0';
 		std::string name{uniformName};
 
 		// Get uniform location
-		GLint location = glGetUniformLocation(shaderProgram, uniformName);
+		GLint location = glGetUniformLocation(handle, uniformName);
 
 		// There should definitly be no uniform name duplicates
 		assert(uniforms.find(name) == uniforms.end());
@@ -255,16 +255,16 @@ void Shader::LocateAndRegisterUniforms()
 	}
 	
 	int activeUniformBlockCount = 0;
-	glGetProgramiv(shaderProgram, GL_ACTIVE_UNIFORM_BLOCKS, &activeUniformBlockCount);
+	glGetProgramiv(handle, GL_ACTIVE_UNIFORM_BLOCKS, &activeUniformBlockCount);
 
 	for (int i = 0; i < activeUniformBlockCount; ++i)
 	{
 		char uniformBlockName[NAME_BUFFER_LENGTH];
 		int uniformBlockNameLength;
-		glGetActiveUniformBlockName(shaderProgram, GLuint(i), NAME_BUFFER_LENGTH - 1, &uniformBlockNameLength, uniformBlockName);
+		glGetActiveUniformBlockName(handle, GLuint(i), NAME_BUFFER_LENGTH - 1, &uniformBlockNameLength, uniformBlockName);
 		uniformBlockName[uniformBlockNameLength] = '\0';
 
-		GLuint blockIndex = glGetUniformBlockIndex(shaderProgram, uniformBlockName);
+		GLuint blockIndex = glGetUniformBlockIndex(handle, uniformBlockName);
 		uniformBlockIndicies[uniformBlockName] = blockIndex;
 	}
 }

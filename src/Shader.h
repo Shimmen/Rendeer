@@ -9,13 +9,15 @@
 #include <glad/glad.h>
 #include <glm/fwd.hpp>
 
+#include "GLResource.h"
+
 class Transform;
 class Material;
 class TextureBase;
 class Uniform;
 class Buffer;
 
-class Shader
+class Shader: public GLResource
 {
 public:
 	
@@ -33,10 +35,10 @@ public:
 	bool SetUniform(const std::string& uniformName, const glm::vec3& vector3) const;
 	bool SetUniform(const std::string& uniformName, const glm::mat3& matrix3) const;
 	bool SetUniform(const std::string& uniformName, const glm::mat4& matrix4) const;
-    
-    /* TODO: Implement!
-    bool SetUniform(const std::string& uniformName, const TextureBase& texture, int binding) const;
-    */
+
+	/* TODO: Implement!
+	bool SetUniform(const std::string& uniformName, const TextureBase& texture, int binding) const;
+	*/
 
 	bool SetUniformBlock(const std::string& uniformBlockName, const Buffer& buffer) const;
 	GLuint GetNextUniformBlockBinding() const;
@@ -48,12 +50,7 @@ private:
 	void CheckShaderErrors(GLuint shaderProgram, GLenum stage) const;
 	void LocateAndRegisterUniforms();
 
-	Shader(Shader&) = delete;
-	Shader& operator=(Shader&) = delete;
-
 private:
-
-	GLuint shaderProgram;
 
 	std::map<std::string, Uniform> uniforms;
 	std::map<std::string, GLuint> uniformBlockIndicies;

@@ -15,19 +15,19 @@ ShaderUnit::ShaderUnit(const std::string& shaderSourcePath, ShaderUnit::Type typ
 	std::string source = ReadShaderSourceFile(shaderSourcePath);
 
 	GLenum shaderType = static_cast<GLenum>(type);
-	this->shaderUnitHandle = glCreateShader(shaderType);
+	handle = glCreateShader(shaderType);
 
 	const GLchar *rawSource = source.c_str();
-	glShaderSource(this->shaderUnitHandle, 1, &rawSource, nullptr);
-	glCompileShader(this->shaderUnitHandle);
+	glShaderSource(handle, 1, &rawSource, nullptr);
+	glCompileShader(handle);
 	
 	GLint compilationSuccess;
-	glGetShaderiv(this->shaderUnitHandle, GL_COMPILE_STATUS, &compilationSuccess);
+	glGetShaderiv(handle, GL_COMPILE_STATUS, &compilationSuccess);
 	if (compilationSuccess == GL_FALSE)
 	{
 		GLchar errorMessage[2048];
 		memset(errorMessage, '\0', sizeof(errorMessage));
-		glGetShaderInfoLog(this->shaderUnitHandle, sizeof(errorMessage), nullptr, errorMessage);
+		glGetShaderInfoLog(handle, sizeof(errorMessage), nullptr, errorMessage);
 
 		const Logger& logger = Logger::GetDefaultLogger();
 		logger.Log("Shader error: shader loaded with file path \"" + shaderSourcePath + "\" could not be compiled.");
@@ -37,7 +37,7 @@ ShaderUnit::ShaderUnit(const std::string& shaderSourcePath, ShaderUnit::Type typ
 
 ShaderUnit::~ShaderUnit()
 {
-	glDeleteShader(this->shaderUnitHandle);
+	glDeleteShader(handle);
 }
 
 ShaderUnit::Type ShaderUnit::GetType() const

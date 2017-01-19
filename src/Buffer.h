@@ -6,7 +6,9 @@
 
 #include <glad/glad.h>
 
-class Buffer
+#include "GLResource.h"
+
+class Buffer: public GLResource
 {
 public:
 
@@ -43,13 +45,6 @@ public:
 	std::vector<uint8_t> GetData(size_t size, size_t offset = 0) const;
 
 private:
-
-	Buffer(Buffer& other) = delete;
-	Buffer& operator=(Buffer& other) = delete;
-
-private:
-
-	GLuint bufferHandle;
 
 	// The target that this buffer handle was last bound to. It is defined as mutable since it isn't a property
 	// of the buffer but more a management variable like currentlyBound. That one is a class variable so it doesn't
