@@ -13,12 +13,7 @@ public:
 		const Bitmap& front, const Bitmap& back);
 	~TextureCube();
 
-	void Bind(GLuint textureTarget) const;
-
-private:
-
-	TextureCube(TextureCube&) = delete;
-	TextureCube& operator=(TextureCube&) = delete;
+	void Bind(GLuint textureBinding) const;
 
 };
 

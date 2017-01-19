@@ -71,7 +71,7 @@ TextureCube::~TextureCube()
 {
 }
 
-void TextureCube::Bind(GLuint textureTarget) const
+void TextureCube::Bind(GLuint textureBinding) const
 {
-	TextureBase::Bind(GL_TEXTURE_CUBE_MAP, textureTarget);
+	TextureBase::Bind(GL_TEXTURE_CUBE_MAP, textureBinding);
 }

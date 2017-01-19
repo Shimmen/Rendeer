@@ -8,10 +8,11 @@ class TextureBase: public GLResource
 {
 public:
 
-	void Bind(GLenum textureBinding, GLuint textureTarget) const;
 	GLuint GetTextureHandle() const;
 
 protected:
+
+	void Bind(GLenum textureTarget, GLuint textureBinding) const;
 
 	// This class is not pure virtual and can therefore be constructed.
 	// This, however, should not be possible so the CTOR/DTOR are protected.

@@ -1,34 +1,65 @@
 #include "Texture2D.h"
 
+// Implementation defined in Bitmap class
+//#define STB_IMAGE_IMPLEMENTATION
+#include <stb/stb_image.h>
+
 #include <glm/gtc/type_ptr.hpp>
 
-#include "Bitmap.h"
 #include "Logger.h"
 
 Texture2D::Texture2D(const std::string& filename, bool srgb, GLint magFilter, GLint wrapMode)
-	: Texture2D(Bitmap{filename}, srgb, magFilter, wrapMode)
+	: TextureBase{}
 {
-}
+	FILE *file = fopen(filename.c_str(), "rb");
+	if (file == nullptr)
+	{
+		// TODO: Move this to another function (Load) so that it can fail safely
+		Logger::GetDefaultLogger().Log("Error: can't read file with name: '" + filename + "'.");
+		//return;
+	}
 
-Texture2D::Texture2D(const Bitmap& image, bool srgb, GLint magFilter, GLint wrapMode)
-	: TextureBase()
-	, width{ image.GetWidth() }
-	, height{ image.GetHeight() }
-{
+	// Flip images to make complient with OpenGL texture handling
+	stbi_set_flip_vertically_on_load(true);
+
+	bool hdr = stbi_is_hdr_from_file(file);
+	fseek(file, 0, SEEK_SET); // TODO: File a bug! Shouldn't need to rewind, right?
+	void *pixels;
+	int numComponents;
+
+	if (hdr)
+	{
+		pixels = stbi_loadf_from_file(file, &width, &height, &numComponents, 0);
+	}
+	else
+	{
+		pixels = stbi_load_from_file(file, &width, &height, &numComponents, 0);
+	}
+
+	if (pixels == nullptr)
+	{
+		// TODO: Move this to another function (Load) so that it can fail safely
+		Logger::GetDefaultLogger().Log("Error: stbi could not load image with name: '" + filename + "'.");
+		Logger::GetDefaultLogger().Log("       Reason: " + std::string(stbi_failure_reason()));
+		//return;
+	}
+
 	Bind(0);
 
-	// Assume trilinear for all loaded images (can always be changed later)
+	// Assume trilinear for all loaded images
 	SetMinFilter(GL_LINEAR_MIPMAP_LINEAR);
 	SetMagFilter(magFilter);
 	SetWrapS(wrapMode);
 	SetWrapT(wrapMode);
 
-	GLenum sourceFormat = CalculateSourceFormat(image);
-	GLenum sourceType = CalculateSourceType(image);
-	GLint internalFormat = CalculateInternalFormat(sourceFormat, srgb, image.IsHdr());
-	const void *sourceData = &image.GetData()[0];
+	GLenum sourceFormat = CalculateSourceFormat(numComponents);
+	GLint internalFormat = CalculateInternalFormat(sourceFormat, srgb, hdr);
+	GLenum sourceType = (hdr) ? GL_FLOAT : GL_UNSIGNED_BYTE;
 
-	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, sourceFormat, sourceType, sourceData);
+	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, sourceFormat, sourceType, pixels);
+
+	stbi_image_free(pixels);
+	fclose(file);
 
 	GenerateMipmapsIfCompatible(GL_LINEAR_MIPMAP_LINEAR);
 	SetMaxAnisotropy();
@@ -55,9 +86,9 @@ Texture2D::Texture2D(int width, int height, GLenum format, GLenum internalFormat
 	SetMaxAnisotropy();
 }
 
-void Texture2D::Bind(GLuint textureTarget) const
+void Texture2D::Bind(GLuint textureBinding) const
 {
-	TextureBase::Bind(GL_TEXTURE_2D, textureTarget);
+	TextureBase::Bind(GL_TEXTURE_2D, textureBinding);
 }
 
 void Texture2D::SetMinFilter(GLint minFilter)
@@ -80,29 +111,21 @@ void Texture2D::SetWrapT(GLint wrapT)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapT);
 }
 
-void Texture2D::SetBorderColor(const glm::vec4& color)
+
+void Texture2D::SetBorderColor(float r, float g, float b, float a)
 {
-	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, glm::value_ptr(color));
+	GLfloat color[4] = { r, g, b, a };
+	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, color);
 }
 
-GLenum Texture2D::CalculateSourceFormat(const Bitmap& bitmap) const
+GLenum Texture2D::CalculateSourceFormat(int numComponents) const
 {
-	int pixelComponentCount = bitmap.GetPixelComponentCount();
-	assert(pixelComponentCount > 0 && pixelComponentCount <= 4);
-	if (pixelComponentCount == 1) return GL_RED;
-	if (pixelComponentCount == 2) return GL_RG;
-	if (pixelComponentCount == 3) return GL_RGB;
-	if (pixelComponentCount == 4) return GL_RGBA;
-	else
-	{
-		Logger::GetDefaultLogger().Log("Error: couldn't find an source format for the pixel component count " + std::to_string(pixelComponentCount));
-		return 0;
-	}
-}
-
-GLenum Texture2D::CalculateSourceType(const Bitmap & bitmap) const
-{
-	return bitmap.IsHdr() ? GL_FLOAT : GL_UNSIGNED_BYTE;
+	assert(numComponents >= 1 && numComponents <= 4);
+	if (numComponents == 1) return GL_RED;
+	if (numComponents == 2) return GL_RG;
+	if (numComponents == 3) return GL_RGB;
+	if (numComponents == 4) return GL_RGBA;
+	return 0;
 }
 
 GLint Texture2D::CalculateInternalFormat(GLint externalFormat, bool srgb, bool hdr) const

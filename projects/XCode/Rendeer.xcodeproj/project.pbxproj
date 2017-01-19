@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		F4433ABB1DEEF7240058CD6C /* Bitmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4433A811DEEF7240058CD6C /* Bitmap.cpp */; };
+		F40F970B1E3132BC004D2C8F /* Bitmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F40F97091E3132BC004D2C8F /* Bitmap.cpp */; };
 		F4433ABC1DEEF7240058CD6C /* Buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4433A831DEEF7240058CD6C /* Buffer.cpp */; };
 		F4433ABD1DEEF7240058CD6C /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4433A851DEEF7240058CD6C /* Camera.cpp */; };
 		F4433ABE1DEEF7240058CD6C /* Component.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4433A871DEEF7240058CD6C /* Component.cpp */; };
@@ -59,10 +59,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		F40F97091E3132BC004D2C8F /* Bitmap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Bitmap.cpp; path = ../../../src/Bitmap.cpp; sourceTree = "<group>"; };
+		F40F970A1E3132BC004D2C8F /* Bitmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Bitmap.h; path = ../../../src/Bitmap.h; sourceTree = "<group>"; };
 		F41859231E2F729E00E20FB6 /* GLResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLResource.h; path = ../../../src/GLResource.h; sourceTree = "<group>"; };
 		F4433A781DEEF6370058CD6C /* Rendeer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Rendeer; sourceTree = BUILT_PRODUCTS_DIR; };
-		F4433A811DEEF7240058CD6C /* Bitmap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Bitmap.cpp; path = ../../../src/Bitmap.cpp; sourceTree = "<group>"; };
-		F4433A821DEEF7240058CD6C /* Bitmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Bitmap.h; path = ../../../src/Bitmap.h; sourceTree = "<group>"; };
 		F4433A831DEEF7240058CD6C /* Buffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Buffer.cpp; path = ../../../src/Buffer.cpp; sourceTree = "<group>"; };
 		F4433A841DEEF7240058CD6C /* Buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Buffer.h; path = ../../../src/Buffer.h; sourceTree = "<group>"; };
 		F4433A851DEEF7240058CD6C /* Camera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Camera.cpp; path = ../../../src/Camera.cpp; sourceTree = "<group>"; };
@@ -198,8 +198,8 @@
 			isa = PBXGroup;
 			children = (
 				F41859241E2F74AD00E20FB6 /* GLBindings */,
-				F4433A811DEEF7240058CD6C /* Bitmap.cpp */,
-				F4433A821DEEF7240058CD6C /* Bitmap.h */,
+				F40F97091E3132BC004D2C8F /* Bitmap.cpp */,
+				F40F970A1E3132BC004D2C8F /* Bitmap.h */,
 				F4433A851DEEF7240058CD6C /* Camera.cpp */,
 				F4433A861DEEF7240058CD6C /* Camera.h */,
 				F4433A871DEEF7240058CD6C /* Component.cpp */,
@@ -332,7 +332,6 @@
 			files = (
 				F4433AF41DEF1B1F0058CD6C /* glad.c in Sources */,
 				F4433AC41DEEF7240058CD6C /* Keyboard.cpp in Sources */,
-				F4433ABB1DEEF7240058CD6C /* Bitmap.cpp in Sources */,
 				F4433ABF1DEEF7240058CD6C /* DeferredRenderer.cpp in Sources */,
 				F4433AC11DEEF7240058CD6C /* Entity.cpp in Sources */,
 				F4433AC71DEEF7240058CD6C /* Main.cpp in Sources */,
@@ -350,6 +349,7 @@
 				F4433ACD1DEEF7240058CD6C /* Scene.cpp in Sources */,
 				F4433AC31DEEF7240058CD6C /* GBuffer.cpp in Sources */,
 				F4433AD21DEEF7240058CD6C /* TextureCube.cpp in Sources */,
+				F40F970B1E3132BC004D2C8F /* Bitmap.cpp in Sources */,
 				F4433ACE1DEEF7240058CD6C /* Shader.cpp in Sources */,
 				F4433AC91DEEF7240058CD6C /* Model.cpp in Sources */,
 				F4433AC51DEEF7240058CD6C /* Lighting.cpp in Sources */,
