@@ -1,10 +1,9 @@
 #pragma once
 
-#include "IMaterial.h"
-
+#include "Material.h"
 #include "Texture2D.h"
 
-class DiffuseMaterial : public IMaterial
+class DiffuseMaterial : public Material
 {
 public:
 

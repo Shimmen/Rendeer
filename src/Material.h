@@ -8,18 +8,12 @@ class Transform;
 class DeferredRenderer;
 class CameraComponent;
 
-class IMaterial
+class Material
 {
 public:
 
-	IMaterial(Shader *shader)
-		: shader{ shader }
-	{
-	}
-
-	virtual ~IMaterial()
-	{
-	}
+	Material(std::shared_ptr<Shader> shader) : shader{shader} {}
+	virtual ~Material() {}
 
 	virtual void UpdateUniforms(const DeferredRenderer& renderer,
 	                            const Transform& transform,

@@ -80,7 +80,7 @@
 		F4433A911DEEF7240058CD6C /* GBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GBuffer.cpp; path = ../../../src/GBuffer.cpp; sourceTree = "<group>"; };
 		F4433A921DEEF7240058CD6C /* GBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GBuffer.h; path = ../../../src/GBuffer.h; sourceTree = "<group>"; };
 		F4433A931DEEF7240058CD6C /* GeneralUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GeneralUtil.h; path = ../../../src/GeneralUtil.h; sourceTree = "<group>"; };
-		F4433A941DEEF7240058CD6C /* IMaterial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IMaterial.h; path = ../../../src/IMaterial.h; sourceTree = "<group>"; };
+		F4433A941DEEF7240058CD6C /* Material.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Material.h; path = ../../../src/Material.h; sourceTree = "<group>"; };
 		F4433A951DEEF7240058CD6C /* Keyboard.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Keyboard.cpp; path = ../../../src/Keyboard.cpp; sourceTree = "<group>"; };
 		F4433A961DEEF7240058CD6C /* Keyboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Keyboard.h; path = ../../../src/Keyboard.h; sourceTree = "<group>"; };
 		F4433A971DEEF7240058CD6C /* Lighting.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Lighting.cpp; path = ../../../src/Lighting.cpp; sourceTree = "<group>"; };
@@ -213,7 +213,7 @@
 				F4433A911DEEF7240058CD6C /* GBuffer.cpp */,
 				F4433A921DEEF7240058CD6C /* GBuffer.h */,
 				F4433A931DEEF7240058CD6C /* GeneralUtil.h */,
-				F4433A941DEEF7240058CD6C /* IMaterial.h */,
+				F4433A941DEEF7240058CD6C /* Material.h */,
 				F4433A951DEEF7240058CD6C /* Keyboard.cpp */,
 				F4433A961DEEF7240058CD6C /* Keyboard.h */,
 				F4433A971DEEF7240058CD6C /* Lighting.cpp */,

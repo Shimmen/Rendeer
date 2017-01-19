@@ -4,7 +4,7 @@
 #include "DeferredRenderer.h"
 
 DiffuseMaterial::DiffuseMaterial()
-	: IMaterial{ new Shader{"Materials/Diffuse.vsh", "Materials/Diffuse.fsh"} }
+: Material{ std::make_shared<Shader>("Materials/Diffuse.vsh", "Materials/Diffuse.fsh") }
 {
 }
 
