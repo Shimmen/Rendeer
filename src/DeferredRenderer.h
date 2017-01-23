@@ -9,9 +9,9 @@
 #include "Window.h"
 #include "Bitmap.h"
 #include "GBuffer.h"
+#include "Drawables.h"
 #include "Texture2D.h"
 #include "TextureCube.h"
-#include "PrimitiveDrawables.h"
 
 class LightComponent;
 

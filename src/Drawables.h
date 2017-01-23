@@ -15,11 +15,6 @@ private:
 	ScreenAlignedQuad();
 	~ScreenAlignedQuad();
 
-	ScreenAlignedQuad(ScreenAlignedQuad& other) = delete;
-	ScreenAlignedQuad& operator=(ScreenAlignedQuad& other) = delete;
-
-private:
-
 	VertexArray vertexArray;
 
 };
@@ -34,11 +29,6 @@ private:
 
 	SkyboxCube();
 	~SkyboxCube();
-
-	SkyboxCube(SkyboxCube& other) = delete;
-	SkyboxCube& operator=(SkyboxCube& other) = delete;
-
-private:
 
 	VertexArray vertexArray;
 
