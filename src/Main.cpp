@@ -12,6 +12,7 @@
 #include "Scene.h"
 #include "Window.h"
 #include "Renderable.h"
+#include "ModelLoader.h"
 #include "DiffuseMaterial.h"
 #include "DeferredRenderer.h"
 
@@ -45,69 +46,34 @@ int main(int argc, char *argv[])
 	Scene scene;
 
 	auto camera = scene.AddChild(std::make_shared<Camera>(
-		glm::vec3{ 0, 1.5f, -2.8f },
-		glm::angleAxis(0.5f, glm::vec3{ 1, 0, 0 })
+		glm::vec3{ 0, 1.7f, -5.0f },
+		glm::angleAxis(0.15f, glm::vec3{ 1, 0, 0 })
 	));
 
 	// TODO: Make syntax better for these things.
 	scene.SetMainCamera(camera->GetComponent<CameraComponent>());
 
-	// PANEL
-	auto panelMesh = std::make_shared<Mesh>("models/cube.obj", false);
-	auto panelTexture = std::make_shared<Texture2D>("textures/bricks/bricks_col.jpg", true);
-	auto panelNormalMap = std::make_shared<Texture2D>("textures/bricks/bricks_norm.jpg", false);
-	auto panelMaterial = std::make_shared<DiffuseMaterial>();
-	panelMaterial->diffuseTexture = panelTexture;
-	panelMaterial->normalMap = panelNormalMap;
-	panelMaterial->specularIntensity = 0.05f;
-	panelMaterial->shininess = 20.0f;
-	auto panel = std::make_shared<Entity>();
-	panel->AddComponent(std::make_shared<Renderable>(panelMesh, panelMaterial));
-	panel->GetTransform().SetScale(3.0f, 0.008f, 1.5f);
-	scene.AddChild(panel);
+	auto teapot = ModelLoader::Load("models/teapot/teapot.obj");
+	scene.AddChild(teapot)->GetTransform().SetScale(0.032f);
 
-	// TEAPOT
-	auto teapotMesh = std::make_shared<Mesh>("models/teapot.obj");
-	auto teapotTexture = std::make_shared<Texture2D>("textures/default.png", true);
-	auto teapotMaterial = std::make_shared<DiffuseMaterial>();
-	teapotMaterial->diffuseTexture = teapotTexture;
-	teapotMaterial->specularIntensity = 1.0f;
-	teapotMaterial->shininess = 100.0f;
-	auto teapot = std::make_shared<Entity>();
-	teapot->AddComponent(std::make_shared<Renderable>(teapotMesh, teapotMaterial));
-	teapot->GetTransform().SetScale(0.04f).Scale(0.5f, 1, 1);
-	panel->AddChild(teapot);
-
-	// FLOOR
-	auto floorMesh = std::make_shared<Mesh>("models/curved_plane.obj");
-	auto gravelColor = std::make_shared<Texture2D>("textures/gravel/gravel_col.jpg", true);
-	auto gravelNormal = std::make_shared<Texture2D>("textures/gravel/gravel_norm.jpg", false);
-	auto floorMaterial = std::make_shared<DiffuseMaterial>();
-	floorMaterial->diffuseTexture = gravelColor;
-	floorMaterial->normalMap = gravelNormal;
-	floorMaterial->specularIntensity = 0.05f;
-	floorMaterial->shininess = 10.0f;
-	auto floor = std::make_shared<Entity>();
-	floor->AddComponent(std::make_shared<Renderable>(floorMesh, floorMaterial));
-	floor->GetTransform().SetPosition(0, -0.5f, 4);
-	scene.AddChild(floor);
+	auto sponza = ModelLoader::Load("models/dabrovic-sponza/sponza.obj");
+	scene.AddChild(sponza);
 
 	// DIRECTIONAL LIGHT
-	auto directionalLight = scene.NewChild();
-	directionalLight->GetTransform().SetOrientation(glm::quat{ 1, 1, 1, 0} );// 0.99996f, 0.00873f, 0.0f, 0.0f });
-	directionalLight->AddComponent(std::make_shared<DirectionalLight>(glm::vec3{ 0.92f, 0.95f, 0.88f }, 1.5f));
+	//auto directionalLight = scene.NewChild();
+	//directionalLight->GetTransform().SetOrientation(glm::quat{ 0.00873f, 0.0f, 0.0f, 0.99996f });
+	//directionalLight->AddComponent(std::make_shared<DirectionalLight>(glm::vec3{ 0.92f, 0.95f, 0.88f }, 1.5f));
 
 	// POINT LIGHT
 	auto pointLight = scene.NewChild();
-	pointLight->GetTransform().SetPosition(glm::vec3{ 0.0f, 0.5f, 0.0f });
 	pointLight->AddComponent(std::make_shared<PointLight>(glm::vec3{ 1.0f, 0.1f, 0.15f }, 1.35f));
 
 	// SPOT LIGHT
 	auto spotLight = scene.NewChild();
 	spotLight->GetTransform()
-		.SetPosition(glm::vec3{ 0, -0.65f, 4 })
-		.SetOrientation(glm::quat{ glm::normalize(glm::vec3{ 1, -3, 0 }) });
-	spotLight->AddComponent(std::make_shared<SpotLight>(glm::vec3{ 1.0f, 0.8f, 0.8f }, 30.0f, glm::radians(40.0f), glm::radians(15.0f)));
+		.SetPosition(glm::vec3{ 0, 10.0f, 0 })
+		.SetOrientation(glm::angleAxis(3.141592f / 2.0f, glm::vec3{1, 0, 0 }));
+	spotLight->AddComponent(std::make_shared<SpotLight>(glm::vec3{ 1.0f, 0.6f, 0.6f }, 12.0f, glm::radians(40.0f), glm::radians(5.0f)));
 
 	//////////
 	// LOOP //
@@ -121,7 +87,7 @@ int main(int argc, char *argv[])
 	deferredRenderer.BindForUsage();
 
 	float timer = 0.0f;
-	bool stickDirectionalLightToCamera = true;
+	bool stickDirectionalLightToCamera = false;
 
 	while (!window.IsCloseRequested())
 	{
@@ -143,27 +109,27 @@ int main(int argc, char *argv[])
 		const float speed = 0.08f;
 
 		auto& keyboard = window.GetKeyboard();
-		if (keyboard.IsKeyDown(GLFW_KEY_W))
+		if (keyboard.IsKeyDown(GLFW_KEY_W) || keyboard.IsKeyDown(GLFW_KEY_UP))
 		{
 			translation.z += speed;
 		}
-		if (keyboard.IsKeyDown(GLFW_KEY_S))
+		if (keyboard.IsKeyDown(GLFW_KEY_S) || keyboard.IsKeyDown(GLFW_KEY_DOWN))
 		{
 			translation.z -= speed;
 		}
-		if (keyboard.IsKeyDown(GLFW_KEY_A))
+		if (keyboard.IsKeyDown(GLFW_KEY_A) || keyboard.IsKeyDown(GLFW_KEY_LEFT))
 		{
 			translation.x -= speed;
 		}
-		if (keyboard.IsKeyDown(GLFW_KEY_D))
+		if (keyboard.IsKeyDown(GLFW_KEY_D) || keyboard.IsKeyDown(GLFW_KEY_RIGHT))
 		{
 			translation.x += speed;
 		}
-		if (keyboard.IsKeyDown(GLFW_KEY_SPACE))
+		if (keyboard.IsKeyDown(GLFW_KEY_SPACE) || keyboard.IsKeyDown(GLFW_KEY_RIGHT_SHIFT))
 		{
 			translation.y += speed;
 		}
-		if (keyboard.IsKeyDown(GLFW_KEY_LEFT_SHIFT))
+		if (keyboard.IsKeyDown(GLFW_KEY_LEFT_SHIFT) || keyboard.IsKeyDown(GLFW_KEY_RIGHT_ALT))
 		{
 			translation.y -= speed;
 		}
@@ -185,11 +151,14 @@ int main(int argc, char *argv[])
 		timer += 0.03f;
 
 		teapot->GetTransform()
-			.SetOrientation(glm::vec3(0, 1, 0), timer)
-			.SetPosition(0, fabs(sinf(timer * 3.0f)), 0);
+			.SetOrientation(glm::vec3(0, 1, 0), 0.7f * timer)
+			.SetPosition(0, 0.4f + 0.2f * cosf(2.0f * timer), 0);
 
-		panel->GetTransform()
-			.SetPosition(0, 0, sinf(timer) * 0.9f + 0.9f);
+		pointLight->GetTransform().SetPosition(
+			6.0f * cosf(1.3f * timer),
+			1.4f + 0.6f * cosf(sinf(timer)),
+			6.0f * sinf(1.3f * timer)
+		);
 
 		if (keyboard.WasKeyPressed(GLFW_KEY_LEFT_CONTROL))
 		{

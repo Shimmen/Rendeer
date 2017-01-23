@@ -15,7 +15,7 @@ public:
 	Buffer();
 	~Buffer();
 
-	static std::vector<std::shared_ptr<Buffer>> GenerateBuffers(GLuint count);
+	static std::vector<std::shared_ptr<Buffer>> GenerateBuffers(unsigned int count);
 
 protected:
 

@@ -27,6 +27,7 @@ public:
 
 	// Default textures etc.
 	Texture2D defaultNormalMap{"textures/default_normal.jpg", false};
+	Texture2D defaultDiffuse{"textures/default.png", true};
 
 private:
 

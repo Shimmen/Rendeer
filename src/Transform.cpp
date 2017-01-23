@@ -78,7 +78,6 @@ glm::quat Transform::GetOrientationInWorld() const
 
 glm::vec3 Transform::GetScaleInWorld() const
 {
-/*
 	glm::vec3 worldScale = GetScale();
 
 	const Transform *currentParent = GetParent();
@@ -89,10 +88,9 @@ glm::vec3 Transform::GetScaleInWorld() const
 	}
 
 	return worldScale;
-*/
 
 	// TODO: Should scale propagate?! Working code for that above!
-	return GetScale();
+	//return GetScale();
 }
 
 glm::vec3 Transform::GetRightInWorld() const

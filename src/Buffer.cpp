@@ -31,7 +31,7 @@ Buffer::~Buffer()
 }
 
 /*static*/
-std::vector<std::shared_ptr<Buffer>> Buffer::GenerateBuffers(GLuint count)
+std::vector<std::shared_ptr<Buffer>> Buffer::GenerateBuffers(unsigned int count)
 {
 	GLuint bufferHandles[count];
 	glGenBuffers(count, bufferHandles);

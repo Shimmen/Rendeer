@@ -18,6 +18,13 @@ namespace nonstd
 	}
 
 	inline
+	std::string directory_name(const std::string& filename)
+	{
+		size_t pos = filename.find_last_of("\\/");
+		return (pos == std::string::npos) ? "" : filename.substr(0, pos);
+	}
+
+	inline
 	std::string trim_whitespace(const std::string& string)
 	{
 		if (string.length() <= 0)
