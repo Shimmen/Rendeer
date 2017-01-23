@@ -66,62 +66,7 @@ void DeferredRenderer::Render(const Scene& scene)
 	GeometryPass(geometry, *camera);
 	LightPass(geometry, lights, *camera);
 	DrawSkybox(*camera);
-
-/*
-	//
-	// Perform bloom
-	//
-
-	const int numBlurPasses = 7;
-	const float brightPassFilterThreshold = 1.4f;
-
-	// Downsample current render
-	auxFramebufferLow1.BindAsDrawFrameBuffer();
-	glClear(GL_COLOR_BUFFER_BIT);
-	auxTexture1.Bind(0);
-	nofilterFilter.Bind();
-	nofilterFilter.SetUniform("u_texture", 0);
-	quad.Render();
-
-	// Extract bright spots through a bright-pass filter
-	auxFramebufferLow2.BindAsDrawFrameBuffer();
-	glClear(GL_COLOR_BUFFER_BIT);
-	auxTextureLow1.Bind(0);
-	highPassFilter.Bind();
-	highPassFilter.SetUniform("u_texture", 0);
-	highPassFilter.SetUniform("u_threshold", brightPassFilterThreshold);
-	quad.Render();
-
-	// Blur downsampled and high-passed render
-	for (int i = 0; i < numBlurPasses; i++)
-	{
-		auxFramebufferLow1.BindAsDrawFrameBuffer();
-		glClear(GL_COLOR_BUFFER_BIT);
-		auxTextureLow2.Bind(0);
-		gaussianBlurVertical.Bind();
-		gaussianBlurVertical.SetUniform("u_texture", 0);
-		quad.Render();
-
-		auxFramebufferLow2.BindAsDrawFrameBuffer();
-		glClear(GL_COLOR_BUFFER_BIT);
-		auxTextureLow1.Bind(0);
-		gaussianBlurHorizontal.Bind();
-		gaussianBlurHorizontal.SetUniform("u_texture", 0);
-		quad.Render();
-	}
-
-	// Additivly blend the bloom result on top of the default render
-	auxFramebuffer1.BindAsDrawFrameBuffer();
-	auxTextureLow2.Bind(0);
-	nofilterFilter.Bind();
-	nofilterFilter.SetUniform("u_texture", 0);
-	glEnable(GL_BLEND);
-	glBlendEquation(GL_FUNC_ADD);
-	glBlendFunc(GL_ONE, GL_ONE);
-	quad.Render();
-	glDisable(GL_BLEND);
-
-*/
+	GenerateBloom();
 
 	//
 	// Final post-processing
@@ -138,7 +83,7 @@ void DeferredRenderer::Render(const Scene& scene)
 	//auxTexture1.Bind(0);
 	lightAccumulationTexture.Bind(0);
 	postProcessShader.SetUniform("u_texture", 0);
-	quad.Render();
+	ScreenAlignedQuad::Render();
 
 	window->SwapBuffers();
 }
@@ -182,7 +127,7 @@ void DeferredRenderer::LightPass(const std::vector<std::shared_ptr<Entity>>& geo
 	ambientShader.SetUniform("u_intensity", ambientIntensity);
 	gBuffer.BindAsUniform(ambientShader);
 	glDisable(GL_DEPTH_TEST);
-	quad.Render();
+	ScreenAlignedQuad::Render();
 
 	for (auto lightEntity : lights)
 	{
@@ -238,7 +183,7 @@ void DeferredRenderer::LightPass(const std::vector<std::shared_ptr<Entity>>& geo
 			lightShader.SetUniform("u_light_view_projection", lightViewProjection);
 		}
 
-		quad.Render();
+		ScreenAlignedQuad::Render();
 
 		glDisable(GL_BLEND);
 	}
@@ -258,7 +203,61 @@ void DeferredRenderer::DrawSkybox(const CameraComponent& camera) const
 	skyboxShader.SetUniform("u_projection_matrix", camera.GetProjectionMatrix());
 	skyboxTexture.Bind(35);
 	skyboxShader.SetUniform("u_skybox_texture", 35);
-	skyboxMesh.Render();
+	SkyboxCube::Render();
+}
+
+void DeferredRenderer::GenerateBloom() const
+{
+/*
+	const int numBlurPasses = 7;
+	const float brightPassFilterThreshold = 1.4f;
+
+	// Downsample current render
+	auxFramebufferLow1.BindAsDrawFrameBuffer();
+	glClear(GL_COLOR_BUFFER_BIT);
+	auxTexture1.Bind(0);
+	nofilterFilter.Bind();
+	nofilterFilter.SetUniform("u_texture", 0);
+	quad.Render();
+
+	// Extract bright spots through a bright-pass filter
+	auxFramebufferLow2.BindAsDrawFrameBuffer();
+	glClear(GL_COLOR_BUFFER_BIT);
+	auxTextureLow1.Bind(0);
+	highPassFilter.Bind();
+	highPassFilter.SetUniform("u_texture", 0);
+	highPassFilter.SetUniform("u_threshold", brightPassFilterThreshold);
+	quad.Render();
+
+	// Blur downsampled and high-passed render
+	for (int i = 0; i < numBlurPasses; i++)
+	{
+		auxFramebufferLow1.BindAsDrawFrameBuffer();
+		glClear(GL_COLOR_BUFFER_BIT);
+		auxTextureLow2.Bind(0);
+		gaussianBlurVertical.Bind();
+		gaussianBlurVertical.SetUniform("u_texture", 0);
+		quad.Render();
+
+		auxFramebufferLow2.BindAsDrawFrameBuffer();
+		glClear(GL_COLOR_BUFFER_BIT);
+		auxTextureLow1.Bind(0);
+		gaussianBlurHorizontal.Bind();
+		gaussianBlurHorizontal.SetUniform("u_texture", 0);
+		quad.Render();
+	}
+
+	// Additivly blend the bloom result on top of the default render
+	auxFramebuffer1.BindAsDrawFrameBuffer();
+	auxTextureLow2.Bind(0);
+	nofilterFilter.Bind();
+	nofilterFilter.SetUniform("u_texture", 0);
+	glEnable(GL_BLEND);
+	glBlendEquation(GL_FUNC_ADD);
+	glBlendFunc(GL_ONE, GL_ONE);
+	quad.Render();
+	glDisable(GL_BLEND);
+*/
 }
 
 void DeferredRenderer::RenderTextureToScreen(const Texture2D& texture)
@@ -273,5 +272,5 @@ void DeferredRenderer::RenderTextureToScreen(const Texture2D& texture)
 	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);
 	glClear(GL_COLOR_BUFFER_BIT);
-	quad.Render();
+	ScreenAlignedQuad::Render();
 }

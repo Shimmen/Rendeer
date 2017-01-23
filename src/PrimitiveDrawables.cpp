@@ -28,11 +28,12 @@ ScreenAlignedQuad::~ScreenAlignedQuad()
 {
 }
 
-void ScreenAlignedQuad::Render() const
+/*static*/ void ScreenAlignedQuad::Render()
 {
-	vertexArray.Bind();
-	vertexArray.RenderWithArrayBuffer(GL_TRIANGLES, 6);
-	vertexArray.Unbind();
+	static const ScreenAlignedQuad defaultQuad{};
+	defaultQuad.vertexArray.Bind();
+	defaultQuad.vertexArray.RenderWithArrayBuffer(GL_TRIANGLES, 6);
+	defaultQuad.vertexArray.Unbind();
 }
 
 SkyboxCube::SkyboxCube()
@@ -95,12 +96,13 @@ SkyboxCube::~SkyboxCube()
 {
 }
 
-void SkyboxCube::Render() const
+/*static*/ void SkyboxCube::Render()
 {
 	// 6 quads * 6 vertices/quad
 	static constexpr int vertexCount = 6 * 6;
 
-	vertexArray.Bind();
-	vertexArray.RenderWithArrayBuffer(GL_TRIANGLES, vertexCount, 0);
-	vertexArray.Unbind();
+	static const SkyboxCube skyboxCube{};
+	skyboxCube.vertexArray.Bind();
+	skyboxCube.vertexArray.RenderWithArrayBuffer(GL_TRIANGLES, vertexCount, 0);
+	skyboxCube.vertexArray.Unbind();
 }

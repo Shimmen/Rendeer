@@ -7,13 +7,13 @@
 class ScreenAlignedQuad
 {
 public:
+	
+	static void Render();
+
+private:
 
 	ScreenAlignedQuad();
 	~ScreenAlignedQuad();
-	
-	void Render() const;
-
-private:
 
 	ScreenAlignedQuad(ScreenAlignedQuad& other) = delete;
 	ScreenAlignedQuad& operator=(ScreenAlignedQuad& other) = delete;
@@ -28,12 +28,12 @@ class SkyboxCube
 {
 public:
 
-	SkyboxCube();
-	~SkyboxCube();
-
-	void Render() const;
+	static void Render();
 
 private:
+
+	SkyboxCube();
+	~SkyboxCube();
 
 	SkyboxCube(SkyboxCube& other) = delete;
 	SkyboxCube& operator=(SkyboxCube& other) = delete;

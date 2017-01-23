@@ -34,40 +34,30 @@ private:
 	void GeometryPass(const std::vector<std::shared_ptr<Entity>>& entities, const CameraComponent& camera) const;
 	void LightPass(const std::vector<std::shared_ptr<Entity>>& geometry, const std::vector<std::shared_ptr<Entity>>& lights, const CameraComponent& camera) const;
 	void DrawSkybox(const CameraComponent& camera) const;
+	void GenerateBloom() const;
 
 private:
 
-	// Reference to the Window in which this renderer renders into
 	const Window *window;
 
-	ScreenAlignedQuad quad;
+	//ScreenAlignedQuad quad;
 
 	// Deferred pipeling default frame buffers and textures
 	GBuffer gBuffer;
-	FrameBuffer lightAccumulationBuffer;
 	Texture2D lightAccumulationTexture;
+	FrameBuffer lightAccumulationBuffer{};
 
+	// Ambient light
 	Shader ambientShader{ "Generic/ScreenSpaceQuad.vsh", "Lighting/AmbientLight.fsh" };
 	float ambientIntensity = 0.01f;
 
-	// Extra frame buffers and textures
-/*
-	Texture2D auxTexture1;
-	FrameBuffer auxFramebuffer1;
-	Texture2D auxTextureLow1;
-	FrameBuffer auxFramebufferLow1;
-	Texture2D auxTextureLow2;
-	FrameBuffer auxFramebufferLow2;
-*/
-	// Shadow map related
+	// Shadow mapping
 	Texture2D shadowMap{ 2048, 2048, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT16, GL_CLAMP_TO_BORDER, GL_NEAREST, GL_NEAREST };
 	FrameBuffer shadowMapFramebuffer;
 	Shader shadowMapGenerator{ "Shadowing/ShadowMapGenerator.vsh", "Shadowing/ShadowMapGenerator.fsh" };
 
-	// Skybox related
+	// Skybox
 	Shader skyboxShader{"Generic/Skybox.vsh", "Generic/Skybox.fsh"};
-	SkyboxCube skyboxMesh;
-	//TextureCube hdrSkyboxTexture{ Bitmap{ "textures/grove.env.hdr" } };
 	TextureCube skyboxTexture{
 		Bitmap{"textures/skybox_sunset/left.png"},
 		Bitmap{"textures/skybox_sunset/right.png"},
@@ -77,7 +67,7 @@ private:
 		Bitmap{"textures/skybox_sunset/back.png"}
 	};
 
-	// Filters and general shaders, etc.
+	// Postprocess
 	//Shader highPassFilter{"Generic/ScreenSpaceQuad.vsh", "Filtering/HighPassFilter.fsh"};
 	//Shader gaussianBlurVertical{"Filtering/GaussianBlurV.vsh", "Filtering/GaussianBlur.fsh"};
 	//Shader gaussianBlurHorizontal{"Filtering/GaussianBlurH.vsh", "Filtering/GaussianBlur.fsh"};
