@@ -21,7 +21,6 @@
 		F4433AC61DEEF7240058CD6C /* Logger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4433A991DEEF7240058CD6C /* Logger.cpp */; };
 		F4433AC71DEEF7240058CD6C /* Main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4433A9B1DEEF7240058CD6C /* Main.cpp */; };
 		F4433AC81DEEF7240058CD6C /* Mesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4433A9C1DEEF7240058CD6C /* Mesh.cpp */; };
-		F4433AC91DEEF7240058CD6C /* Model.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4433A9E1DEEF7240058CD6C /* Model.cpp */; };
 		F4433ACA1DEEF7240058CD6C /* ModelLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4433AA01DEEF7240058CD6C /* ModelLoader.cpp */; };
 		F4433ACB1DEEF7240058CD6C /* Mouse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4433AA21DEEF7240058CD6C /* Mouse.cpp */; };
 		F4433ACC1DEEF7240058CD6C /* PrimitiveDrawables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4433AA41DEEF7240058CD6C /* PrimitiveDrawables.cpp */; };
@@ -90,8 +89,6 @@
 		F4433A9B1DEEF7240058CD6C /* Main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Main.cpp; path = ../../../src/Main.cpp; sourceTree = "<group>"; };
 		F4433A9C1DEEF7240058CD6C /* Mesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Mesh.cpp; path = ../../../src/Mesh.cpp; sourceTree = "<group>"; };
 		F4433A9D1DEEF7240058CD6C /* Mesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Mesh.h; path = ../../../src/Mesh.h; sourceTree = "<group>"; };
-		F4433A9E1DEEF7240058CD6C /* Model.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Model.cpp; path = ../../../src/Model.cpp; sourceTree = "<group>"; };
-		F4433A9F1DEEF7240058CD6C /* Model.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Model.h; path = ../../../src/Model.h; sourceTree = "<group>"; };
 		F4433AA01DEEF7240058CD6C /* ModelLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ModelLoader.cpp; path = ../../../src/ModelLoader.cpp; sourceTree = "<group>"; };
 		F4433AA11DEEF7240058CD6C /* ModelLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ModelLoader.h; path = ../../../src/ModelLoader.h; sourceTree = "<group>"; };
 		F4433AA21DEEF7240058CD6C /* Mouse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Mouse.cpp; path = ../../../src/Mouse.cpp; sourceTree = "<group>"; };
@@ -176,6 +173,21 @@
 			name = GLBindings;
 			sourceTree = "<group>";
 		};
+		F41C16881E3587D900F7C574 /* ECS */ = {
+			isa = PBXGroup;
+			children = (
+				F4433A871DEEF7240058CD6C /* Component.cpp */,
+				F4433A881DEEF7240058CD6C /* Component.h */,
+				F4433A8D1DEEF7240058CD6C /* Entity.cpp */,
+				F4433A8E1DEEF7240058CD6C /* Entity.h */,
+				F4433AA71DEEF7240058CD6C /* Scene.cpp */,
+				F4433AA81DEEF7240058CD6C /* Scene.h */,
+				F4433AB31DEEF7240058CD6C /* Transform.cpp */,
+				F4433AB41DEEF7240058CD6C /* Transform.h */,
+			);
+			name = ECS;
+			sourceTree = "<group>";
+		};
 		F4433A791DEEF6370058CD6C /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -198,18 +210,15 @@
 			isa = PBXGroup;
 			children = (
 				F41859241E2F74AD00E20FB6 /* GLBindings */,
+				F41C16881E3587D900F7C574 /* ECS */,
 				F40F97091E3132BC004D2C8F /* Bitmap.cpp */,
 				F40F970A1E3132BC004D2C8F /* Bitmap.h */,
 				F4433A851DEEF7240058CD6C /* Camera.cpp */,
 				F4433A861DEEF7240058CD6C /* Camera.h */,
-				F4433A871DEEF7240058CD6C /* Component.cpp */,
-				F4433A881DEEF7240058CD6C /* Component.h */,
 				F4433A891DEEF7240058CD6C /* DeferredRenderer.cpp */,
 				F4433A8A1DEEF7240058CD6C /* DeferredRenderer.h */,
 				F4433A8B1DEEF7240058CD6C /* DiffuseMaterial.cpp */,
 				F4433A8C1DEEF7240058CD6C /* DiffuseMaterial.h */,
-				F4433A8D1DEEF7240058CD6C /* Entity.cpp */,
-				F4433A8E1DEEF7240058CD6C /* Entity.h */,
 				F4433A911DEEF7240058CD6C /* GBuffer.cpp */,
 				F4433A921DEEF7240058CD6C /* GBuffer.h */,
 				F4433A931DEEF7240058CD6C /* GeneralUtil.h */,
@@ -223,8 +232,6 @@
 				F4433A9B1DEEF7240058CD6C /* Main.cpp */,
 				F4433A9C1DEEF7240058CD6C /* Mesh.cpp */,
 				F4433A9D1DEEF7240058CD6C /* Mesh.h */,
-				F4433A9E1DEEF7240058CD6C /* Model.cpp */,
-				F4433A9F1DEEF7240058CD6C /* Model.h */,
 				F4433AA01DEEF7240058CD6C /* ModelLoader.cpp */,
 				F4433AA11DEEF7240058CD6C /* ModelLoader.h */,
 				F4433AA21DEEF7240058CD6C /* Mouse.cpp */,
@@ -232,10 +239,6 @@
 				F4433AA41DEEF7240058CD6C /* PrimitiveDrawables.cpp */,
 				F4433AA51DEEF7240058CD6C /* PrimitiveDrawables.h */,
 				F4433AA61DEEF7240058CD6C /* Renderable.h */,
-				F4433AA71DEEF7240058CD6C /* Scene.cpp */,
-				F4433AA81DEEF7240058CD6C /* Scene.h */,
-				F4433AB31DEEF7240058CD6C /* Transform.cpp */,
-				F4433AB41DEEF7240058CD6C /* Transform.h */,
 				F4433AB91DEEF7240058CD6C /* Window.cpp */,
 				F4433ABA1DEEF7240058CD6C /* Window.h */,
 			);
@@ -351,7 +354,6 @@
 				F4433AD21DEEF7240058CD6C /* TextureCube.cpp in Sources */,
 				F40F970B1E3132BC004D2C8F /* Bitmap.cpp in Sources */,
 				F4433ACE1DEEF7240058CD6C /* Shader.cpp in Sources */,
-				F4433AC91DEEF7240058CD6C /* Model.cpp in Sources */,
 				F4433AC51DEEF7240058CD6C /* Lighting.cpp in Sources */,
 				F4433AD31DEEF7240058CD6C /* Transform.cpp in Sources */,
 				F4433ACB1DEEF7240058CD6C /* Mouse.cpp in Sources */,

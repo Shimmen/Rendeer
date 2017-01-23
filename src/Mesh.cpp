@@ -1,28 +1,9 @@
 #include "Mesh.h"
 
-#include <iostream>
+#include <glad/glad.h>
 
 #include "Buffer.h"
 #include "GeneralUtil.h"
-
-Mesh::Mesh(const std::string& filePath, bool genSmoothNormals)
-	: Mesh{ Model{filePath, genSmoothNormals} }
-{
-}
-
-Mesh::Mesh(const Model& m)
-	: Mesh{
-		&m.positions[0].x,
-		&m.normals[0].x,
-		&m.tangents[0].x,
-		&m.textureCoordinates[0].x,
-		static_cast<unsigned int>(m.positions.size()),
-		&m.indices[0],
-		static_cast<unsigned int>(m.indices.size())
-	}
-{
-	// TODO: Clean up this constructor! (well, the initializer list at least...)
-}
 
 Mesh::Mesh(
 	const float *positions,

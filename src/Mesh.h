@@ -1,12 +1,5 @@
 #pragma once
 
-#include <string>
-#include <vector>
-
-#include <glm/glm.hpp>
-#include <glad/glad.h>
-
-#include "Model.h"
 #include "VertexArray.h"
 
 //
@@ -15,9 +8,6 @@
 class Mesh
 {
 public:
-
-	Mesh(const Model& model);
-	Mesh(const std::string& filePath, bool genSmoothNormals = true);
 
 	// The positions, normals, and tangents are assumed to be encoded as three floats.
 	// Texture coordinates are assumed to be encoded as two floats.
