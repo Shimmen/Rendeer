@@ -177,6 +177,13 @@ void DeferredRenderer::LightPass(const std::vector<std::shared_ptr<Entity>>& geo
 	glClearColor(0, 0, 0, 0);
 	glClear(GL_COLOR_BUFFER_BIT);
 
+	// Ambient light pass (could be optimized to be done while filling g-buffer)
+	ambientShader.Bind();
+	ambientShader.SetUniform("u_intensity", ambientIntensity);
+	gBuffer.BindAsUniform(ambientShader);
+	glDisable(GL_DEPTH_TEST);
+	quad.Render();
+
 	for (auto lightEntity : lights)
 	{
 		auto light = lightEntity->GetComponent<LightComponent>();

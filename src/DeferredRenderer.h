@@ -47,6 +47,9 @@ private:
 	FrameBuffer lightAccumulationBuffer;
 	Texture2D lightAccumulationTexture;
 
+	Shader ambientShader{ "Generic/ScreenSpaceQuad.vsh", "Lighting/AmbientLight.fsh" };
+	float ambientIntensity = 0.01f;
+
 	// Extra frame buffers and textures
 /*
 	Texture2D auxTexture1;
