@@ -10,7 +10,7 @@ class GBuffer
 public:
 
 	GBuffer(int renderWidth, int renderHeight);
-	virtual ~GBuffer();
+	virtual ~GBuffer() {}
 
 	void BindAsRenderTarget() const;
 	void BindAsUniform(const Shader& lightShader) const;

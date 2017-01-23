@@ -18,17 +18,13 @@ Bitmap::Bitmap()
 
 Bitmap::Bitmap(const std::string& filePath)
 {
-	// Flip images to make complient with OpenGL texture handling
-	stbi_set_flip_vertically_on_load(true);
-
 	if (!nonstd::file_is_readable(filePath))
 	{
 		Logger::GetDefaultLogger().Log("Error: can't read file with name: " + filePath + ".");
 	}
 
-	// Check if image is HDR or not
+	stbi_set_flip_vertically_on_load(true);
 	this->isHdr = stbi_is_hdr(filePath.c_str()) != 0;
-
 	void *stbiOwnedData = nullptr;
 
 	if (IsHdr())
@@ -49,13 +45,9 @@ Bitmap::Bitmap(const std::string& filePath)
 	}
 	else
 	{
-		// Copy data from stbi's memory into owned memory
 		size_t dataSize = GetDataSize();
-		this->pixelData.resize(dataSize);
-        std::memcpy(&this->pixelData[0], stbiOwnedData, dataSize);
-		//memcmp(&this->pixelData[0], stbiOwnedData, dataSize);
-
-		// Tell stbi to free it's own data
+		this->pixelData.reserve(dataSize);
+		std::memcpy(&this->pixelData[0], stbiOwnedData, dataSize);
 		stbi_image_free(stbiOwnedData);
 	}
 }
@@ -71,10 +63,6 @@ Bitmap::Bitmap(int width, int height, int pixelComponentCount, const std::vector
 	// It could also be smaller, but this could possible avoid some bugs where you miss a row, or similar.
 	assert(data.size() == pixelData.size());
 	memcpy(&pixelData[0], &data[0], pixelData.size());
-}
-
-Bitmap::~Bitmap()
-{
 }
 
 int Bitmap::GetWidth() const

@@ -10,7 +10,7 @@ public:
 	Bitmap();
 	Bitmap(const std::string& filePath);
 	Bitmap(int width, int height, int pixelComponentCount, const std::vector<void *>& data);
-	~Bitmap();
+	virtual ~Bitmap() {}
 
 	int GetWidth() const;
 	int GetHeight() const;

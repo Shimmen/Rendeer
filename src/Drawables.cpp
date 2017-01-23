@@ -19,13 +19,9 @@ ScreenAlignedQuad::ScreenAlignedQuad()
 	Buffer vertexBuffer;
 	vertexBuffer.Bind(GL_ARRAY_BUFFER);
 	vertexBuffer.SetData(&vertices[0], sizeof(vertices), GL_STATIC_DRAW);
-	vertexArray.AddVertexAttribute(0, 2, GL_FLOAT, 0, 0);
+	vertexArray.AddVertexAttribute(0, 2, GL_FLOAT);
 	
 	vertexArray.Unbind();
-}
-
-ScreenAlignedQuad::~ScreenAlignedQuad()
-{
 }
 
 /*static*/ void ScreenAlignedQuad::Render()
@@ -87,13 +83,9 @@ SkyboxCube::SkyboxCube()
 	Buffer vertexBuffer;
 	vertexBuffer.Bind(GL_ARRAY_BUFFER);
 	vertexBuffer.SetData(&skyboxVertices[0], sizeof(skyboxVertices), GL_STATIC_DRAW);
-	vertexArray.AddVertexAttribute(0, 3, GL_FLOAT, 0, 0);
+	vertexArray.AddVertexAttribute(0, 3, GL_FLOAT);
 
 	vertexArray.Unbind();
-}
-
-SkyboxCube::~SkyboxCube()
-{
 }
 
 /*static*/ void SkyboxCube::Render()

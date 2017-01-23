@@ -9,11 +9,9 @@
 #include "Camera.h"
 #include "Lighting.h"
 
-/*
- *
- * Scene is the root entity of the scene graph and it defines the world origin
- *
- */
+//
+// Scene is the root entity of the scene graph and it defines the world origin
+//
 class Scene: public Entity
 {
 public:
@@ -31,7 +29,7 @@ private:
 
 	std::weak_ptr<const CameraComponent> mainCamera;
 
-	// Add scene related items like:
+	// TODO: Add scene related items like:
 	//  - Skybox
 	//  - Ambient light
 	//  - ?

@@ -11,14 +11,16 @@
 #include "Mesh.h"
 #include "Scene.h"
 #include "Window.h"
+#include "Renderer.h"
 #include "Renderable.h"
 #include "ModelLoader.h"
 #include "DiffuseMaterial.h"
-#include "DeferredRenderer.h"
 
 int main(int argc, char *argv[])
 {
-	// DISPLAY & RENDERER
+	//
+	// Setup
+	//
 	const int WINDOW_WIDTH = 1280;
 	const int WINDOW_HEIGHT = 720;
 	Window window{ WINDOW_WIDTH, WINDOW_HEIGHT, "Rendeer", true };
@@ -43,6 +45,7 @@ int main(int argc, char *argv[])
 	//
 	// Define scene
 	//
+
 	Scene scene;
 
 	auto camera = std::make_shared<Camera>(
@@ -59,25 +62,22 @@ int main(int argc, char *argv[])
 	auto sponza = ModelLoader::Load("models/dabrovic-sponza/sponza.obj");
 	scene.AddChild(sponza);
 
-	// DIRECTIONAL LIGHT
 	//auto directionalLight = scene.NewChild();
 	//directionalLight->GetTransform().SetOrientation(glm::quat{ 0.00873f, 0.0f, 0.0f, 0.99996f });
 	//directionalLight->AddComponent(std::make_shared<DirectionalLight>(glm::vec3{ 0.92f, 0.95f, 0.88f }, 1.5f));
 
-	// POINT LIGHT
 	auto pointLight = scene.NewChild();
 	pointLight->AddComponent(std::make_shared<PointLight>(glm::vec3{ 1.0f, 0.1f, 0.15f }, 1.35f));
 
-	// SPOT LIGHT
 	auto spotLight = scene.NewChild();
 	spotLight->GetTransform()
 		.SetPosition(glm::vec3{ 0, 10.0f, 0 })
 		.SetOrientation(glm::angleAxis(3.141592f / 2.0f, glm::vec3{1, 0, 0 }));
 	spotLight->AddComponent(std::make_shared<SpotLight>(glm::vec3{ 1.0f, 0.6f, 0.6f }, 12.0f, glm::radians(40.0f), glm::radians(5.0f)));
 
-	//////////
-	// LOOP //
-	//////////
+	//
+	// Render/game loop
+	//
 
 	logger.LogSubheading("Render loop begin");
 	logger.LogTimestamp();

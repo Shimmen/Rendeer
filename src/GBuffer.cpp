@@ -22,10 +22,6 @@ GBuffer::GBuffer(int renderWidth, int renderHeight)
 	}
 }
 
-GBuffer::~GBuffer()
-{
-}
-
 void GBuffer::BindAsRenderTarget() const
 {
 	frameBuffer.BindAsDrawFrameBuffer();
@@ -35,6 +31,7 @@ void GBuffer::BindAsUniform(const Shader& lightShader) const
 {
 	lightShader.Bind();
 
+	// Bind at the highest texture units so it won't collide with other stuff
 	int numTextureUnits = Texture2D::GetMaxNumberOfCombinedTextureUnits();
 	int currentUnit = numTextureUnits - 1;
 

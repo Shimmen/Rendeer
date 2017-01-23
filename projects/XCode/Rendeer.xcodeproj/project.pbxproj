@@ -11,7 +11,7 @@
 		F4433ABC1DEEF7240058CD6C /* Buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4433A831DEEF7240058CD6C /* Buffer.cpp */; };
 		F4433ABD1DEEF7240058CD6C /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4433A851DEEF7240058CD6C /* Camera.cpp */; };
 		F4433ABE1DEEF7240058CD6C /* Component.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4433A871DEEF7240058CD6C /* Component.cpp */; };
-		F4433ABF1DEEF7240058CD6C /* DeferredRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4433A891DEEF7240058CD6C /* DeferredRenderer.cpp */; };
+		F4433ABF1DEEF7240058CD6C /* Renderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4433A891DEEF7240058CD6C /* Renderer.cpp */; };
 		F4433AC01DEEF7240058CD6C /* DiffuseMaterial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4433A8B1DEEF7240058CD6C /* DiffuseMaterial.cpp */; };
 		F4433AC11DEEF7240058CD6C /* Entity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4433A8D1DEEF7240058CD6C /* Entity.cpp */; };
 		F4433AC21DEEF7240058CD6C /* FrameBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4433A8F1DEEF7240058CD6C /* FrameBuffer.cpp */; };
@@ -68,8 +68,8 @@
 		F4433A861DEEF7240058CD6C /* Camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Camera.h; path = ../../../src/Camera.h; sourceTree = "<group>"; };
 		F4433A871DEEF7240058CD6C /* Component.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Component.cpp; path = ../../../src/Component.cpp; sourceTree = "<group>"; };
 		F4433A881DEEF7240058CD6C /* Component.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Component.h; path = ../../../src/Component.h; sourceTree = "<group>"; };
-		F4433A891DEEF7240058CD6C /* DeferredRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DeferredRenderer.cpp; path = ../../../src/DeferredRenderer.cpp; sourceTree = "<group>"; };
-		F4433A8A1DEEF7240058CD6C /* DeferredRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeferredRenderer.h; path = ../../../src/DeferredRenderer.h; sourceTree = "<group>"; };
+		F4433A891DEEF7240058CD6C /* Renderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Renderer.cpp; path = ../../../src/Renderer.cpp; sourceTree = "<group>"; };
+		F4433A8A1DEEF7240058CD6C /* Renderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Renderer.h; path = ../../../src/Renderer.h; sourceTree = "<group>"; };
 		F4433A8B1DEEF7240058CD6C /* DiffuseMaterial.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DiffuseMaterial.cpp; path = ../../../src/DiffuseMaterial.cpp; sourceTree = "<group>"; };
 		F4433A8C1DEEF7240058CD6C /* DiffuseMaterial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DiffuseMaterial.h; path = ../../../src/DiffuseMaterial.h; sourceTree = "<group>"; };
 		F4433A8D1DEEF7240058CD6C /* Entity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Entity.cpp; path = ../../../src/Entity.cpp; sourceTree = "<group>"; };
@@ -215,8 +215,8 @@
 				F40F970A1E3132BC004D2C8F /* Bitmap.h */,
 				F4433A851DEEF7240058CD6C /* Camera.cpp */,
 				F4433A861DEEF7240058CD6C /* Camera.h */,
-				F4433A891DEEF7240058CD6C /* DeferredRenderer.cpp */,
-				F4433A8A1DEEF7240058CD6C /* DeferredRenderer.h */,
+				F4433A891DEEF7240058CD6C /* Renderer.cpp */,
+				F4433A8A1DEEF7240058CD6C /* Renderer.h */,
 				F4433A8B1DEEF7240058CD6C /* DiffuseMaterial.cpp */,
 				F4433A8C1DEEF7240058CD6C /* DiffuseMaterial.h */,
 				F4433A911DEEF7240058CD6C /* GBuffer.cpp */,
@@ -335,7 +335,7 @@
 			files = (
 				F4433AF41DEF1B1F0058CD6C /* glad.c in Sources */,
 				F4433AC41DEEF7240058CD6C /* Keyboard.cpp in Sources */,
-				F4433ABF1DEEF7240058CD6C /* DeferredRenderer.cpp in Sources */,
+				F4433ABF1DEEF7240058CD6C /* Renderer.cpp in Sources */,
 				F4433AC11DEEF7240058CD6C /* Entity.cpp in Sources */,
 				F4433AC71DEEF7240058CD6C /* Main.cpp in Sources */,
 				F4433AD01DEEF7240058CD6C /* Texture2D.cpp in Sources */,

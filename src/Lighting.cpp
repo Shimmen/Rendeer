@@ -1,7 +1,6 @@
 #include "Lighting.h"
 
 #include "Uniform.h"
-#include "DeferredRenderer.h"
 
 LightComponent::LightComponent(Shader *shader, glm::vec3 color, float intensity)
 	: Component{}

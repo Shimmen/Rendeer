@@ -1,20 +1,16 @@
 #include "DiffuseMaterial.h"
 
+#include "Renderer.h"
 #include "Transform.h"
-#include "DeferredRenderer.h"
 
 DiffuseMaterial::DiffuseMaterial()
 : Material{ std::make_shared<Shader>("Materials/Diffuse.vsh", "Materials/Diffuse.fsh") }
 {
 }
 
-void DiffuseMaterial::UpdateUniforms(const DeferredRenderer& renderer,
-                                     const Transform& transform,
-                                     const CameraComponent& camera) const
+void DiffuseMaterial::UpdateUniforms(const DeferredRenderer& renderer, const Transform& transform, const CameraComponent& camera) const
 {
 	shader->Bind();
-
-
 
 	diffuseTexture != nullptr ? diffuseTexture->Bind(0) : renderer.defaultDiffuse.Bind(0);
 	shader->SetUniform("u_diffuse", 0);

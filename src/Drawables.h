@@ -13,7 +13,7 @@ public:
 private:
 
 	ScreenAlignedQuad();
-	~ScreenAlignedQuad();
+	~ScreenAlignedQuad() {}
 
 	VertexArray vertexArray;
 
@@ -28,7 +28,7 @@ public:
 private:
 
 	SkyboxCube();
-	~SkyboxCube();
+	~SkyboxCube() {}
 
 	VertexArray vertexArray;
 
