@@ -45,12 +45,12 @@ int main(int argc, char *argv[])
 	//
 	Scene scene;
 
-	auto camera = scene.AddChild(std::make_shared<Camera>(
+	auto camera = std::make_shared<Camera>(
 		glm::vec3{ 0, 1.7f, -5.0f },
 		glm::angleAxis(0.15f, glm::vec3{ 1, 0, 0 })
-	));
-
-	// TODO: Make syntax better for these things.
+	);
+	scene.AddChild(camera);
+	// TODO: Make it so that the main camera is automatically set if a new entity with a camera component is added to the scene(-graph)!
 	scene.SetMainCamera(camera->GetComponent<CameraComponent>());
 
 	auto teapot = ModelLoader::Load("models/teapot/teapot.obj");
@@ -91,10 +91,14 @@ int main(int argc, char *argv[])
 
 	while (!window.IsCloseRequested())
 	{
+		// TODO: Calculate
+		const float deltaTime = 1.0f / 60.0f;
+
 		// Start every frame by polling events
 		window.PollEvents();
 
-		// Make the escape button quit the app/close the window
+		camera->Update(deltaTime, window);
+
 		if (window.GetKeyboard().WasKeyPressed(GLFW_KEY_ESCAPE) || window.GetMouse().WasButtonPressed(GLFW_MOUSE_BUTTON_RIGHT))
 		{
 			window.SetCursorHidden(false);
@@ -104,51 +108,8 @@ int main(int argc, char *argv[])
 			window.SetCursorHidden(true);
 		}
 
-		// Move the camera (for now in this very temporary solution)
-		glm::vec3 translation = glm::vec3();
-		const float speed = 0.08f;
-
-		auto& keyboard = window.GetKeyboard();
-		if (keyboard.IsKeyDown(GLFW_KEY_W) || keyboard.IsKeyDown(GLFW_KEY_UP))
-		{
-			translation.z += speed;
-		}
-		if (keyboard.IsKeyDown(GLFW_KEY_S) || keyboard.IsKeyDown(GLFW_KEY_DOWN))
-		{
-			translation.z -= speed;
-		}
-		if (keyboard.IsKeyDown(GLFW_KEY_A) || keyboard.IsKeyDown(GLFW_KEY_LEFT))
-		{
-			translation.x -= speed;
-		}
-		if (keyboard.IsKeyDown(GLFW_KEY_D) || keyboard.IsKeyDown(GLFW_KEY_RIGHT))
-		{
-			translation.x += speed;
-		}
-		if (keyboard.IsKeyDown(GLFW_KEY_SPACE) || keyboard.IsKeyDown(GLFW_KEY_RIGHT_SHIFT))
-		{
-			translation.y += speed;
-		}
-		if (keyboard.IsKeyDown(GLFW_KEY_LEFT_SHIFT) || keyboard.IsKeyDown(GLFW_KEY_RIGHT_ALT))
-		{
-			translation.y -= speed;
-		}
-
-		// Rotate translation to model space and translate
-		translation = camera->GetTransform().RotateVector(translation);
-		camera->GetTransform().Translate(translation);
-
-		// If cursor is hidden, rotate camera
-		if (window.IsCursorHidden())
-		{
-			float mouseSensitivity = 0.0005f;
-			glm::vec2 mouseDelta = window.GetMouse().GetMouseDelta();
-
-			camera->GetTransform().Rotate(glm::vec3(0, 1, 0), mouseDelta.x * mouseSensitivity);
-			camera->GetTransform().Rotate(camera->GetTransform().GetRight(), mouseDelta.y * mouseSensitivity);
-		}
-
-		timer += 0.03f;
+		// Just for keeping track of animations
+		timer += deltaTime;
 
 		teapot->GetTransform()
 			.SetOrientation(glm::vec3(0, 1, 0), 0.7f * timer)
@@ -160,21 +121,20 @@ int main(int argc, char *argv[])
 			6.0f * sinf(1.3f * timer)
 		);
 
-		if (keyboard.WasKeyPressed(GLFW_KEY_LEFT_CONTROL))
+		if (window.GetKeyboard().WasKeyPressed(GLFW_KEY_LEFT_CONTROL))
 		{
 			stickDirectionalLightToCamera = !stickDirectionalLightToCamera;
 		}
 
 		if (stickDirectionalLightToCamera)
 		{
-			// Spot light must be attached directly to root node
+			// (Spot light must be attached directly to root node / scene for this to work properly)
 			auto cameraPosition = camera->GetTransform().GetPositionInWorld();
 			auto cameraOrientation = camera->GetTransform().GetOrientationInWorld();
 			spotLight->GetTransform().SetPosition(cameraPosition).SetOrientation(cameraOrientation);
 		}
 
 		deferredRenderer.Render(scene);
-
 	}
 
 	logger.LogSubheading("Render loop end");

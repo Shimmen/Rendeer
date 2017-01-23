@@ -81,6 +81,39 @@ Camera::Camera(glm::vec3 position, glm::quat orientation, float aspectRatio, flo
 	);
 }
 
+void Camera::Update(float deltaTime, const Window& window)
+{
+	// Move the camera (for now in this very temporary solution)
+	glm::vec3 movement = glm::vec3();
+	const float baseSpeed = 4.0f; /* m/s */
+	const float speed = baseSpeed * deltaTime;
+
+	auto& keyboard = window.GetKeyboard();
+
+	if (keyboard.IsKeyDown(GLFW_KEY_W) || keyboard.IsKeyDown(GLFW_KEY_UP))    movement.z += speed;
+	if (keyboard.IsKeyDown(GLFW_KEY_S) || keyboard.IsKeyDown(GLFW_KEY_DOWN))  movement.z -= speed;
+	if (keyboard.IsKeyDown(GLFW_KEY_A) || keyboard.IsKeyDown(GLFW_KEY_LEFT))  movement.x -= speed;
+	if (keyboard.IsKeyDown(GLFW_KEY_D) || keyboard.IsKeyDown(GLFW_KEY_RIGHT)) movement.x += speed;
+	if (keyboard.IsKeyDown(GLFW_KEY_SPACE) || keyboard.IsKeyDown(GLFW_KEY_RIGHT_SHIFT))    movement.y += speed;
+	if (keyboard.IsKeyDown(GLFW_KEY_LEFT_SHIFT) || keyboard.IsKeyDown(GLFW_KEY_RIGHT_ALT)) movement.y -= speed;
+
+	// Rotate translation to model space and translate
+	movement = GetTransform().RotateVector(movement);
+	GetTransform().Translate(movement);
+
+	// If cursor is hidden, rotate the camera like an fps camera
+	if (window.IsCursorHidden())
+	{
+		const float baseMouseSensitivity = 0.1f;
+		const float mouseSensitivity = baseMouseSensitivity * deltaTime;
+
+		glm::vec2 mouseDelta = window.GetMouse().GetMouseDelta();
+
+		GetTransform().Rotate(glm::vec3(0, 1, 0), mouseDelta.x * mouseSensitivity);
+		GetTransform().Rotate(GetTransform().GetRight(), mouseDelta.y * mouseSensitivity);
+	}
+}
+
 glm::mat4 Camera::GetViewMatrix() const
 {
 	// Simply delegate to the CameraComponent
