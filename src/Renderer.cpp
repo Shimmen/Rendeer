@@ -1,5 +1,6 @@
 #include "Renderer.h"
 
+#include "GLState.h"
 #include "Renderable.h"
 
 DeferredRenderer::DeferredRenderer(const Window *window)
@@ -39,21 +40,23 @@ DeferredRenderer::~DeferredRenderer()
 {
 }
 
-void DeferredRenderer::BindForUsage() const
-{
-	glFrontFace(GL_CW);
-	glCullFace(GL_BACK);
-
-	glDepthFunc(GL_LEQUAL);
-
-	glEnable(GL_FRAMEBUFFER_SRGB);
-
-	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-}
-
-
 void DeferredRenderer::Render(const Scene& scene)
 {
+	static bool first = true;
+	if (first)
+	{
+		GL::FetchCurrentGLState();
+
+		//GL::SetFaceCullingEnabled(true);
+		glFrontFace(GL_CW); //GL::SetFrontFace(GL_CW);
+		glCullFace(GL_BACK); //GL::CullFace(GL_BACK);
+
+		glEnable(GL_FRAMEBUFFER_SRGB);
+		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+
+		first = false;
+	}
+
 	auto camera = scene.GetMainCamera();
 
 	// All entities that are renderable are considered to be geometry (for now)

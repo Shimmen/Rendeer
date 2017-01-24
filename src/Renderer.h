@@ -22,7 +22,6 @@ public:
 	DeferredRenderer(const Window *display);
 	~DeferredRenderer();
 
-	void BindForUsage() const;
 	void Render(const Scene& scene);
 
 	// Default textures etc.

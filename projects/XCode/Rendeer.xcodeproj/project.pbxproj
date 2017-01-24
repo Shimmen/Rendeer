@@ -43,6 +43,7 @@
 		F4433AF01DEF1A7B0058CD6C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F4433AE61DEEFAAF0058CD6C /* CoreGraphics.framework */; };
 		F4433AF21DEF1AEB0058CD6C /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F4433AF11DEF1AEB0058CD6C /* libz.tbd */; };
 		F4433AF41DEF1B1F0058CD6C /* glad.c in Sources */ = {isa = PBXBuildFile; fileRef = F4433AF31DEF1B1F0058CD6C /* glad.c */; };
+		F4B34AAB1E377EE900781A19 /* GLState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4B34AAA1E377EE900781A19 /* GLState.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -125,6 +126,8 @@
 		F4433AEC1DEF1A330058CD6C /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		F4433AF11DEF1AEB0058CD6C /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		F4433AF31DEF1B1F0058CD6C /* glad.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = glad.c; path = ../../../deps/glad/src/glad.c; sourceTree = "<group>"; };
+		F4B34AA91E377D7600781A19 /* GLState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLState.h; path = ../../../src/GLState.h; sourceTree = "<group>"; };
+		F4B34AAA1E377EE900781A19 /* GLState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GLState.cpp; path = ../../../src/GLState.cpp; sourceTree = "<group>"; };
 		F4E48A2A1DF0D8E300F6AFAC /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; name = assets; path = ../../../assets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -169,6 +172,8 @@
 				F4433AB71DEEF7240058CD6C /* VertexArray.cpp */,
 				F4433AB81DEEF7240058CD6C /* VertexArray.h */,
 				F41859231E2F729E00E20FB6 /* GLResource.h */,
+				F4B34AA91E377D7600781A19 /* GLState.h */,
+				F4B34AAA1E377EE900781A19 /* GLState.cpp */,
 			);
 			name = GLBindings;
 			sourceTree = "<group>";
@@ -346,6 +351,7 @@
 				F4433AC21DEEF7240058CD6C /* FrameBuffer.cpp in Sources */,
 				F4433ACA1DEEF7240058CD6C /* ModelLoader.cpp in Sources */,
 				F4433AC61DEEF7240058CD6C /* Logger.cpp in Sources */,
+				F4B34AAB1E377EE900781A19 /* GLState.cpp in Sources */,
 				F4433ABC1DEEF7240058CD6C /* Buffer.cpp in Sources */,
 				F4433AD11DEEF7240058CD6C /* TextureBase.cpp in Sources */,
 				F4433AC81DEEF7240058CD6C /* Mesh.cpp in Sources */,

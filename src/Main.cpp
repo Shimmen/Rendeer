@@ -83,9 +83,6 @@ int main(int argc, char *argv[])
 	logger.LogTimestamp();
 	logger.LogEmptyLine();
 
-	// Will set up the renderer for rendering
-	deferredRenderer.BindForUsage();
-
 	float timer = 0.0f;
 	bool stickDirectionalLightToCamera = false;
 
