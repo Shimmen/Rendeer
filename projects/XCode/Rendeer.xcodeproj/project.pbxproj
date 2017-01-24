@@ -150,7 +150,7 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		F41859241E2F74AD00E20FB6 /* GLBindings */ = {
+		F41859241E2F74AD00E20FB6 /* GL */ = {
 			isa = PBXGroup;
 			children = (
 				F4433AB51DEEF7240058CD6C /* Uniform.cpp */,
@@ -175,7 +175,7 @@
 				F4B34AA91E377D7600781A19 /* GLState.h */,
 				F4B34AAA1E377EE900781A19 /* GLState.cpp */,
 			);
-			name = GLBindings;
+			name = GL;
 			sourceTree = "<group>";
 		};
 		F41C16881E3587D900F7C574 /* ECS */ = {
@@ -214,7 +214,7 @@
 		F4433AD71DEEF7430058CD6C /* src */ = {
 			isa = PBXGroup;
 			children = (
-				F41859241E2F74AD00E20FB6 /* GLBindings */,
+				F41859241E2F74AD00E20FB6 /* GL */,
 				F41C16881E3587D900F7C574 /* ECS */,
 				F40F97091E3132BC004D2C8F /* Bitmap.cpp */,
 				F40F970A1E3132BC004D2C8F /* Bitmap.h */,

@@ -74,8 +74,8 @@ void Renderer::Render(const Scene& scene)
 
 	// Render light accumulation buffer onto screen with final post processing step(like tone mapping etc.)
 	window->BindAsDrawFramebuffer();
-	GL::SetDepthTestEnabled(false);
-	GL::SetBlendingEnabled(false);
+	GL::SetDepthTest(false);
+	GL::SetBlending(false);
 
 	postProcessShader.Bind();
 	//auxTexture1.Bind(0);
@@ -93,12 +93,12 @@ void Renderer::GeometryPass(const std::vector<std::shared_ptr<Entity>>& entities
 	GL::SetClearColor(0, 0, 0, 0);
 	GL::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	GL::SetDepthTestEnabled(true);
+	GL::SetDepthTest(true);
 	GL::SetDepthFunction(GL_LEQUAL);
 	GL::SetDepthMask(true);
 
-	GL::SetFaceCullingEnabled(true);
-	GL::SetBlendingEnabled(false);
+	GL::SetFaceCulling(true);
+	GL::SetBlending(false);
 
 	for (auto entity : entities)
 	{
@@ -124,7 +124,7 @@ void Renderer::LightPass(const std::vector<std::shared_ptr<Entity>>& geometry, c
 	ambientShader.Bind();
 	ambientShader.SetUniform("u_intensity", ambientIntensity);
 	gBuffer.BindAsUniform(ambientShader);
-	GL::SetDepthTestEnabled(false);
+	GL::SetDepthTest(false);
 	ScreenAlignedQuad::Render();
 
 	for (auto lightEntity : lights)
@@ -142,9 +142,9 @@ void Renderer::LightPass(const std::vector<std::shared_ptr<Entity>>& geometry, c
 			GL::Clear(GL_DEPTH_BUFFER_BIT);
 
 			GL::SetDepthMask(true);
-			GL::SetDepthTestEnabled(true);
+			GL::SetDepthTest(true);
 			GL::SetDepthFunction(GL_LEQUAL);
-			GL::SetFaceCullingEnabled(true);
+			GL::SetFaceCulling(true);
 
 			shadowMapGenerator.Bind();
 			shadowMapGenerator.SetUniform("u_view_projecion_matrix", lightViewProjection);
@@ -161,11 +161,11 @@ void Renderer::LightPass(const std::vector<std::shared_ptr<Entity>>& geometry, c
 		// TODO: Logically the depth mask should be false, since I don't want to touch the depth at all from the lights, but I get really strage results if it's false!
 		// So I'm not sure... It might be some strange behaviour related to one texture in multiple frame buffers. Find out, somehow...
 		// HOWEVER, since depth test is disabled, depth writing is always disabled too, and this works.
-		GL::SetDepthTestEnabled(false);
+		GL::SetDepthTest(false);
 
-		GL::SetFaceCullingEnabled(false);
+		GL::SetFaceCulling(false);
 
-		GL::SetBlendingEnabled(true);
+		GL::SetBlending(true);
 		GL::SetBlendEquation(GL_FUNC_ADD, GL_FUNC_ADD);
 		GL::SetBlendFunction(GL_ONE, GL_ONE, GL_ONE, GL_ONE);
 
@@ -183,7 +183,7 @@ void Renderer::LightPass(const std::vector<std::shared_ptr<Entity>>& geometry, c
 
 		ScreenAlignedQuad::Render();
 
-		GL::SetBlendingEnabled(false);
+		GL::SetBlending(false);
 	}
 }
 
@@ -192,7 +192,7 @@ void Renderer::DrawSkybox(const CameraComponent& camera) const
 	lightAccumulationBuffer.BindAsDrawFrameBuffer();
 
 	// Depth map is cleared to 1.0, skybox shader fixes depth to 1.0
-	GL::SetDepthTestEnabled(true);
+	GL::SetDepthTest(true);
 	GL::SetDepthFunction(GL_EQUAL);
 	GL::SetDepthMask(true);
 
@@ -266,8 +266,8 @@ void Renderer::RenderTextureToScreen(const Texture2D& texture)
 	texture.Bind(0);
 	nofilterFilter.SetUniform("u_texture", 0);
 
-	GL::SetFaceCullingEnabled(false);
-	GL::SetDepthTestEnabled(false);
+	GL::SetFaceCulling(false);
+	GL::SetDepthTest(false);
 	GL::SetDepthMask(false);
 	GL::Clear(GL_COLOR_BUFFER_BIT);
 	ScreenAlignedQuad::Render();

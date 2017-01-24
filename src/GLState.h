@@ -67,16 +67,16 @@ public:
 	static void SetClearColor(float r, float g, float b, float a);
 
 	// Blending
-	static inline bool IsBlendingEnabled() { return state.blendingEnabled == GL_TRUE; }
-	static void SetBlendingEnabled(bool enabled);
+	static inline bool IsBlending() { return state.blendingEnabled == GL_TRUE; }
+	static void SetBlending(bool enabled);
 	static void GetBlendEquation(GLenum *modeRGB, GLenum *modeAlpha);
 	static void SetBlendEquation(GLenum modeRGB, GLenum modeAlpha);
 	static void GetBlendFunction(GLenum *srcRgb, GLenum *dstRgb, GLenum *srcAlpha, GLenum *dstAlpha);
 	static void SetBlendFunction(GLenum srcRgb, GLenum dstRgb, GLenum srcAlpha, GLenum dstAlpha);
 
 	// Depth
-	static inline bool IsDepthTestEnabled() { return state.depthTest == GL_TRUE; }
-	static void SetDepthTestEnabled(bool enabled);
+	static inline bool IsDepthTesting() { return state.depthTest == GL_TRUE; }
+	static void SetDepthTest(bool enabled);
 	static inline GLenum GetDepthFunction() { return state.depthFunction; }
 	static void SetDepthFunction(GLenum function);
 	static inline bool GetDepthMask() { return state.depthMask == GL_TRUE; }
@@ -85,8 +85,8 @@ public:
 	static void SetClearDepth(float depth);
 
 	// Culling & faces
-	static inline bool IsFaceCullingEnabled() { return state.faceCullingEnabled == GL_TRUE; }
-	static void SetFaceCullingEnabled(bool enabled);
+	static inline bool IsFaceCulling() { return state.faceCullingEnabled == GL_TRUE; }
+	static void SetFaceCulling(bool enabled);
 	static inline GLenum GetFrontFace() { return state.frontFace; }
 	static void SetFrontFace(GLenum frontFaceWinding);
 	static inline GLenum GetCullFace() { return state.cullFace; }

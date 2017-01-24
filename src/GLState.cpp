@@ -114,7 +114,7 @@ STATIC void GL::SetBlendFunction(GLenum srcRGB, GLenum dstRGB, GLenum srcAlpha, 
 	}
 }
 
-STATIC void GL::SetBlendingEnabled(bool enabled)
+STATIC void GL::SetBlending(bool enabled)
 {
 	if (state.blendingEnabled != enabled)
 	{
@@ -123,7 +123,7 @@ STATIC void GL::SetBlendingEnabled(bool enabled)
 	}
 }
 
-STATIC void GL::SetDepthTestEnabled(bool enabled)
+STATIC void GL::SetDepthTest(bool enabled)
 {
 	if (state.depthTest != enabled)
 	{
@@ -159,7 +159,7 @@ STATIC void GL::SetClearDepth(float depth)
 	}
 }
 
-STATIC void GL::SetFaceCullingEnabled(bool enabled)
+STATIC void GL::SetFaceCulling(bool enabled)
 {
 	if (state.faceCullingEnabled != enabled)
 	{
