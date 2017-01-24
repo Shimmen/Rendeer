@@ -68,7 +68,7 @@ Camera::Camera()
 }
 
 Camera::Camera(glm::vec3 position, glm::quat orientation)
-	: Camera{position, orientation, Window::GetLastCreated().GetAspectRatio(), 0.1f, 1000.0f, glm::radians(75.0f), CameraComponent::CameraType::PERSPECTIVE}
+	: Camera{position, orientation, Window::CurrentWindow()->GetAspectRatio(), 0.1f, 1000.0f, glm::radians(75.0f), CameraComponent::CameraType::PERSPECTIVE}
 {
 }
 

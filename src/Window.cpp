@@ -4,103 +4,137 @@
 #include "GLState.h"
 #include "FrameBuffer.h"
 
-/* static */ int Window::windowCount{ 0 };
-/* static */ const Window *Window::lastCreatedWindow;
+/*static*/ const Window *Window::currentWindow;
 
-Window::Window(int width, int height, const std::string & title, bool vSync)
-	: isFullscreen{ false }
-	, isVsyncEnabled{ vSync }
+Window::Window(int width, int height, bool fullscreen, bool vSync)
+	: fullscreen{ fullscreen }
+	, vsyncEnabled{ vSync }
 {
-	InitializeGlfwIfNeeded();
-	SetUpGlobalWindowHints();
+	static bool firstWindow = true;
+	if (firstWindow)
+	{
+		if (!glfwInit())
+		{
+			Logger::GetDefaultLogger().Log("Error: could not initialize glfw! Application must terminate.");
+		}
 
-	// Create a windowed window with the requested size.
-	this->windowHandle = CreateWindowedWindow(width, height, title);
-	windowCount++;
-	lastCreatedWindow = this;
+		// Set window related hints
+		glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+		glfwWindowHint(GLFW_VISIBLE, GL_TRUE);
+		glfwWindowHint(GLFW_FLOATING, GL_FALSE);
 
-	MakeContextCurrent();
-	LoadOpenGLForCurrentContext();
-	SetUpWindowUserPointer(this->windowHandle);
+		// Set context related hints
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+		glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE);
+		glfwWindowHint(GLFW_SRGB_CAPABLE, GL_TRUE);
+		glfwWindowHint(GLFW_RED_BITS, 8);
+		glfwWindowHint(GLFW_GREEN_BITS, 8);
+		glfwWindowHint(GLFW_BLUE_BITS, 8);
+		glfwWindowHint(GLFW_ALPHA_BITS, 8);
+		glfwWindowHint(GLFW_DEPTH_BITS, 16);
+		glfwWindowHint(GLFW_STENCIL_BITS, 8);
+
+		firstWindow = false;
+	}
+
+	const char *title = "Rendeer";
+	if (fullscreen)
+	{
+		GLFWmonitor *primaryMonitor = glfwGetPrimaryMonitor();
+		if (primaryMonitor != nullptr)
+		{
+			const GLFWvidmode *currentVideoMode = glfwGetVideoMode(primaryMonitor);
+			if (currentVideoMode != nullptr)
+			{
+				const int width = currentVideoMode->width;
+				const int height = currentVideoMode->height;
+
+				this->glfwWindow = glfwCreateWindow(width, height, title, primaryMonitor, nullptr);
+			}
+			else
+			{
+				Logger::GetDefaultLogger().Log("Error: primary video mode could not be accessed for primary monitor.");
+			}
+		}
+		else
+		{
+			Logger::GetDefaultLogger().Log("Error: primary monitor could not be accessed.");
+		}
+	}
+	else
+	{
+		this->glfwWindow = glfwCreateWindow(width, height, title, nullptr, nullptr);;
+	}
+
+	MakeCurrent();
+
+	// Store a pointer to the Window instance in the user pointer of the GLFW window handle
+	glfwSetWindowUserPointer(glfwWindow, static_cast<void *>(this));
 
 	SetVsyncEnabled(vSync);
 	SetCursorHidden(false);
 
-	CreateInputHandlers(this->windowHandle);
-}
-
-Window::Window(const std::string & title, bool vSync)
-	: isFullscreen{ true }
-	, isVsyncEnabled{ vSync }
-{
-	InitializeGlfwIfNeeded();
-	SetUpGlobalWindowHints();
-
-	// Create a fullscreen window with the size of the sceen.
-	this->windowHandle = CreateFullscreenWindow(title);
-	windowCount++;
-	lastCreatedWindow = this;
-
-	MakeContextCurrent();
-	LoadOpenGLForCurrentContext();
-	SetUpWindowUserPointer(this->windowHandle);
-
-	SetVsyncEnabled(vSync);
-	SetCursorHidden(false);
-
-	CreateInputHandlers(this->windowHandle);
+	keyboard.reset(new Keyboard(glfwWindow));
+	mouse.reset(new Mouse(glfwWindow));
 }
 
 Window::~Window()
 {
-	glfwSetKeyCallback(windowHandle, nullptr);
-	glfwSetMouseButtonCallback(windowHandle, nullptr);
-	glfwSetCursorPosCallback(windowHandle, nullptr);
-	glfwDestroyWindow(windowHandle);
+	glfwSetKeyCallback(glfwWindow, nullptr);
+	glfwSetMouseButtonCallback(glfwWindow, nullptr);
+	glfwSetCursorPosCallback(glfwWindow, nullptr);
+	glfwDestroyWindow(glfwWindow);
 
-	windowCount--;
-	if (windowCount <= 0)
-	{
-		// Destroy GLFW context if there are no more windows
-		glfwTerminate();
-	}
+	// Destroy GLFW context if there are no more windows
+	//glfwTerminate();
 }
 
-/* static */ const Window& Window::FromGlfwWindow(GLFWwindow *glfwWindowPointer)
+/*static*/ const Window *Window::FromGlfwWindow(GLFWwindow *glfwWindow)
 {
-	return *static_cast<Window *>(glfwGetWindowUserPointer(glfwWindowPointer));
+	void *windowUserPtr = glfwGetWindowUserPointer(glfwWindow);
+	return static_cast<Window *>(windowUserPtr);
 }
 
-/* static */ const Window& Window::GetLastCreated()
+/*static*/ const Window *Window::CurrentWindow()
 {
-	assert(lastCreatedWindow != nullptr);
-	return *lastCreatedWindow;
+	return currentWindow;
 }
 
-void Window::PollEvents() const
+void Window::PollEvents()
 {
 	// Very important that these get called BEFORE polling new events
 	// If not, the wasPressed/Released arrays will be cleared as soon
 	// as they get filled in by glfwPollEvents().
 	keyboard->Update();
 	mouse->Update();
-
 	glfwPollEvents();
 }
 
 void Window::SwapBuffers() const
 {
-	glfwSwapBuffers(this->windowHandle);
+	glfwSwapBuffers(glfwWindow);
 }
 
 bool Window::IsCloseRequested() const
 {
-	return (glfwWindowShouldClose(this->windowHandle) != 0);
+	return (glfwWindowShouldClose(glfwWindow) != 0);
 }
 
-void Window::MakeContextCurrent() const
+void Window::MakeCurrent() const
 {
-	glfwMakeContextCurrent(this->windowHandle);
+	currentWindow = this;
+	glfwMakeContextCurrent(glfwWindow);
+
+	// Load GL functions after the first context is ready (and made current)
+	static bool firstContextCreation = true;
+	if (firstContextCreation)
+	{
+		gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+		firstContextCreation = false;
+	}
 }
 
 void Window::BindAsDrawFramebuffer() const
@@ -117,17 +151,12 @@ void Window::BindAsDrawFramebuffer() const
 
 bool Window::IsFullscreen() const
 {
-	return this->isFullscreen;
+	return fullscreen;
 }
 
-void Window::SetWindowPosition(int xPos, int yPos) const
+void Window::GetFramebufferSize(int *width, int *height) const
 {
-	glfwSetWindowPos(this->windowHandle, xPos, yPos);
-}
-
-void Window::GetFramebufferSize(int *widthPixels, int *heightPixels) const
-{
-	glfwGetFramebufferSize(this->windowHandle, widthPixels, heightPixels);
+	glfwGetFramebufferSize(glfwWindow, width, height);
 }
 
 int Window::GetFramebufferWidth() const
@@ -148,32 +177,32 @@ float Window::GetAspectRatio() const
 {
 	int width, height;
 	GetFramebufferSize(&width, &height);
-
-	return (float)width / (float)height;
+	float ar = static_cast<float>(width) / static_cast<float>(height);
+	return ar;
 }
 
 bool Window::IsVsyncEnabled() const
 {
-	return isVsyncEnabled;
+	return vsyncEnabled;
 }
 
 void Window::SetVsyncEnabled(bool enabled)
 {
-	int interval = enabled ? 1 : 0;
+	int interval = (enabled) ? 1 : 0;
 	glfwSwapInterval(interval);
-	this->isVsyncEnabled = enabled;
+	this->vsyncEnabled = enabled;
 }
 
 bool Window::IsCursorHidden() const
 {
-	int cursorMode = glfwGetInputMode(this->windowHandle, GLFW_CURSOR);
+	int cursorMode = glfwGetInputMode(glfwWindow, GLFW_CURSOR);
 	return (cursorMode == GLFW_CURSOR_DISABLED);
 }
 
 void Window::SetCursorHidden(bool hidden) const
 {
 	int mode = (hidden) ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL;
-	glfwSetInputMode(this->windowHandle, GLFW_CURSOR, mode);
+	glfwSetInputMode(glfwWindow, GLFW_CURSOR, mode);
 }
 
 const Keyboard& Window::GetKeyboard() const
@@ -184,88 +213,4 @@ const Keyboard& Window::GetKeyboard() const
 const Mouse& Window::GetMouse() const
 {
 	return *this->mouse;
-}
-
-GLFWwindow *Window::CreateWindowedWindow(int width, int height, const std::string& title) const
-{
-	return glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);;
-}
-
-GLFWwindow *Window::CreateFullscreenWindow(const std::string& title) const
-{
-	GLFWmonitor *primaryMonitor = glfwGetPrimaryMonitor();
-	if (primaryMonitor != nullptr)
-	{
-		const GLFWvidmode *currentVideoMode = glfwGetVideoMode(primaryMonitor);
-		if (currentVideoMode != nullptr)
-		{
-			const int width = currentVideoMode->width;
-			const int height = currentVideoMode->height;
-
-			return glfwCreateWindow(width, height, title.c_str(), primaryMonitor, nullptr);
-			
-		}
-		else
-		{
-			Logger::GetDefaultLogger().Log("Error: primary video mode could not be accessed for primary monitor.");
-			return nullptr;
-		}
-	}
-	else
-	{
-		Logger::GetDefaultLogger().Log("Error: primary monitor could not be accessed.");
-		return nullptr;
-	}
-}
-
-void Window::InitializeGlfwIfNeeded() const
-{
-	if (windowCount == 0)
-	{
-		int result = glfwInit();
-		if (result == GL_FALSE)
-		{
-			Logger::GetDefaultLogger().Log("Error: could not initialize glfw! Application must terminate.");
-		}
-	}
-}
-
-void Window::LoadOpenGLForCurrentContext() const
-{
-	// Use the glfw loader with glad (this way the glad source doesn't need to include its own loader).
-	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-}
-
-void Window::SetUpGlobalWindowHints() const
-{
-	// Set window related hints
-	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-	glfwWindowHint(GLFW_VISIBLE, GL_TRUE);
-	glfwWindowHint(GLFW_FLOATING, GL_FALSE);
-	
-	// Set context related hints
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE);
-	glfwWindowHint(GLFW_SRGB_CAPABLE, GL_TRUE);
-	glfwWindowHint(GLFW_RED_BITS, 8);
-	glfwWindowHint(GLFW_GREEN_BITS, 8);
-	glfwWindowHint(GLFW_BLUE_BITS, 8);
-	glfwWindowHint(GLFW_ALPHA_BITS, 8);
-	glfwWindowHint(GLFW_DEPTH_BITS, 24);
-	glfwWindowHint(GLFW_STENCIL_BITS, 8);
-}
-
-void Window::SetUpWindowUserPointer(GLFWwindow *window)
-{
-	// Store a pointer to the C++ Window instance in the user pointer of the GLFW window handle.
-	glfwSetWindowUserPointer(window, static_cast<void *>(this));
-}
-
-void Window::CreateInputHandlers(GLFWwindow *window)
-{
-	keyboard.reset(new Keyboard(window));
-	mouse.reset(new Mouse(window));
 }

@@ -55,16 +55,16 @@ void Mouse::Update()
 
 /* static */ void Mouse::MouseButtonEventCallback(GLFWwindow *glfwWindow, int button, int action, int mods)
 {
-	const Window& window = Window::FromGlfwWindow(glfwWindow);
+	const Window *window = Window::FromGlfwWindow(glfwWindow);
 
 	switch (action)
 	{
 	case GLFW_PRESS:
-		window.mouse->SetButtonPressed(button);
+		window->mouse->SetButtonPressed(button);
 		break;
 
 	case GLFW_RELEASE:
-		window.mouse->SetButtonReleased(button);
+		window->mouse->SetButtonReleased(button);
 		break;
 
 	default:
@@ -74,10 +74,10 @@ void Mouse::Update()
 
 /* static */ void Mouse::MouseMovementEventCallback(GLFWwindow *glfwWindow, double xPos, double yPos)
 {
-	const Window& window = Window::FromGlfwWindow(glfwWindow);
+	const Window *window = Window::FromGlfwWindow(glfwWindow);
 
-	window.mouse->currentXPosition = xPos;
-	window.mouse->currentYPosition = yPos;
+	window->mouse->currentXPosition = xPos;
+	window->mouse->currentYPosition = yPos;
 }
 
 void Mouse::ResetPressedAndReleasedButtons()

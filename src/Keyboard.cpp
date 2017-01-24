@@ -41,16 +41,16 @@ void Keyboard::Update()
 
 /* static */ void Keyboard::KeyEventCallback(GLFWwindow *glfwWindow, int key, int scancode, int action, int mods)
 {
-	const Window& window = Window::FromGlfwWindow(glfwWindow);
+	const Window *window = Window::FromGlfwWindow(glfwWindow);
 
 	switch (action)
 	{
 	case GLFW_PRESS:
-		window.keyboard->SetKeyPressed(key);
+		window->keyboard->SetKeyPressed(key);
 		break;
 
 	case GLFW_RELEASE:
-		window.keyboard->SetKeyReleased(key);
+		window->keyboard->SetKeyReleased(key);
 		break;
 
 	case GLFW_REPEAT:

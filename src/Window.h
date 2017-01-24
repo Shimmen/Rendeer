@@ -13,25 +13,25 @@ class Window
 {
 public:
 
-	Window(int width, int height, const std::string& title, bool vSync = true);
-	Window(const std::string& title, bool vSync = true);
-
+	Window(int width, int height, bool fullscreen = false, bool vSync = true);
 	~Window();
 
-	static const Window& FromGlfwWindow(GLFWwindow *glfwWindowPointer);
-	static const Window& GetLastCreated();
+	static const Window *FromGlfwWindow(GLFWwindow *glfwWindow);
+	static const Window *CurrentWindow();
 
-	void PollEvents() const;
+	// Will poll window events and make sure the mouse & keyboard are up to date
+	void PollEvents();
+
 	void SwapBuffers() const;
 	bool IsCloseRequested() const;
 
-	void MakeContextCurrent() const;
+	void MakeCurrent() const;
+
 	void BindAsDrawFramebuffer() const;
 
 	bool IsFullscreen() const;
-	void SetWindowPosition(int xPos, int yPos) const;
 
-	void GetFramebufferSize(int *widthPixels, int * heightPixels) const;
+	void GetFramebufferSize(int *width, int *height) const;
 	int GetFramebufferWidth() const;
 	int GetFramebufferHeight() const;
 	float GetAspectRatio() const;
@@ -50,24 +50,11 @@ private:
 	Window(Window& other) = delete;
 	Window& operator=(Window& other) = delete;
 
-	GLFWwindow *CreateWindowedWindow(int width, int height, const std::string& title) const;
-	GLFWwindow *CreateFullscreenWindow(const std::string& title) const;
-
-	void InitializeGlfwIfNeeded() const;
-	void LoadOpenGLForCurrentContext() const;
-	void SetUpGlobalWindowHints() const;
-	void SetUpWindowUserPointer(GLFWwindow *window);
-	void CreateInputHandlers(GLFWwindow *window);
-
 private:
 
-	GLFWwindow *windowHandle;
-
-	static int windowCount;
-	static const Window *lastCreatedWindow;
-
-	bool isFullscreen;
-	bool isVsyncEnabled;
+	GLFWwindow *glfwWindow;
+	bool fullscreen;
+	bool vsyncEnabled;
 
 	// The input classes and their callbacks require access to certain members of the Window class
 	friend class Keyboard;
@@ -76,5 +63,9 @@ private:
 	// Pointer types to initialization can be deferred to the constructor body
 	std::unique_ptr<Keyboard> keyboard;
 	std::unique_ptr<Mouse> mouse;
+
+private:
+
+	static const Window *currentWindow;
 
 };

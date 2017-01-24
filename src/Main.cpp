@@ -21,9 +21,7 @@ int main(int argc, char *argv[])
 	//
 	// Setup
 	//
-	const int WINDOW_WIDTH = 1280;
-	const int WINDOW_HEIGHT = 720;
-	Window window{ WINDOW_WIDTH, WINDOW_HEIGHT, "Rendeer", true };
+	Window window{ 1280, 720, false, true };
 	Renderer renderer{ &window };
 	window.BindAsDrawFramebuffer();
 
