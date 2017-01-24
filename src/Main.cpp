@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
 	const int WINDOW_WIDTH = 1280;
 	const int WINDOW_HEIGHT = 720;
 	Window window{ WINDOW_WIDTH, WINDOW_HEIGHT, "Rendeer", true };
-	DeferredRenderer deferredRenderer{ &window };
+	Renderer renderer{ &window };
 	window.BindAsDrawFramebuffer();
 
 	// Log default startup stuff
@@ -131,7 +131,7 @@ int main(int argc, char *argv[])
 			spotLight->GetTransform().SetPosition(cameraPosition).SetOrientation(cameraOrientation);
 		}
 
-		deferredRenderer.Render(scene);
+		renderer.Render(scene);
 	}
 
 	logger.LogSubheading("Render loop end");

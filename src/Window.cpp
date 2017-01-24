@@ -1,6 +1,8 @@
 #include "Window.h"
 
 #include "Logger.h"
+#include "GLState.h"
+#include "FrameBuffer.h"
 
 /* static */ int Window::windowCount{ 0 };
 /* static */ const Window *Window::lastCreatedWindow;
@@ -103,12 +105,14 @@ void Window::MakeContextCurrent() const
 
 void Window::BindAsDrawFramebuffer() const
 {
-	// Bind framebuffer 0, i.e. the window for this context
+	// Bind framebuffer 0, i.e. the window for this context. To be compatible with the FrameBuffer class, make sure to set
+	// the last bound framebuffer to this one! This function is a friend function of the FrameBuffer class for this reason.
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+	FrameBuffer::lastBound = 0;
 
 	int width, height;
 	GetFramebufferSize(&width, &height);
-	glViewport(0, 0, width, height);
+	GL::SetViewport(0, 0, width, height);
 }
 
 bool Window::IsFullscreen() const
@@ -121,7 +125,7 @@ void Window::SetWindowPosition(int xPos, int yPos) const
 	glfwSetWindowPos(this->windowHandle, xPos, yPos);
 }
 
-void Window::GetFramebufferSize(int *widthPixels, int * heightPixels) const
+void Window::GetFramebufferSize(int *widthPixels, int *heightPixels) const
 {
 	glfwGetFramebufferSize(this->windowHandle, widthPixels, heightPixels);
 }

@@ -10,7 +10,7 @@
 #include "Transform.h"
 #include "FrameBuffer.h"
 
-class DeferredRenderer;
+class Renderer;
 class Uniform;
 
 class LightComponent: public Component
@@ -20,7 +20,7 @@ public:
 	LightComponent(Shader *shader, glm::vec3 color, float intensity);
 	virtual ~LightComponent() {}
 
-	virtual void SetUniforms(const DeferredRenderer& renderer, const CameraComponent& camera) const;
+	virtual void SetUniforms(const Renderer& renderer, const CameraComponent& camera) const;
 	virtual Camera GetLightCamera(const CameraComponent& mainCamera, int shadowMapSize) const = 0;
 
 	const Shader& GetShader() const { return *shader; }
@@ -52,7 +52,7 @@ public:
 	DirectionalLight(glm::vec3 color, float intensity, bool usingDynamicCameraPositioning = false);
 	virtual ~DirectionalLight() {}
 
-	void SetUniforms(const DeferredRenderer& renderer, const CameraComponent& camera) const;
+	void SetUniforms(const Renderer& renderer, const CameraComponent& camera) const;
 	Camera GetLightCamera(const CameraComponent& mainCamera, int shadowMapSize) const;
 
 private:
@@ -71,7 +71,7 @@ public:
 	PointLight(glm::vec3 color, float intensity);
 	virtual ~PointLight() {}
 
-	void SetUniforms(const DeferredRenderer& renderer, const CameraComponent& camera) const;
+	void SetUniforms(const Renderer& renderer, const CameraComponent& camera) const;
 	Camera GetLightCamera(const CameraComponent& mainCamera, int shadowMapSize) const;
 
 private:
@@ -88,7 +88,7 @@ public:
 	SpotLight(glm::vec3 color, float intensity, float outerConeAngle, float innerConeAngle);
 	virtual ~SpotLight() {}
 
-	void SetUniforms(const DeferredRenderer& renderer, const CameraComponent& camera) const;
+	void SetUniforms(const Renderer& renderer, const CameraComponent& camera) const;
 	Camera GetLightCamera(const CameraComponent& mainCamera, int shadowMapSize) const;
 
 private:

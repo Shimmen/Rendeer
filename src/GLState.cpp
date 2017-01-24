@@ -18,6 +18,8 @@ void GL::ContextState::FetchCurrentGLState()
 {
 	assert(glGetError() == GL_NO_ERROR);
 
+	glGetIntegerv(GL_VIEWPORT, viewportDims);
+
 	glGetFloatv(GL_COLOR_CLEAR_VALUE, clearColor);
 
 	glGetBooleanv(GL_BLEND, &blendingEnabled);
@@ -44,6 +46,18 @@ void GL::ContextState::FetchCurrentGLState()
 
 STATIC GL::ContextState GL::state{};
 
+STATIC void GL::SetViewport(int x, int y, unsigned int width, unsigned int height)
+{
+	if (state.viewportDims[0] != x || state.viewportDims[1] != y || state.viewportDims[2] != width || state.viewportDims[3] != height)
+	{
+		state.viewportDims[0] = x;
+		state.viewportDims[1] = y;
+		state.viewportDims[2] = static_cast<int>(width);
+		state.viewportDims[3] = static_cast<int>(height);
+		glViewport(x, y, width, height);
+	}
+}
+
 STATIC void GL::GetClearColor(float *r, float *g, float *b, float *a)
 {
 	*r = state.clearColor[0];
@@ -54,7 +68,7 @@ STATIC void GL::GetClearColor(float *r, float *g, float *b, float *a)
 
 STATIC void GL::SetClearColor(float r, float g, float b, float a)
 {
-	if (r != state.clearColor[0] && g != state.clearColor[1] && b != state.clearColor[2] && a != state.clearColor[3])
+	if (r != state.clearColor[0] || g != state.clearColor[1] || b != state.clearColor[2] || a != state.clearColor[3])
 	{
 		state.clearColor[0] = r;
 		state.clearColor[1] = g;

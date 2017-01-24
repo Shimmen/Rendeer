@@ -12,7 +12,7 @@ LightComponent::LightComponent(Shader *shader, glm::vec3 color, float intensity)
 	this->intensityUniform = shader->GetUniformWithName("u_light_intensity");
 }
 
-void LightComponent::SetUniforms(const DeferredRenderer& renderer, const CameraComponent& camera) const
+void LightComponent::SetUniforms(const Renderer& renderer, const CameraComponent& camera) const
 {
 	shader->Bind();
 
@@ -31,7 +31,7 @@ DirectionalLight::DirectionalLight(glm::vec3 color, float intensity, bool usingD
 	this->inverseProjectionUniform = shader->GetUniformWithName("u_inverse_projection_matrix");
 }
 
-void DirectionalLight::SetUniforms(const DeferredRenderer& renderer, const CameraComponent& camera) const
+void DirectionalLight::SetUniforms(const Renderer& renderer, const CameraComponent& camera) const
 {
 	LightComponent::SetUniforms(renderer, camera);
 
@@ -85,7 +85,7 @@ PointLight::PointLight(glm::vec3 color, float intensity)
 	this->inverseProjectionUniform = shader->GetUniformWithName("u_inverse_projection_matrix");
 }
 
-void PointLight::SetUniforms(const DeferredRenderer& renderer, const CameraComponent& camera) const
+void PointLight::SetUniforms(const Renderer& renderer, const CameraComponent& camera) const
 {
 	LightComponent::SetUniforms(renderer, camera);
 
@@ -121,7 +121,7 @@ SpotLight::SpotLight(glm::vec3 color, float intensity, float outerConeAngle, flo
 	this->inverseProjectionUniform = shader->GetUniformWithName("u_inverse_projection_matrix");
 }
 
-void SpotLight::SetUniforms(const DeferredRenderer& renderer, const CameraComponent& camera) const
+void SpotLight::SetUniforms(const Renderer& renderer, const CameraComponent& camera) const
 {
 	LightComponent::SetUniforms(renderer, camera);
 

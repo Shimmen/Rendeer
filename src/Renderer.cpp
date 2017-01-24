@@ -3,7 +3,7 @@
 #include "GLState.h"
 #include "Renderable.h"
 
-DeferredRenderer::DeferredRenderer(const Window *window)
+Renderer::Renderer(const Window *window)
 	: window{ window }
 	, gBuffer{ window->GetFramebufferWidth(), window->GetFramebufferHeight() }
 	, lightAccumulationTexture{window->GetFramebufferWidth(), window->GetFramebufferHeight(), GL_RGBA, GL_RGBA16F, GL_CLAMP_TO_EDGE, GL_NEAREST, GL_NEAREST}
@@ -36,23 +36,18 @@ DeferredRenderer::DeferredRenderer(const Window *window)
 	assert(shadowMapFramebuffer.IsComplete());
 }
 
-DeferredRenderer::~DeferredRenderer()
-{
-}
-
-void DeferredRenderer::Render(const Scene& scene)
+void Renderer::Render(const Scene& scene)
 {
 	static bool first = true;
 	if (first)
 	{
 		GL::FetchCurrentGLState();
 
-		//GL::SetFaceCullingEnabled(true);
-		glFrontFace(GL_CW); //GL::SetFrontFace(GL_CW);
-		glCullFace(GL_BACK); //GL::CullFace(GL_BACK);
+		GL::SetFrontFace(GL_CW);
+		GL::SetCullFace(GL_BACK);
 
-		glEnable(GL_FRAMEBUFFER_SRGB);
-		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+		GL::Enable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+		GL::Enable(GL_FRAMEBUFFER_SRGB);
 
 		first = false;
 	}
@@ -79,8 +74,8 @@ void DeferredRenderer::Render(const Scene& scene)
 
 	// Render light accumulation buffer onto screen with final post processing step(like tone mapping etc.)
 	window->BindAsDrawFramebuffer();
-	glDisable(GL_DEPTH_TEST);
-	glDisable(GL_BLEND);
+	GL::SetDepthTestEnabled(false);
+	GL::SetBlendingEnabled(false);
 
 	postProcessShader.Bind();
 	//auxTexture1.Bind(0);
@@ -91,19 +86,19 @@ void DeferredRenderer::Render(const Scene& scene)
 	window->SwapBuffers();
 }
 
-void DeferredRenderer::GeometryPass(const std::vector<std::shared_ptr<Entity>>& entities, const CameraComponent& camera) const
+void Renderer::GeometryPass(const std::vector<std::shared_ptr<Entity>>& entities, const CameraComponent& camera) const
 {
 	gBuffer.BindAsRenderTarget();
-	glClearDepth(1.0);
-	glClearColor(0, 0, 0, 0);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	GL::SetClearDepth(1.0f);
+	GL::SetClearColor(0, 0, 0, 0);
+	GL::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LEQUAL);
-	glDepthMask(GL_TRUE);
+	GL::SetDepthTestEnabled(true);
+	GL::SetDepthFunction(GL_LEQUAL);
+	GL::SetDepthMask(true);
 
-	glEnable(GL_CULL_FACE);
-	glDisable(GL_BLEND);
+	GL::SetFaceCullingEnabled(true);
+	GL::SetBlendingEnabled(false);
 
 	for (auto entity : entities)
 	{
@@ -119,17 +114,17 @@ void DeferredRenderer::GeometryPass(const std::vector<std::shared_ptr<Entity>>& 
 	}
 }
 
-void DeferredRenderer::LightPass(const std::vector<std::shared_ptr<Entity>>& geometry, const std::vector<std::shared_ptr<Entity>>& lights, const CameraComponent& camera) const
+void Renderer::LightPass(const std::vector<std::shared_ptr<Entity>>& geometry, const std::vector<std::shared_ptr<Entity>>& lights, const CameraComponent& camera) const
 {
 	lightAccumulationBuffer.BindAsDrawFrameBuffer();
-	glClearColor(0, 0, 0, 0);
-	glClear(GL_COLOR_BUFFER_BIT);
+	GL::SetClearColor(0, 0, 0, 0);
+	GL::Clear(GL_COLOR_BUFFER_BIT);
 
 	// Ambient light pass (could be optimized to be done while filling g-buffer)
 	ambientShader.Bind();
 	ambientShader.SetUniform("u_intensity", ambientIntensity);
 	gBuffer.BindAsUniform(ambientShader);
-	glDisable(GL_DEPTH_TEST);
+	GL::SetDepthTestEnabled(false);
 	ScreenAlignedQuad::Render();
 
 	for (auto lightEntity : lights)
@@ -143,13 +138,13 @@ void DeferredRenderer::LightPass(const std::vector<std::shared_ptr<Entity>>& geo
 		if (light->CastsShadows())
 		{
 			shadowMapFramebuffer.BindAsDrawFrameBuffer();
-			glClearDepth(1.0);
-			glClear(GL_DEPTH_BUFFER_BIT);
+			GL::SetClearDepth(1.0f);
+			GL::Clear(GL_DEPTH_BUFFER_BIT);
 
-			glDepthMask(GL_TRUE);
-			glEnable(GL_DEPTH_TEST);
-			glDepthFunc(GL_LEQUAL);
-			glEnable(GL_CULL_FACE);
+			GL::SetDepthMask(true);
+			GL::SetDepthTestEnabled(true);
+			GL::SetDepthFunction(GL_LEQUAL);
+			GL::SetFaceCullingEnabled(true);
 
 			shadowMapGenerator.Bind();
 			shadowMapGenerator.SetUniform("u_view_projecion_matrix", lightViewProjection);
@@ -166,13 +161,13 @@ void DeferredRenderer::LightPass(const std::vector<std::shared_ptr<Entity>>& geo
 		// TODO: Logically the depth mask should be false, since I don't want to touch the depth at all from the lights, but I get really strage results if it's false!
 		// So I'm not sure... It might be some strange behaviour related to one texture in multiple frame buffers. Find out, somehow...
 		// HOWEVER, since depth test is disabled, depth writing is always disabled too, and this works.
-		glDisable(GL_DEPTH_TEST);
+		GL::SetDepthTestEnabled(false);
 
-		glDisable(GL_CULL_FACE);
+		GL::SetFaceCullingEnabled(false);
 
-		glEnable(GL_BLEND);
-		glBlendEquation(GL_FUNC_ADD);
-		glBlendFunc(GL_ONE, GL_ONE);
+		GL::SetBlendingEnabled(true);
+		GL::SetBlendEquation(GL_FUNC_ADD, GL_FUNC_ADD);
+		GL::SetBlendFunction(GL_ONE, GL_ONE, GL_ONE, GL_ONE);
 
 		auto& lightShader = light->GetShader();
 		gBuffer.BindAsUniform(lightShader);
@@ -188,18 +183,18 @@ void DeferredRenderer::LightPass(const std::vector<std::shared_ptr<Entity>>& geo
 
 		ScreenAlignedQuad::Render();
 
-		glDisable(GL_BLEND);
+		GL::SetBlendingEnabled(false);
 	}
 }
 
-void DeferredRenderer::DrawSkybox(const CameraComponent& camera) const
+void Renderer::DrawSkybox(const CameraComponent& camera) const
 {
 	lightAccumulationBuffer.BindAsDrawFrameBuffer();
 
 	// Depth map is cleared to 1.0, skybox shader fixes depth to 1.0
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_EQUAL);
-	glDepthMask(GL_TRUE);
+	GL::SetDepthTestEnabled(true);
+	GL::SetDepthFunction(GL_EQUAL);
+	GL::SetDepthMask(true);
 
 	skyboxShader.Bind();
 	skyboxShader.SetUniform("u_view_rotation_matrix", glm::mat4(glm::mat3(camera.GetViewMatrix()))); // remove translation part
@@ -209,7 +204,7 @@ void DeferredRenderer::DrawSkybox(const CameraComponent& camera) const
 	SkyboxCube::Render();
 }
 
-void DeferredRenderer::GenerateBloom() const
+void Renderer::GenerateBloom() const
 {
 /*
 	const int numBlurPasses = 7;
@@ -217,7 +212,7 @@ void DeferredRenderer::GenerateBloom() const
 
 	// Downsample current render
 	auxFramebufferLow1.BindAsDrawFrameBuffer();
-	glClear(GL_COLOR_BUFFER_BIT);
+	GL::Clear(GL_COLOR_BUFFER_BIT);
 	auxTexture1.Bind(0);
 	nofilterFilter.Bind();
 	nofilterFilter.SetUniform("u_texture", 0);
@@ -225,7 +220,7 @@ void DeferredRenderer::GenerateBloom() const
 
 	// Extract bright spots through a bright-pass filter
 	auxFramebufferLow2.BindAsDrawFrameBuffer();
-	glClear(GL_COLOR_BUFFER_BIT);
+	GL::Clear(GL_COLOR_BUFFER_BIT);
 	auxTextureLow1.Bind(0);
 	highPassFilter.Bind();
 	highPassFilter.SetUniform("u_texture", 0);
@@ -236,14 +231,14 @@ void DeferredRenderer::GenerateBloom() const
 	for (int i = 0; i < numBlurPasses; i++)
 	{
 		auxFramebufferLow1.BindAsDrawFrameBuffer();
-		glClear(GL_COLOR_BUFFER_BIT);
+		GL::Clear(GL_COLOR_BUFFER_BIT);
 		auxTextureLow2.Bind(0);
 		gaussianBlurVertical.Bind();
 		gaussianBlurVertical.SetUniform("u_texture", 0);
 		quad.Render();
 
 		auxFramebufferLow2.BindAsDrawFrameBuffer();
-		glClear(GL_COLOR_BUFFER_BIT);
+		GL::Clear(GL_COLOR_BUFFER_BIT);
 		auxTextureLow1.Bind(0);
 		gaussianBlurHorizontal.Bind();
 		gaussianBlurHorizontal.SetUniform("u_texture", 0);
@@ -255,15 +250,15 @@ void DeferredRenderer::GenerateBloom() const
 	auxTextureLow2.Bind(0);
 	nofilterFilter.Bind();
 	nofilterFilter.SetUniform("u_texture", 0);
-	glEnable(GL_BLEND);
-	glBlendEquation(GL_FUNC_ADD);
-	glBlendFunc(GL_ONE, GL_ONE);
+	GL::SetBlendingEnabled(true);
+	GL::SetBlendEquation(GL_FUNC_ADD, GL_FUNC_ADD);
+	GL::SetBlendFunction(GL_ONE, GL_ONE, GL_ONE, GL_ONE);
 	quad.Render();
-	glDisable(GL_BLEND);
+	GL::SetBlendingEnabled(false);
 */
 }
 
-void DeferredRenderer::RenderTextureToScreen(const Texture2D& texture)
+void Renderer::RenderTextureToScreen(const Texture2D& texture)
 {
 	window->BindAsDrawFramebuffer();
 	nofilterFilter.Bind();
@@ -271,9 +266,9 @@ void DeferredRenderer::RenderTextureToScreen(const Texture2D& texture)
 	texture.Bind(0);
 	nofilterFilter.SetUniform("u_texture", 0);
 
-	glDisable(GL_CULL_FACE);
-	glDisable(GL_DEPTH_TEST);
-	glDepthMask(GL_FALSE);
-	glClear(GL_COLOR_BUFFER_BIT);
+	GL::SetFaceCullingEnabled(false);
+	GL::SetDepthTestEnabled(false);
+	GL::SetDepthMask(false);
+	GL::Clear(GL_COLOR_BUFFER_BIT);
 	ScreenAlignedQuad::Render();
 }

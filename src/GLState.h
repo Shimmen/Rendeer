@@ -26,6 +26,8 @@ private:
 
 		// Add more as needed
 
+		GLint viewportDims[4];
+
 		GLfloat clearColor[4];
 
 		GLboolean blendingEnabled;
@@ -56,6 +58,9 @@ public:
 
 	// Actions
 	static inline void Clear(GLenum bufferBits) { glClear(bufferBits); }
+
+	// Viewport
+	static void SetViewport(int x, int y, unsigned int width, unsigned int height);
 
 	// Colors
 	static void GetClearColor(float *r, float *g, float *b, float *a);

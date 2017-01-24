@@ -1,6 +1,9 @@
 #include "FrameBuffer.h"
 
+#include "GLState.h"
 #include "Texture2D.h"
+
+/*static*/ GLuint FrameBuffer::lastBound = 0;
 
 FrameBuffer::FrameBuffer()
 {
@@ -64,7 +67,6 @@ bool FrameBuffer::IsComplete(GLenum *statusIfNotComplete) const
 
 void FrameBuffer::BindAsDrawFrameBuffer(bool setViewport, bool setDrawBuffers) const
 {
-	static GLuint lastBound = 0;
 	if (handle != lastBound)
 	{
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, handle);
@@ -79,7 +81,7 @@ void FrameBuffer::BindAsDrawFrameBuffer(bool setViewport, bool setDrawBuffers) c
 	if (setViewport)
 	{
 		const auto first = attachments.begin()->second;
-		glViewport(0, 0, first->GetWidth(), first->GetHeight());
+		GL::SetViewport(0, 0, first->GetWidth(), first->GetHeight());
 	}
 
 	if (setDrawBuffers && drawBuffers.size() > 0)

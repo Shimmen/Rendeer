@@ -5,6 +5,7 @@
 
 #include <glad/glad.h>
 
+#include "Window.h"
 #include "GLResource.h"
 
 class Texture2D;
@@ -28,5 +29,10 @@ protected:
 
 	std::vector<GLenum> drawBuffers;
 	std::map<GLenum, const Texture2D *> attachments;
+
+	static GLuint lastBound;
+
+	// We want the window to be able to change the lastBound parameter to 0 when bound!
+	friend void Window::BindAsDrawFramebuffer() const;
 
 };

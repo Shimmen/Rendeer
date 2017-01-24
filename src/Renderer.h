@@ -15,12 +15,12 @@
 
 class LightComponent;
 
-class DeferredRenderer
+class Renderer
 {
 public:
 	
-	DeferredRenderer(const Window *display);
-	~DeferredRenderer();
+	Renderer(const Window *display);
+	virtual ~Renderer() {}
 
 	void Render(const Scene& scene);
 
