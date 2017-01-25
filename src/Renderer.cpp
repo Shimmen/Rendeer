@@ -3,7 +3,7 @@
 #include "GLState.h"
 #include "Renderable.h"
 
-Renderer::Renderer(const Window *window)
+Renderer::Renderer(const Window *const window)
 	: window{ window }
 	, gBuffer{ window->GetFramebufferWidth(), window->GetFramebufferHeight() }
 	, lightAccumulationTexture{window->GetFramebufferWidth(), window->GetFramebufferHeight(), GL_RGBA, GL_RGBA16F, GL_CLAMP_TO_EDGE, GL_NEAREST, GL_NEAREST}

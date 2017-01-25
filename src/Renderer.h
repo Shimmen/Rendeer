@@ -19,7 +19,7 @@ class Renderer
 {
 public:
 	
-	Renderer(const Window *display);
+	Renderer(const Window *const window);
 	virtual ~Renderer() {}
 
 	void Render(const Scene& scene);
@@ -37,9 +37,7 @@ private:
 
 private:
 
-	const Window *window;
-
-	//ScreenAlignedQuad quad;
+	const Window *const window;
 
 	// Deferred pipeling default frame buffers and textures
 	GBuffer gBuffer;
