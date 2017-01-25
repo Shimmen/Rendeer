@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 #include <vector>
+#include <memory>
 #include <map>
 
 #include <glad/glad.h>

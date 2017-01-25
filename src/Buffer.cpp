@@ -33,7 +33,9 @@ Buffer::~Buffer()
 /*static*/
 std::vector<std::shared_ptr<Buffer>> Buffer::GenerateBuffers(unsigned int count)
 {
-	GLuint bufferHandles[count];
+	static const int maxNumCreated = 32;
+	assert(count < maxNumCreated);
+	GLuint bufferHandles[maxNumCreated];
 	glGenBuffers(count, bufferHandles);
 
 	std::vector<std::shared_ptr<Buffer>> buffers;

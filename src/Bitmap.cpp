@@ -47,7 +47,7 @@ Bitmap::Bitmap(const std::string& filePath)
 	{
 		size_t dataSize = GetDataSize();
 		this->pixelData.reserve(dataSize);
-		std::memcpy(&this->pixelData[0], stbiOwnedData, dataSize);
+		std::memcpy(this->pixelData.data(), stbiOwnedData, dataSize);
 		stbi_image_free(stbiOwnedData);
 	}
 }
