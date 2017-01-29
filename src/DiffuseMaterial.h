@@ -18,5 +18,6 @@ public:
 
 	float specularIntensity{1.0f};
 	float shininess{0.0f};
+	float emissive{0.0f};
 
 };

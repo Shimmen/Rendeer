@@ -9,5 +9,5 @@ void writeGBufferData(in GBuffer gBuffer)
 	vec3 encodedNormal = encodeNormal(gBuffer.normal);
 	o_normal = encodedNormal;
 
-	o_material = vec4(gBuffer.specularIntensity, gBuffer.shininess, 0.0, 0.0);
+	o_material = vec4(gBuffer.specularIntensity, gBuffer.shininess, gBuffer.emissive, 0.0);
 }

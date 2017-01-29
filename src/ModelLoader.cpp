@@ -65,9 +65,16 @@
 
 		auto renderable = std::make_shared<Renderable>(myMesh, myMaterial);
 
-		// TODO: Currently we don't support multiple components of the same type in one entity (for when we need to look one up),
-		// so we will have to put the renderables in separate child entities for now at least.
-		entity->NewChild()->AddComponent(renderable);
+		if (numMeshes == 1)
+		{
+			entity->AddComponent(renderable);
+		}
+		else
+		{
+			// TODO: Currently we don't support multiple components of the same type in one entity (for when we need to look one up),
+			// so we will have to put the renderables in separate child entities for now at least.
+			entity->NewChild()->AddComponent(renderable);
+		}
 	}
 
 	// Assemble child entities

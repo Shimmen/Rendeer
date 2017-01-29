@@ -20,6 +20,7 @@ struct GBuffer
 
 	float specularIntensity;
 	float shininess;
+	float emissive;
 
 #ifdef LIGHT_SHADER
 	vec3 position;

@@ -29,6 +29,7 @@ GBuffer extractGBufferData(in vec2 texCoord)
 	gBuffer.normal = normal;
 	gBuffer.specularIntensity = material.x;
 	gBuffer.shininess = material.y;
+	gBuffer.emissive = material.z;
 	gBuffer.position = viewSpacePosition.xyz;
 	return gBuffer;
 }

@@ -13,6 +13,7 @@ uniform sampler2D u_diffuse;
 uniform sampler2D u_normal_map;
 uniform float u_specular_intensity;
 uniform float u_shininess;
+uniform float u_emissive;
 
 void main()
 {
@@ -30,6 +31,7 @@ void main()
 
 	gBuffer.specularIntensity = u_specular_intensity;
 	gBuffer.shininess = u_shininess;
+	gBuffer.emissive = u_emissive;
 
 	writeGBufferData(gBuffer);
 }
