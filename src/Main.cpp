@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
 	// Setup
 	//
 
-	Window window{ 1280, 720, false, true };
+	Window window{ 1280, 720, false, false };
 	Renderer renderer{ &window };
 
 	// Log default startup stuff
