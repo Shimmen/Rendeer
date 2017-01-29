@@ -51,8 +51,18 @@ int main(int argc, char *argv[])
 		glm::angleAxis(0.15f, glm::vec3{ 1, 0, 0 })
 	);
 	scene.AddChild(camera);
-	// TODO: Make it so that the main camera is automatically set if a new entity with a camera component is added to the scene(-graph)!
 	scene.SetMainCamera(camera->GetComponent<CameraComponent>());
+
+	scene.SetSkybox(std::make_shared<TextureCube>(
+		Bitmap{"textures/skybox_sunset/left.png"},
+		Bitmap{"textures/skybox_sunset/right.png"},
+		Bitmap{"textures/skybox_sunset/bottom.png"},
+		Bitmap{"textures/skybox_sunset/top.png"},
+		Bitmap{"textures/skybox_sunset/front.png"},
+		Bitmap{"textures/skybox_sunset/back.png"}
+	));
+
+	scene.SetAmbientColor(glm::vec3{ 0.01f, 0.01f, 0.01f });
 
 	auto teapot = ModelLoader::Load("models/teapot/teapot.obj");
 	scene.AddChild(teapot)->GetTransform().SetScale(0.032f);

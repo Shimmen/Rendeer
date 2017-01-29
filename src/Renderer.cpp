@@ -7,29 +7,29 @@ Renderer::Renderer(const Window *const window)
 	: window{ window }
 	, gBuffer{ window->GetFramebufferWidth(), window->GetFramebufferHeight() }
 	, lightAccumulationTexture{window->GetFramebufferWidth(), window->GetFramebufferHeight(), GL_RGBA, GL_RGBA16F, GL_CLAMP_TO_EDGE, GL_NEAREST, GL_NEAREST}
-/*	, auxTexture1{ window->GetFramebufferWidth(), window->GetFramebufferHeight(), GL_RGBA, GL_RGBA16F, GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR }
-	, auxTextureLow1{ window->GetFramebufferWidth() / 2, window->GetFramebufferHeight() / 2, GL_RGBA, GL_RGBA16F, GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR }
-	, auxTextureLow2{ window->GetFramebufferWidth() / 2, window->GetFramebufferHeight() / 2, GL_RGBA, GL_RGBA16F, GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR } */
 	, shadowMap{ 2048, 2048, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT16, GL_CLAMP_TO_BORDER, GL_NEAREST, GL_NEAREST }
 	, shadowMapGenerator{ "Shadowing/ShadowMapGenerator.vsh", "Shadowing/ShadowMapGenerator.fsh" }
 	, postProcessShader{ "Generic/ScreenSpaceQuad.vsh", "Postprocess/Postprocess.fsh" }
-	, defaultNormalMap{"textures/default_normal.jpg", false}
+	, bloomTexture( 256, 256, GL_RGB, GL_RGB16F, GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR )
+	, bloomBlur256{ 256, 256, GL_RGB, GL_RGB16F, GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR }
+	, bloomBlur128{ 128, 128, GL_RGB, GL_RGB16F, GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR }
+	, bloomBlur64{ 64, 64, GL_RGB, GL_RGB16F, GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR }
+	, bloomBlur32{ 32, 32, GL_RGB, GL_RGB16F, GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR }
 {
 	assert(window != nullptr);
 
 	lightAccumulationBuffer.Attach(&lightAccumulationTexture, GL_COLOR_ATTACHMENT0);
 	lightAccumulationBuffer.Attach(&gBuffer.depth, GL_DEPTH_ATTACHMENT);
 	assert(lightAccumulationBuffer.IsComplete());
-/*
-	auxFramebuffer1.AttachTexture(&auxTexture1, GL_COLOR_ATTACHMENT0);
-	assert(auxFramebuffer1.IsComplete());
 
-	auxFramebufferLow1.AttachTexture(&auxTextureLow1, GL_COLOR_ATTACHMENT0);
-	assert(auxFramebufferLow1.IsComplete());
+	bloomFB.Attach(&bloomTexture, GL_COLOR_ATTACHMENT0);
+	assert(bloomFB.IsComplete());
 
-	auxFramebufferLow2.AttachTexture(&auxTextureLow2, GL_COLOR_ATTACHMENT0);
-	assert(auxFramebufferLow2.IsComplete());
-*/
+	bloomBlur256FB.Attach(&bloomBlur256, GL_COLOR_ATTACHMENT0); assert(bloomBlur256FB.IsComplete());
+	bloomBlur128FB.Attach(&bloomBlur128, GL_COLOR_ATTACHMENT0); assert(bloomBlur128FB.IsComplete());
+	bloomBlur64FB.Attach(&bloomBlur64, GL_COLOR_ATTACHMENT0); assert(bloomBlur64FB.IsComplete());
+	bloomBlur32FB.Attach(&bloomBlur32, GL_COLOR_ATTACHMENT0); assert(bloomBlur32FB.IsComplete());
+
 	shadowMap.Bind(0);
 	shadowMap.SetBorderColor(1.0f, 1.0f, 1.0f, 1.0f);
 	shadowMapFramebuffer.Attach(&shadowMap, GL_DEPTH_ATTACHMENT);
@@ -62,15 +62,20 @@ void Renderer::Render(const Scene& scene)
 	scene.GetEntities<LightComponent>(lights);
 
 	GeometryPass(geometry, *camera);
-	LightPass(geometry, lights, *camera);
-	DrawSkybox(*camera);
+	LightPass(scene, geometry, lights, *camera);
+
+	if (scene.GetSkybox())
+	{
+		DrawSkybox(*camera, *scene.GetSkybox());
+	}
+
 	GenerateBloom();
 
 	//
 	// Final post-processing
 	//
 
-	//RenderTextureToScreen(gBuffer.depth); window->SwapBuffers(); return;
+	//RenderTextureToScreen(bloomTexture); window->SwapBuffers(); return;
 
 	// Render light accumulation buffer onto screen with final post processing step(like tone mapping etc.)
 	window->BindAsDrawFramebuffer();
@@ -114,7 +119,7 @@ void Renderer::GeometryPass(const std::vector<std::shared_ptr<Entity>>& entities
 	}
 }
 
-void Renderer::LightPass(const std::vector<std::shared_ptr<Entity>>& geometry, const std::vector<std::shared_ptr<Entity>>& lights, const CameraComponent& camera) const
+void Renderer::LightPass(const Scene& scene, const std::vector<std::shared_ptr<Entity>>& geometry, const std::vector<std::shared_ptr<Entity>>& lights, const CameraComponent& camera) const
 {
 	lightAccumulationBuffer.BindAsDrawFrameBuffer();
 	GL::SetClearColor(0, 0, 0, 0);
@@ -122,7 +127,7 @@ void Renderer::LightPass(const std::vector<std::shared_ptr<Entity>>& geometry, c
 
 	// Ambient light pass (could be optimized to be done while filling g-buffer)
 	ambientShader.Bind();
-	ambientShader.SetUniform("u_intensity", ambientIntensity);
+	ambientShader.SetUniform("u_color", scene.GetAmbientColor());
 	gBuffer.BindAsUniform(ambientShader);
 	GL::SetDepthTest(false);
 	ScreenAlignedQuad::Render();
@@ -187,7 +192,7 @@ void Renderer::LightPass(const std::vector<std::shared_ptr<Entity>>& geometry, c
 	}
 }
 
-void Renderer::DrawSkybox(const CameraComponent& camera) const
+void Renderer::DrawSkybox(const CameraComponent& camera, const TextureCube& skyboxTexture) const
 {
 	lightAccumulationBuffer.BindAsDrawFrameBuffer();
 
@@ -207,9 +212,33 @@ void Renderer::DrawSkybox(const CameraComponent& camera) const
 void Renderer::GenerateBloom() const
 {
 /*
-	const int numBlurPasses = 7;
-	const float brightPassFilterThreshold = 1.4f;
+	const float brightPassFilterThreshold = 0.1f;
 
+	bloomFB.BindAsDrawFrameBuffer();
+	GL::SetBlending(false);
+	GL::SetDepthTest(false);
+
+	static Shader highPass{"Generic/ScreenSpaceQuad.vsh", "Filtering/HighPassFilter.fsh"};
+	highPass.Bind();
+	highPass.SetUniform("u_threshold", brightPassFilterThreshold);
+	highPass.SetUniform("u_texture", lightAccumulationTexture.Bind(0));
+	ScreenAlignedQuad::Render();
+
+	static Shader gaussianBlurV{"Filtering/GaussianBlurV.vsh", "Filtering/GaussianBlur.fsh"};
+	static Shader gaussianBlurH{"Filtering/GaussianBlurH.vsh", "Filtering/GaussianBlur.fsh"};
+
+	// All passes will use the same input texture (with different mipmap levels)
+	bloomTexture.Bind(0);
+	gaussianBlurH.Bind();
+	gaussianBlurH.SetUniform("u_texture", 0);
+	gaussianBlurV.Bind();
+	gaussianBlurV.SetUniform("u_texture", 0);
+
+	bloomBlur256FB.BindAsDrawFrameBuffer();
+	ScreenAlignedQuad::Render();
+*/
+
+/*
 	// Downsample current render
 	auxFramebufferLow1.BindAsDrawFrameBuffer();
 	GL::Clear(GL_COLOR_BUFFER_BIT);
@@ -266,9 +295,17 @@ void Renderer::RenderTextureToScreen(const Texture2D& texture)
 	texture.Bind(0);
 	nofilterFilter.SetUniform("u_texture", 0);
 
+	bool faceCulling = GL::IsFaceCulling();
+	bool depthTest = GL::IsDepthTesting();
+	bool depthMask = GL::GetDepthMask();
+
 	GL::SetFaceCulling(false);
 	GL::SetDepthTest(false);
 	GL::SetDepthMask(false);
 	GL::Clear(GL_COLOR_BUFFER_BIT);
 	ScreenAlignedQuad::Render();
+
+	GL::SetFaceCulling(faceCulling);
+	GL::SetDepthMask(depthMask);
+	GL::SetDepthTest(depthTest);
 }

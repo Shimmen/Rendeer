@@ -83,6 +83,9 @@ Camera::Camera(glm::vec3 position, glm::quat orientation, float aspectRatio, flo
 
 void Camera::Update(float deltaTime, const Window& window)
 {
+	// If the delta time is way to big, ignore it altogether
+	if (deltaTime > 0.5f) return;
+
 	// Move the camera (for now in this very temporary solution)
 	glm::vec3 movement = glm::vec3();
 	const float baseSpeed = 4.0f; /* m/s */

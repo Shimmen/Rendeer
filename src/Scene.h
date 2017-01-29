@@ -9,6 +9,8 @@
 #include "Camera.h"
 #include "Lighting.h"
 
+class TextureCube;
+
 //
 // Scene is the root entity of the scene graph and it defines the world origin
 //
@@ -18,8 +20,14 @@ public:
 
 	Scene();
 
-	std::shared_ptr<const CameraComponent> GetMainCamera() const;
-	void SetMainCamera(std::shared_ptr<const CameraComponent> cameraComponent);
+	std::shared_ptr<CameraComponent> GetMainCamera() const;
+	void SetMainCamera(std::shared_ptr<CameraComponent> cameraComponent);
+
+	std::shared_ptr<TextureCube> GetSkybox() const;
+	void SetSkybox(std::shared_ptr<TextureCube> skybox);
+
+	glm::vec3 GetAmbientColor() const;
+	void SetAmbientColor(glm::vec3 ambientColor);
 
 	// Collect entities matching the filter (i.e. has the specified component) into a flat list of items
 	template<typename Filter>
@@ -27,12 +35,10 @@ public:
 
 private:
 
-	std::weak_ptr<const CameraComponent> mainCamera;
+	std::shared_ptr<CameraComponent> mainCamera;
+	std::shared_ptr<TextureCube> skybox;
 
-	// TODO: Add scene related items like:
-	//  - Skybox
-	//  - Ambient light
-	//  - ?
+	glm::vec3 ambientColor;
 
 };
 

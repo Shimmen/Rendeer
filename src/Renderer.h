@@ -31,8 +31,8 @@ public:
 private:
 
 	void GeometryPass(const std::vector<std::shared_ptr<Entity>>& entities, const CameraComponent& camera) const;
-	void LightPass(const std::vector<std::shared_ptr<Entity>>& geometry, const std::vector<std::shared_ptr<Entity>>& lights, const CameraComponent& camera) const;
-	void DrawSkybox(const CameraComponent& camera) const;
+	void LightPass(const Scene& scene, const std::vector<std::shared_ptr<Entity>>& geometry, const std::vector<std::shared_ptr<Entity>>& lights, const CameraComponent& camera) const;
+	void DrawSkybox(const CameraComponent& camera, const TextureCube& skyboxTexture) const;
 	void GenerateBloom() const;
 
 private:
@@ -46,7 +46,6 @@ private:
 
 	// Ambient light
 	Shader ambientShader{ "Generic/ScreenSpaceQuad.vsh", "Lighting/AmbientLight.fsh" };
-	float ambientIntensity = 0.01f;
 
 	// Shadow mapping
 	Texture2D shadowMap{ 2048, 2048, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT16, GL_CLAMP_TO_BORDER, GL_NEAREST, GL_NEAREST };
@@ -55,19 +54,13 @@ private:
 
 	// Skybox
 	Shader skyboxShader{"Generic/Skybox.vsh", "Generic/Skybox.fsh"};
-	TextureCube skyboxTexture{
-		Bitmap{"textures/skybox_sunset/left.png"},
-		Bitmap{"textures/skybox_sunset/right.png"},
-		Bitmap{"textures/skybox_sunset/bottom.png"},
-		Bitmap{"textures/skybox_sunset/top.png"},
-		Bitmap{"textures/skybox_sunset/front.png"},
-		Bitmap{"textures/skybox_sunset/back.png"}
-	};
 
 	// Postprocess
-	//Shader highPassFilter{"Generic/ScreenSpaceQuad.vsh", "Filtering/HighPassFilter.fsh"};
-	//Shader gaussianBlurVertical{"Filtering/GaussianBlurV.vsh", "Filtering/GaussianBlur.fsh"};
-	//Shader gaussianBlurHorizontal{"Filtering/GaussianBlurH.vsh", "Filtering/GaussianBlur.fsh"};
+	Texture2D bloomTexture;
+	FrameBuffer bloomFB{};
+	Texture2D bloomBlur256, bloomBlur128, bloomBlur64, bloomBlur32;
+	FrameBuffer bloomBlur256FB{}, bloomBlur128FB{}, bloomBlur64FB{}, bloomBlur32FB{};
+
 	Shader postProcessShader{ "Generic/ScreenSpaceQuad.vsh", "Postprocess/Postprocess.fsh" };
 
 	// Debug stuff etc.

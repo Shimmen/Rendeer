@@ -8,61 +8,25 @@
 
 #include "Logger.h"
 
+Texture2D::Texture2D()
+	: Texture2D{ "textures/default.png", true }
+{
+	// Could also not load anything to start up quicker, but this will make it visually clearer what's happening
+}
+
 Texture2D::Texture2D(const std::string& filename, bool srgb, GLint magFilter, GLint wrapMode)
 	: TextureBase{}
 {
-	FILE *file = fopen(filename.c_str(), "rb");
-	if (file == nullptr)
-	{
-		// TODO: Move this to another function (Load) so that it can fail safely
-		Logger::GetDefaultLogger().Log("Error: can't read file with name: '" + filename + "'.");
-		//return;
-	}
+	Bind();
 
-	// Flip images to make complient with OpenGL texture handling
-	stbi_set_flip_vertically_on_load(true);
-
-	bool hdr = stbi_is_hdr_from_file(file);
-	fseek(file, 0, SEEK_SET); // TODO: File a bug! Shouldn't need to rewind, right?
-	void *pixels;
-	int numComponents;
-
-	if (hdr)
-	{
-		pixels = stbi_loadf_from_file(file, &width, &height, &numComponents, 0);
-	}
-	else
-	{
-		pixels = stbi_load_from_file(file, &width, &height, &numComponents, 0);
-	}
-
-	if (pixels == nullptr)
-	{
-		// TODO: Move this to another function (Load) so that it can fail safely
-		Logger::GetDefaultLogger().Log("Error: stbi could not load image with name: '" + filename + "'.");
-		Logger::GetDefaultLogger().Log("       Reason: " + std::string(stbi_failure_reason()));
-		//return;
-	}
-
-	Bind(0);
+	Load(filename, srgb);
 
 	// Assume trilinear for all loaded images
 	SetMinFilter(GL_LINEAR_MIPMAP_LINEAR);
 	SetMagFilter(magFilter);
 	SetWrapS(wrapMode);
 	SetWrapT(wrapMode);
-
-	GLenum sourceFormat = CalculateSourceFormat(numComponents);
-	GLint internalFormat = CalculateInternalFormat(sourceFormat, srgb, hdr);
-	GLenum sourceType = (hdr) ? GL_FLOAT : GL_UNSIGNED_BYTE;
-
-	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, sourceFormat, sourceType, pixels);
-
-	stbi_image_free(pixels);
-	fclose(file);
-
-	GenerateMipmapsIfCompatible(GL_LINEAR_MIPMAP_LINEAR);
-	SetMaxAnisotropy();
+	SetAnisotropy(GetMaxAnisotropy());
 }
 
 Texture2D::Texture2D(int width, int height, GLenum format, GLenum internalFormat, GLint wrapMode, GLint magFilter, GLint minFilter, GLenum type)
@@ -70,25 +34,22 @@ Texture2D::Texture2D(int width, int height, GLenum format, GLenum internalFormat
 	, width{ width }
 	, height{ height }
 {
-	Bind(0);
+	Bind();
 
 	SetMinFilter(minFilter);
 	SetMagFilter(magFilter);
 	SetWrapS(wrapMode);
 	SetWrapT(wrapMode);
+	SetAnisotropy(GetMaxAnisotropy());
 
-	// Since the texture is created empty this works fine.
-	static const void *NO_DATA = nullptr;
-
-	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, type, NO_DATA);
-
-	GenerateMipmapsIfCompatible(minFilter);
-	SetMaxAnisotropy();
+	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, type, nullptr);
+	GenerateMipmaps();
 }
 
-void Texture2D::Bind(GLuint textureBinding) const
+int Texture2D::Bind(GLuint textureBinding) const
 {
 	TextureBase::Bind(GL_TEXTURE_2D, textureBinding);
+	return static_cast<int>(textureBinding);
 }
 
 void Texture2D::SetMinFilter(GLint minFilter)
@@ -116,6 +77,86 @@ void Texture2D::SetBorderColor(float r, float g, float b, float a)
 {
 	GLfloat color[4] = { r, g, b, a };
 	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, color);
+}
+
+void Texture2D::GenerateMipmaps()
+{
+	glGenerateMipmap(GL_TEXTURE_2D);
+}
+
+void Texture2D::SetMipmapBase(int base)
+{
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, base);
+}
+
+float Texture2D::GetMaxAnisotropy() const
+{
+	GLfloat maxAnisotropy;
+	glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAnisotropy);
+	return maxAnisotropy;
+}
+
+void Texture2D::SetAnisotropy(float level)
+{
+	static GLfloat maxAnisotropy = GetMaxAnisotropy();
+	float anisotropy = fminf(1.0f, fmaxf(level, maxAnisotropy));
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, anisotropy);
+}
+
+bool Texture2D::Load(const std::string& filename, bool srgb, GLint magFilter, GLint wrapMode, bool generateMipmaps)
+{
+	FILE *file = fopen(filename.c_str(), "rb");
+	if (file == nullptr)
+	{
+		Logger::GetDefaultLogger().Log("Error: can't read file with name: '" + filename + "'.");
+		return false;
+	}
+
+	// Flip images to make complient with OpenGL texture handling
+	stbi_set_flip_vertically_on_load(true);
+
+	bool hdr = stbi_is_hdr_from_file(file);
+	fseek(file, 0, SEEK_SET); // TODO: File a bug! Shouldn't need to rewind, right?
+	void *pixels;
+	int numComponents;
+
+	if (hdr)
+	{
+		pixels = stbi_loadf_from_file(file, &width, &height, &numComponents, 0);
+	}
+	else
+	{
+		pixels = stbi_load_from_file(file, &width, &height, &numComponents, 0);
+	}
+
+	if (pixels == nullptr)
+	{
+		Logger::GetDefaultLogger().Log("Error: stbi could not load image with name: '" + filename + "'.");
+		Logger::GetDefaultLogger().Log("       Reason: " + std::string(stbi_failure_reason()));
+		return false;
+	}
+
+	// Assume trilinear for all loaded images
+	SetMinFilter(GL_LINEAR_MIPMAP_LINEAR);
+	SetMagFilter(magFilter);
+	SetWrapS(wrapMode);
+	SetWrapT(wrapMode);
+
+	GLenum sourceFormat = CalculateSourceFormat(numComponents);
+	GLint internalFormat = CalculateInternalFormat(sourceFormat, srgb, hdr);
+	GLenum sourceType = (hdr) ? GL_FLOAT : GL_UNSIGNED_BYTE;
+
+	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, sourceFormat, sourceType, pixels);
+
+	stbi_image_free(pixels);
+	fclose(file);
+
+	if (generateMipmaps)
+	{
+		GenerateMipmaps();
+	}
+
+	return true;
 }
 
 GLenum Texture2D::CalculateSourceFormat(int numComponents) const
@@ -166,21 +207,4 @@ GLint Texture2D::CalculateInternalFormat(GLint externalFormat, bool srgb, bool h
 
 	// This should never happen...
 	return -1;
-}
-
-void Texture2D::GenerateMipmapsIfCompatible(GLint minFilter) const
-{
-	// If minFilter is mipmap compatible, generate mipmaps
-	if (minFilter == GL_LINEAR_MIPMAP_LINEAR  || minFilter == GL_LINEAR_MIPMAP_NEAREST ||
-		minFilter == GL_NEAREST_MIPMAP_LINEAR || minFilter == GL_NEAREST_MIPMAP_NEAREST)
-	{
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-}
-
-void Texture2D::SetMaxAnisotropy() const
-{
-	GLfloat maxAnisotropy;
-	glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAnisotropy);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAnisotropy);
 }

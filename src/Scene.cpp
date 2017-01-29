@@ -6,15 +6,32 @@ Scene::Scene()
 {
 }
 
-std::shared_ptr<const CameraComponent> Scene::GetMainCamera() const
+std::shared_ptr<CameraComponent> Scene::GetMainCamera() const
 {
-	// TODO: Maybe check if it's null. If it's null, maybe try to find some arbitrary camera to use,
-	// or make some own default camera. Also warn about that...
-	assert(!mainCamera.expired());
-	return mainCamera.lock();
+	return mainCamera;
 }
 
-void Scene::SetMainCamera(std::shared_ptr<const CameraComponent> cameraComponent)
+void Scene::SetMainCamera(std::shared_ptr<CameraComponent> cameraComponent)
 {
 	this->mainCamera = cameraComponent;
+}
+
+std::shared_ptr<TextureCube> Scene::GetSkybox() const
+{
+	return skybox;
+}
+
+void Scene::SetSkybox(std::shared_ptr<TextureCube> skybox)
+{
+	this->skybox = skybox;
+}
+
+glm::vec3 Scene::GetAmbientColor() const
+{
+	return ambientColor;
+}
+
+void Scene::SetAmbientColor(glm::vec3 ambientColor)
+{
+	this->ambientColor = ambientColor;
 }
