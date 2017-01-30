@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
 		Bitmap{"textures/skybox_sunset/back.png"}
 	));
 
-	scene.SetAmbientColor(glm::vec3{ 0.01f, 0.01f, 0.01f });
+	scene.SetAmbientColor(glm::vec3{ 0.02f, 0.02f, 0.02f });
 
 	auto teapot = ModelLoader::Load("models/teapot/teapot.obj");
 	scene.AddChild(teapot)->GetTransform().SetScale(0.032f);
@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
 		auto renderable = tv->GetDirectChildren().front()->GetComponent<Renderable>();
 		auto mat = std::dynamic_pointer_cast<DiffuseMaterial>(renderable->GetMaterial());
 		mat->specularIntensity = 0.0f;
-		mat->emissive = 40.0f;
+		mat->emissive = 1.0f;
 	}
 
 	//auto directionalLight = scene.NewChild();
