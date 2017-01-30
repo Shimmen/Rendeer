@@ -14,6 +14,21 @@ CameraComponent::CameraComponent(float aspectRatio, float nearPlane, float farPl
 	assert(fovOrSize > 0.0f);
 }
 
+std::shared_ptr<FrameBuffer> CameraComponent::GetTarget() const
+{
+	return target;
+}
+
+void CameraComponent::SetTarget(std::shared_ptr<FrameBuffer> target)
+{
+	this->target = target;
+}
+
+void CameraComponent::SetAsMainCamera()
+{
+	this->target = nullptr;
+}
+
 glm::mat4 CameraComponent::GetViewMatrix() const
 {
 	const Transform& transform = GetOwnerEntity().GetTransform();

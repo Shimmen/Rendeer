@@ -35,6 +35,8 @@ private:
 	void DrawSkybox(const CameraComponent& camera, const TextureCube& skyboxTexture) const;
 	void GenerateBloom() const;
 
+	void RenderCameras(std::vector<std::shared_ptr<Entity>> cameras) const;
+
 private:
 
 	const Window *const window;

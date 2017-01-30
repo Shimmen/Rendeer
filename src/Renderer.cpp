@@ -52,8 +52,6 @@ void Renderer::Render(const Scene& scene)
 		first = false;
 	}
 
-	auto camera = scene.GetMainCamera();
-
 	// All entities that are renderable are considered to be geometry (for now)
 	std::vector<std::shared_ptr<Entity>> geometry{};
 	scene.GetEntities<Renderable>(geometry);
@@ -61,12 +59,19 @@ void Renderer::Render(const Scene& scene)
 	std::vector<std::shared_ptr<Entity>> lights{};
 	scene.GetEntities<LightComponent>(lights);
 
-	GeometryPass(geometry, *camera);
-	LightPass(scene, geometry, lights, *camera);
+	std::vector<std::shared_ptr<Entity>> cameras{};
+	scene.GetEntities<CameraComponent>(cameras);
+
+	RenderCameras(cameras);
+
+	auto mainCamera = scene.GetMainCamera();
+
+	GeometryPass(geometry, *mainCamera);
+	LightPass(scene, geometry, lights, *mainCamera);
 
 	if (scene.GetSkybox())
 	{
-		DrawSkybox(*camera, *scene.GetSkybox());
+		DrawSkybox(*mainCamera, *scene.GetSkybox());
 	}
 
 	GenerateBloom();
@@ -122,8 +127,6 @@ void Renderer::GeometryPass(const std::vector<std::shared_ptr<Entity>>& entities
 void Renderer::LightPass(const Scene& scene, const std::vector<std::shared_ptr<Entity>>& geometry, const std::vector<std::shared_ptr<Entity>>& lights, const CameraComponent& camera) const
 {
 	lightAccumulationBuffer.BindAsDrawFrameBuffer();
-	GL::SetClearColor(0, 0, 0, 0);
-	GL::Clear(GL_COLOR_BUFFER_BIT);
 
 	// Ambient light pass (could be optimized to be done while filling g-buffer)
 	ambientShader.Bind();
@@ -285,6 +288,22 @@ void Renderer::GenerateBloom() const
 	quad.Render();
 	GL::SetBlendingEnabled(false);
 */
+}
+
+void Renderer::RenderCameras(std::vector<std::shared_ptr<Entity>> cameras) const
+{
+	for (auto camera : cameras)
+	{
+		auto cameraComp = camera->GetComponent<CameraComponent>();
+		if (cameraComp->GetTarget() != nullptr)
+		{
+			// TODO: Simply render every geometry object into the target with some ambient component for now
+			// (later we could do possibly do the whole Geometry+Light pass into the camera target
+			cameraComp->GetTarget()->BindAsDrawFrameBuffer();
+			GL::SetClearColor(1, 0, 1, 1);
+			GL::Clear(GL_COLOR_BUFFER_BIT);
+		}
+	}
 }
 
 void Renderer::RenderTextureToScreen(const Texture2D& texture)

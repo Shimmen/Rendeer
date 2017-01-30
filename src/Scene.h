@@ -21,7 +21,6 @@ public:
 	Scene();
 
 	std::shared_ptr<CameraComponent> GetMainCamera() const;
-	void SetMainCamera(std::shared_ptr<CameraComponent> cameraComponent);
 
 	std::shared_ptr<TextureCube> GetSkybox() const;
 	void SetSkybox(std::shared_ptr<TextureCube> skybox);
@@ -35,9 +34,7 @@ public:
 
 private:
 
-	std::shared_ptr<CameraComponent> mainCamera;
 	std::shared_ptr<TextureCube> skybox;
-
 	glm::vec3 ambientColor;
 
 };

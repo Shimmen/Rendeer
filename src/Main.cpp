@@ -51,7 +51,6 @@ int main(int argc, char *argv[])
 		glm::angleAxis(0.15f, glm::vec3{ 1, 0, 0 })
 	);
 	scene.AddChild(camera);
-	scene.SetMainCamera(camera->GetComponent<CameraComponent>());
 
 	scene.SetSkybox(std::make_shared<TextureCube>(
 		Bitmap{"textures/skybox_sunset/left.png"},
@@ -70,20 +69,6 @@ int main(int argc, char *argv[])
 	auto sponza = ModelLoader::Load("models/dabrovic-sponza/sponza.obj");
 	scene.AddChild(sponza);
 
-	auto tv = ModelLoader::Load("models/cube.obj");
-	tv->GetTransform()
-		.SetPosition(15.0f, 1.75f, 0)
-		.SetScale(16.0f / 9.0f, 1, 0.05f)
-		.Rotate(glm::vec3{0,1,0}, 3.1415f / 2.0f);
-	scene.AddChild(tv);
-	{
-		// HACK!!! There needs to be a real nice way to search for a component in a scene graph!
-		auto renderable = tv->GetDirectChildren().front()->GetComponent<Renderable>();
-		auto mat = std::dynamic_pointer_cast<DiffuseMaterial>(renderable->GetMaterial());
-		mat->specularIntensity = 0.0f;
-		mat->emissive = 1.0f;
-	}
-
 	//auto directionalLight = scene.NewChild();
 	//directionalLight->GetTransform().SetOrientation(glm::quat{ 0.00873f, 0.0f, 0.0f, 0.99996f });
 	//directionalLight->AddComponent(std::make_shared<DirectionalLight>(glm::vec3{ 0.92f, 0.95f, 0.88f }, 1.5f));
@@ -96,6 +81,30 @@ int main(int argc, char *argv[])
 		.SetPosition(glm::vec3{ 0, 10.0f, 0 })
 		.SetOrientation(glm::angleAxis(3.141592f / 2.0f, glm::vec3{1, 0, 0 }));
 	spotLight->AddComponent(std::make_shared<SpotLight>(glm::vec3{ 1.0f, 0.6f, 0.6f }, 12.0f, glm::radians(40.0f), glm::radians(5.0f)));
+
+	// Set up the extra camera
+	auto extraCamera = std::make_shared<CameraComponent>(16.0f / 9.0f, 0.1f, 1000.0f, glm::radians(50.0f));
+	auto extraCameraTexture = std::make_shared<Texture2D>(160, 90, GL_RGBA, GL_RGBA8, GL_CLAMP_TO_EDGE, GL_NEAREST, GL_NEAREST);
+	auto extraCameraTarget = std::make_shared<FrameBuffer>();
+	extraCameraTarget->Attach(extraCameraTexture.get(), GL_COLOR_ATTACHMENT0);
+	extraCamera->SetTarget(extraCameraTarget);
+	spotLight->NewChild()->AddComponent(extraCamera);
+
+	// Set up the extra camera target model
+	auto tv = ModelLoader::Load("models/cube.obj");
+	tv->GetTransform()
+	.SetPosition(15.0f, 1.75f, 0)
+	.SetScale(16.0f / 9.0f, 1, 0.05f)
+	.Rotate(glm::vec3{0,1,0}, 3.1415f / 2.0f);
+	scene.AddChild(tv);
+	{
+		// HACK!!! There needs to be a real nice way to search for a component in a scene graph!
+		auto renderable = tv->GetDirectChildren().front()->GetComponent<Renderable>();
+		auto mat = std::dynamic_pointer_cast<DiffuseMaterial>(renderable->GetMaterial());
+		mat->diffuseTexture = extraCameraTexture;
+		mat->specularIntensity = 0.0f;
+		mat->emissive = 1.0f;
+	}
 
 	//
 	// Render/game loop

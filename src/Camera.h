@@ -5,6 +5,7 @@
 #include "Component.h"
 
 class Window;
+class FrameBuffer;
 
 class CameraComponent: public Component
 {
@@ -22,11 +23,16 @@ public:
 
 	virtual void Init() {};
 
+	std::shared_ptr<FrameBuffer> GetTarget() const;
+	void SetTarget(std::shared_ptr<FrameBuffer> target);
+	void SetAsMainCamera();
+
 	glm::mat4 GetViewMatrix() const;
 	glm::mat4 GetProjectionMatrix() const;
 
 private:
 
+	std::shared_ptr<FrameBuffer> target;
 	float aspectRatio;
 	
 	float nearClippingPlane;
