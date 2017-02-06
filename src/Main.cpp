@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
 
 	// Set up the extra camera
 	auto extraCamera = std::make_shared<CameraComponent>(16.0f / 9.0f, 0.1f, 1000.0f, glm::radians(50.0f));
-	auto extraCameraTexture = std::make_shared<Texture2D>(160, 90, GL_RGBA, GL_RGBA8, GL_CLAMP_TO_EDGE, GL_NEAREST, GL_NEAREST);
+	auto extraCameraTexture = std::make_shared<Texture2D>(853, 480, GL_RGBA, GL_RGBA8, GL_CLAMP_TO_EDGE, GL_NEAREST, GL_NEAREST);
 	auto extraCameraTarget = std::make_shared<FrameBuffer>();
 	extraCameraTarget->Attach(extraCameraTexture.get(), GL_COLOR_ATTACHMENT0);
 	extraCamera->SetTarget(extraCameraTarget);
@@ -93,9 +93,9 @@ int main(int argc, char *argv[])
 	// Set up the extra camera target model
 	auto tv = ModelLoader::Load("models/cube.obj");
 	tv->GetTransform()
-	.SetPosition(15.0f, 1.75f, 0)
-	.SetScale(16.0f / 9.0f, 1, 0.05f)
-	.Rotate(glm::vec3{0,1,0}, 3.1415f / 2.0f);
+		.SetPosition(15.0f, 2.3f, 0)
+		.SetScale(1.8f).Scale(0.05f, 16.0f / 9.0f, 1) // TODO: Fix mirroring etc.
+		.Rotate(glm::vec3{1,0,0}, 3.1415f / 2.0f);
 	scene.AddChild(tv);
 	{
 		// HACK!!! There needs to be a real nice way to search for a component in a scene graph!
@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
 		auto mat = std::dynamic_pointer_cast<DiffuseMaterial>(renderable->GetMaterial());
 		mat->diffuseTexture = extraCameraTexture;
 		mat->specularIntensity = 0.0f;
-		mat->emissive = 1.0f;
+		mat->emissive = 0.25f;
 	}
 
 	//

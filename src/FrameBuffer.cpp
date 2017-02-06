@@ -3,7 +3,8 @@
 #include "GLState.h"
 #include "Texture2D.h"
 
-/*static*/ GLuint FrameBuffer::lastBound = 0;
+/*static*/ GLuint FrameBuffer::lastBoundDraw = 0;
+/*static*/ GLuint FrameBuffer::lastBoundRead = 0;
 
 FrameBuffer::FrameBuffer()
 {
@@ -67,10 +68,10 @@ bool FrameBuffer::IsComplete(GLenum *statusIfNotComplete) const
 
 void FrameBuffer::BindAsDrawFrameBuffer(bool setViewport, bool setDrawBuffers) const
 {
-	if (handle != lastBound)
+	if (handle != lastBoundDraw)
 	{
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, handle);
-		lastBound = handle;
+		lastBoundDraw = handle;
 	}
 
 	// Always set viewport and draw buffers if requested, even if the correct frame buffer is bound.
@@ -92,10 +93,9 @@ void FrameBuffer::BindAsDrawFrameBuffer(bool setViewport, bool setDrawBuffers) c
 
 void FrameBuffer::BindAsReadFrameBuffer() const
 {
-	static GLuint lastBound = 0;
-	if (handle != lastBound)
+	if (handle != lastBoundRead)
 	{
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, handle);
-		lastBound = handle;
+		lastBoundRead = handle;
 	}
 }

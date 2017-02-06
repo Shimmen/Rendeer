@@ -27,7 +27,8 @@ public:
 
 	void MakeCurrent() const;
 
-	void BindAsDrawFramebuffer() const;
+	void BindAsDrawFrameBuffer() const;
+	void BindAsReadFrameBuffer() const;
 
 	bool IsFullscreen() const;
 

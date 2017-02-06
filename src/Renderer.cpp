@@ -83,7 +83,7 @@ void Renderer::Render(const Scene& scene)
 	//RenderTextureToScreen(bloomTexture); window->SwapBuffers(); return;
 
 	// Render light accumulation buffer onto screen with final post processing step(like tone mapping etc.)
-	window->BindAsDrawFramebuffer();
+	window->BindAsDrawFrameBuffer();
 	GL::SetDepthTest(false);
 	GL::SetBlending(false);
 
@@ -299,16 +299,19 @@ void Renderer::RenderCameras(std::vector<std::shared_ptr<Entity>> cameras) const
 		{
 			// TODO: Simply render every geometry object into the target with some ambient component for now
 			// (later we could do possibly do the whole Geometry+Light pass into the camera target
+
+			// Since the extra camera is placed at the same place as the main camera, this neat trick works!
 			cameraComp->GetTarget()->BindAsDrawFrameBuffer();
-			GL::SetClearColor(1, 0, 1, 1);
-			GL::Clear(GL_COLOR_BUFFER_BIT);
+			auto window = Window::CurrentWindow();
+			window->BindAsReadFrameBuffer();
+			glBlitFramebuffer(0, 0, window->GetFramebufferWidth(), window->GetFramebufferHeight(), 0, 0, 853, 480, GL_COLOR_BUFFER_BIT, GL_LINEAR); // HACK: Hardcoded sizes!
 		}
 	}
 }
 
 void Renderer::RenderTextureToScreen(const Texture2D& texture)
 {
-	window->BindAsDrawFramebuffer();
+	window->BindAsDrawFrameBuffer();
 	nofilterFilter.Bind();
 
 	texture.Bind(0);

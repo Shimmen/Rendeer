@@ -30,9 +30,11 @@ protected:
 	std::vector<GLenum> drawBuffers;
 	std::map<GLenum, const Texture2D *> attachments;
 
-	static GLuint lastBound;
+	static GLuint lastBoundDraw;
+	static GLuint lastBoundRead;
 
 	// We want the window to be able to change the lastBound parameter to 0 when bound!
-	friend void Window::BindAsDrawFramebuffer() const;
+	friend void Window::BindAsDrawFrameBuffer() const;
+	friend void Window::BindAsReadFrameBuffer() const;
 
 };
