@@ -120,9 +120,6 @@ int main(int argc, char *argv[])
 	double currentTime = 0.0;
 	double previousTime = glfwGetTime();
 
-	double fpsTimer = 0.0;
-	int fpsTimerCount = 0;
-
 	float animation = 0.0f;
 
 	bool stickDirectionalLightToCamera = false;
@@ -134,18 +131,6 @@ int main(int argc, char *argv[])
 		const double dt = currentTime - previousTime;
 		const float deltaTime = static_cast<float>(dt);
 		previousTime = currentTime;
-
-		fpsTimer += dt;
-		fpsTimerCount += 1;
-		if (fpsTimer > 1.0 /* every ~1 second */)
-		{
-			// If time granularity is low (frame time is long), count is not enough for precision
-			int fps = static_cast<int>((fpsTimerCount / fpsTimer) + 0.5);
-			double averageMs = (fpsTimer / fpsTimerCount) * 1000.0;
-			printf("Avg frame time: %.2f ms, %d fps\n", averageMs, fps);
-			fpsTimer = 0.0;
-			fpsTimerCount = 0;
-		}
 
 		window.PollEvents();
 		ImGuiAdapter::NewFrame(deltaTime);
