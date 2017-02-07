@@ -3,6 +3,7 @@
 #include "Window.h"
 
 Mouse::Mouse(GLFWwindow *glfwWindow)
+	: glfwWindow(glfwWindow)
 {
 	// Set all buttons to false
 	memset(isButtonDown, 0, MOUSE_BUTTON_COUNT * sizeof(bool));
@@ -37,7 +38,9 @@ bool Mouse::WasButtonReleased(int key) const
 
 glm::vec2 Mouse::GetMousePosition() const
 {
-	return glm::vec2((float)currentXPosition, (float)currentYPosition);
+	double x, y;
+	glfwGetCursorPos(glfwWindow, &x, &y);
+	return glm::vec2(static_cast<float>(x), static_cast<float>(y));
 }
 
 glm::vec2 Mouse::GetMouseDelta() const

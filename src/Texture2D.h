@@ -13,7 +13,9 @@ public:
 
 	Texture2D();
 	Texture2D(const std::string& filename, bool srgb, GLint magFilter = GL_LINEAR, GLint wrapMode = GL_REPEAT);
-	Texture2D(int width, int height, GLenum format, GLenum internalFormat, GLint wrapMode, GLint magFilter, GLint minFilter, GLenum type = GL_UNSIGNED_BYTE);
+	Texture2D(int width, int height, int numComponents, const unsigned char *data = nullptr);
+
+	Texture2D(int width, int height, GLenum format, GLenum internalFormat, GLint wrapMode, GLint magFilter, GLint minFilter, GLenum type = GL_UNSIGNED_BYTE, const GLvoid *data = nullptr);
 
 	bool Load(const std::string& filename, bool srgb, GLint magFilter = GL_LINEAR, GLint wrapMode = GL_REPEAT, bool generateMipmaps = true);
 	

@@ -66,7 +66,7 @@ private:
 	Shader postProcessShader{ "Generic/ScreenSpaceQuad.vsh", "Postprocess/Postprocess.fsh" };
 
 	// Debug stuff etc.
-	void RenderTextureToScreen(const Texture2D& texture);
+public: void RenderTextureToScreen(const Texture2D& texture, bool alphaBlending = false);
 	Shader nofilterFilter{"Generic/ScreenSpaceQuad.vsh", "Filtering/Nofilter.fsh"};
 
 };

@@ -92,8 +92,6 @@ void Renderer::Render(const Scene& scene)
 	lightAccumulationTexture.Bind(0);
 	postProcessShader.SetUniform("u_texture", 0);
 	ScreenAlignedQuad::Render();
-
-	window->SwapBuffers();
 }
 
 void Renderer::GeometryPass(const std::vector<std::shared_ptr<Entity>>& entities, const CameraComponent& camera) const
@@ -309,7 +307,7 @@ void Renderer::RenderCameras(std::vector<std::shared_ptr<Entity>> cameras) const
 	}
 }
 
-void Renderer::RenderTextureToScreen(const Texture2D& texture)
+void Renderer::RenderTextureToScreen(const Texture2D& texture, bool alphaBlending)
 {
 	window->BindAsDrawFrameBuffer();
 	nofilterFilter.Bind();
@@ -317,17 +315,35 @@ void Renderer::RenderTextureToScreen(const Texture2D& texture)
 	texture.Bind(0);
 	nofilterFilter.SetUniform("u_texture", 0);
 
+	float r, g, b, a;
+	GL::GetClearColor(&r, &g, &b, &a);
 	bool faceCulling = GL::IsFaceCulling();
 	bool depthTest = GL::IsDepthTesting();
 	bool depthMask = GL::GetDepthMask();
+	GLenum eqRGB, eqA;
+	GL::GetBlendEquation(&eqRGB, &eqA);
+	GLenum fnSrcRGB, fnDstRGB, fnSrcA, fnDstA;
+	GL::GetBlendFunction(&fnSrcRGB, &fnDstRGB, &fnSrcA, &fnDstA);
 
 	GL::SetFaceCulling(false);
 	GL::SetDepthTest(false);
 	GL::SetDepthMask(false);
+	GL::SetClearColor(1, 0, 1, 1);
 	GL::Clear(GL_COLOR_BUFFER_BIT);
+
+	GL::SetBlending(alphaBlending);
+	if (alphaBlending)
+	{
+		GL::SetBlendEquation(GL_FUNC_ADD, GL_FUNC_ADD);
+		GL::SetBlendFunction(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	}
+
 	ScreenAlignedQuad::Render();
 
+	GL::SetClearColor(r, g, b, a);
 	GL::SetFaceCulling(faceCulling);
 	GL::SetDepthMask(depthMask);
 	GL::SetDepthTest(depthTest);
+	GL::SetBlendEquation(eqRGB, eqA);
+	GL::SetBlendFunction(fnSrcRGB, fnDstRGB, fnSrcA, fnDstA);
 }

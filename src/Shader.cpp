@@ -48,6 +48,7 @@ void Shader::Bind() const
 	if (handle != currentlyBoundShaderProgram)
 	{
 		glUseProgram(handle);
+		assert(glIsProgram(handle));
 		currentlyBoundShaderProgram = handle;
 	}
 }

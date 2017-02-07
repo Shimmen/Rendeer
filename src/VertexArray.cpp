@@ -22,9 +22,9 @@ void VertexArray::Unbind() const
 	glBindVertexArray(0);
 }
 
-void VertexArray::RenderWithElementArrayBuffer(GLenum polygonType, size_t indexCount, GLenum indexType) const
+void VertexArray::RenderWithElementArrayBuffer(GLenum polygonType, size_t indexCount, GLenum indexType, const GLvoid *offset) const
 {
-	glDrawElements(polygonType, static_cast<GLsizei>(indexCount), indexType, nullptr);
+	glDrawElements(polygonType, static_cast<GLsizei>(indexCount), indexType, offset);
 }
 
 void VertexArray::RenderWithArrayBuffer(GLenum polygonType, int vertexCount, int vertexIndexOffset) const
@@ -32,18 +32,14 @@ void VertexArray::RenderWithArrayBuffer(GLenum polygonType, int vertexCount, int
 	glDrawArrays(polygonType, vertexIndexOffset, vertexCount);
 }
 
-void VertexArray::AddVertexAttribute(int index, int valueCount, GLenum valueType, int stride, void *offset)
+void VertexArray::AddVertexAttribute(int index, int valueCount, GLenum valueType, int stride, void *offset, GLboolean normalize)
 {
 	assert(index < VertexArray::GetMaxNumberOfVertexAttributes());
-	
-	// Assume this for now. I've never seen a reason to have this as true,
-	// (At least not for a floating point processor like for a PC).
-	static const GLboolean normalizeFixedPointValues = GL_FALSE;
 
 	GLuint idx = static_cast<GLuint>(index);
 
 	glEnableVertexAttribArray(idx);
-	glVertexAttribPointer(idx, valueCount, valueType, normalizeFixedPointValues, stride, offset);
+	glVertexAttribPointer(idx, valueCount, valueType, normalize, stride, offset);
 }
 
 int VertexArray::GetMaxNumberOfVertexAttributes()

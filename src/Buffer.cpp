@@ -18,6 +18,10 @@ Buffer::~Buffer()
 {
 	// Make sure that all cached data on this buffer handle is invalidated, since a new buffer might be created
 	// with the same handle as this one which wouldn't be compatible with the current caching/optimizing.
+
+	// TODO: Delete the buffer!!!
+	//assert(glIsBuffer(handle));
+	/*
 	for (auto& pair : currentlyBound)
 	{
 		if (pair.second == handle)
@@ -28,6 +32,7 @@ Buffer::~Buffer()
 	}
 
 	glDeleteBuffers(1, &handle);
+	*/
 }
 
 /*static*/
@@ -55,6 +60,7 @@ const Buffer& Buffer::Bind(GLenum target) const
 	if (currentlyBound[target] != handle)
 	{
 		glBindBuffer(target, handle);
+		assert(glIsBuffer(handle));
 		lastBoundTargetForInstance = target;
 		currentlyBound[target] = handle;
 	}
@@ -72,7 +78,7 @@ const Buffer& Buffer::BindAsUniformBuffer(GLuint binding) const
 
 void Buffer::SetData(const void *data, size_t dataSize, GLenum dataUsage) const
 {
-	assert(dataUsage == GL_STATIC_DRAW || dataUsage == GL_DYNAMIC_DRAW);
+	assert(dataUsage == GL_STATIC_DRAW || dataUsage == GL_DYNAMIC_DRAW || dataUsage == GL_STREAM_DRAW);
 	assert(dataSize > 0);
 
 	assert(currentlyBound[lastBoundTargetForInstance] == handle);

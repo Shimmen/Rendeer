@@ -71,6 +71,7 @@ void FrameBuffer::BindAsDrawFrameBuffer(bool setViewport, bool setDrawBuffers) c
 	if (handle != lastBoundDraw)
 	{
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, handle);
+		assert(glIsFramebuffer(handle));
 		lastBoundDraw = handle;
 	}
 
@@ -96,6 +97,7 @@ void FrameBuffer::BindAsReadFrameBuffer() const
 	if (handle != lastBoundRead)
 	{
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, handle);
+		assert(glIsFramebuffer(handle));
 		lastBoundRead = handle;
 	}
 }

@@ -22,6 +22,7 @@ void TextureBase::Bind(GLenum textureTarget, GLuint textureBinding) const
 	assert(textureBinding >= 0 && textureBinding < GetMaxNumberOfCombinedTextureUnits());
 	glActiveTexture(GL_TEXTURE0 + textureBinding);
 	glBindTexture(textureTarget, handle);
+	assert(glIsTexture(handle));
 }
 
 int TextureBase::GetMaxNumberOfCombinedTextureUnits()

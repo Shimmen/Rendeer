@@ -29,7 +29,24 @@ Texture2D::Texture2D(const std::string& filename, bool srgb, GLint magFilter, GL
 	SetAnisotropy(GetMaxAnisotropy());
 }
 
-Texture2D::Texture2D(int width, int height, GLenum format, GLenum internalFormat, GLint wrapMode, GLint magFilter, GLint minFilter, GLenum type)
+Texture2D::Texture2D(int width, int height, int numComponents, const unsigned char *data)
+	: TextureBase()
+	, width(width)
+	,height(height)
+{
+	Bind();
+
+	GLenum sourceFormat = CalculateSourceFormat(numComponents);
+	GLint internalFormat = CalculateInternalFormat(sourceFormat, false, false);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, sourceFormat, GL_UNSIGNED_BYTE, data);
+
+	// Default to linear (can of course be changed later)
+	SetMinFilter(GL_LINEAR);
+	SetMagFilter(GL_LINEAR);
+}
+
+Texture2D::Texture2D(int width, int height, GLenum format, GLenum internalFormat, GLint wrapMode, GLint magFilter, GLint minFilter, GLenum type, const GLvoid *data)
 	: TextureBase()
 	, width{ width }
 	, height{ height }
@@ -42,7 +59,7 @@ Texture2D::Texture2D(int width, int height, GLenum format, GLenum internalFormat
 	SetWrapT(wrapMode);
 	SetAnisotropy(GetMaxAnisotropy());
 
-	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, type, nullptr);
+	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, type, data);
 	GenerateMipmaps();
 }
 

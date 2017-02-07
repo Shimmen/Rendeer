@@ -14,6 +14,7 @@
 #include "Renderer.h"
 #include "Renderable.h"
 #include "ModelLoader.h"
+#include "ImGuiAdapter.h"
 #include "DiffuseMaterial.h"
 
 int main(int argc, char *argv[])
@@ -24,6 +25,7 @@ int main(int argc, char *argv[])
 
 	Window window{ 1280, 720, false, false };
 	Renderer renderer{ &window };
+	ImGuiAdapter::Init(&window);
 
 	// Log default startup stuff
 	Logger& logger = Logger::GetDefaultLogger();
@@ -125,6 +127,7 @@ int main(int argc, char *argv[])
 
 	bool stickDirectionalLightToCamera = false;
 
+	window.Focus();
 	while (!window.IsCloseRequested())
 	{
 		currentTime = glfwGetTime();
@@ -145,16 +148,16 @@ int main(int argc, char *argv[])
 		}
 
 		window.PollEvents();
+		ImGuiAdapter::NewFrame(deltaTime);
 
-		camera->Update(deltaTime, window);
-
-		if (window.GetKeyboard().WasKeyPressed(GLFW_KEY_ESCAPE) || window.GetMouse().WasButtonPressed(GLFW_MOUSE_BUTTON_RIGHT))
+		if (window.IsCursorHidden())
 		{
-			window.SetCursorHidden(false);
+			camera->Update(deltaTime, window);
 		}
-		if (window.GetMouse().WasButtonPressed(GLFW_MOUSE_BUTTON_LEFT))
+
+		if (window.GetKeyboard().WasKeyPressed(GLFW_KEY_LEFT_ALT))
 		{
-			window.SetCursorHidden(true);
+			window.SetCursorHidden(!window.IsCursorHidden());
 		}
 
 		animation += deltaTime;
@@ -183,10 +186,17 @@ int main(int argc, char *argv[])
 		}
 
 		renderer.Render(scene);
+
+		ImGui::ShowMetricsWindow();
+		ImGui::Render();
+
+		window.SwapBuffers();
 	}
 
 	logger.LogSubheading("Render loop end");
 	logger.LogTimestamp();
+
+	ImGuiAdapter::Deinit();
 
 	return 0;
 }

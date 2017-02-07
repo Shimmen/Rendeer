@@ -43,6 +43,10 @@
 		F4433AF01DEF1A7B0058CD6C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F4433AE61DEEFAAF0058CD6C /* CoreGraphics.framework */; };
 		F4433AF21DEF1AEB0058CD6C /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F4433AF11DEF1AEB0058CD6C /* libz.tbd */; };
 		F4433AF41DEF1B1F0058CD6C /* glad.c in Sources */ = {isa = PBXBuildFile; fileRef = F4433AF31DEF1B1F0058CD6C /* glad.c */; };
+		F48E24081E48A805001B7CD0 /* imgui_demo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F48E24051E48A805001B7CD0 /* imgui_demo.cpp */; };
+		F48E24091E48A805001B7CD0 /* imgui_draw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F48E24061E48A805001B7CD0 /* imgui_draw.cpp */; };
+		F48E240A1E48A805001B7CD0 /* imgui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F48E24071E48A805001B7CD0 /* imgui.cpp */; };
+		F48E240D1E48A862001B7CD0 /* ImGuiAdapter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F48E240B1E48A862001B7CD0 /* ImGuiAdapter.cpp */; };
 		F4B34AAB1E377EE900781A19 /* GLState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4B34AAA1E377EE900781A19 /* GLState.cpp */; };
 /* End PBXBuildFile section */
 
@@ -126,6 +130,11 @@
 		F4433AEC1DEF1A330058CD6C /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		F4433AF11DEF1AEB0058CD6C /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		F4433AF31DEF1B1F0058CD6C /* glad.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = glad.c; path = ../../../deps/glad/src/glad.c; sourceTree = "<group>"; };
+		F48E24051E48A805001B7CD0 /* imgui_demo.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = imgui_demo.cpp; path = ../../../deps/imgui/src/imgui_demo.cpp; sourceTree = "<group>"; };
+		F48E24061E48A805001B7CD0 /* imgui_draw.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = imgui_draw.cpp; path = ../../../deps/imgui/src/imgui_draw.cpp; sourceTree = "<group>"; };
+		F48E24071E48A805001B7CD0 /* imgui.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = imgui.cpp; path = ../../../deps/imgui/src/imgui.cpp; sourceTree = "<group>"; };
+		F48E240B1E48A862001B7CD0 /* ImGuiAdapter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ImGuiAdapter.cpp; path = ../../../src/ImGuiAdapter.cpp; sourceTree = "<group>"; };
+		F48E240C1E48A862001B7CD0 /* ImGuiAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImGuiAdapter.h; path = ../../../src/ImGuiAdapter.h; sourceTree = "<group>"; };
 		F4B34AA91E377D7600781A19 /* GLState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLState.h; path = ../../../src/GLState.h; sourceTree = "<group>"; };
 		F4B34AAA1E377EE900781A19 /* GLState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GLState.cpp; path = ../../../src/GLState.cpp; sourceTree = "<group>"; };
 		F4E48A2A1DF0D8E300F6AFAC /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; name = assets; path = ../../../assets; sourceTree = "<group>"; };
@@ -246,6 +255,8 @@
 				F4433AA61DEEF7240058CD6C /* Renderable.h */,
 				F4433AB91DEEF7240058CD6C /* Window.cpp */,
 				F4433ABA1DEEF7240058CD6C /* Window.h */,
+				F48E240B1E48A862001B7CD0 /* ImGuiAdapter.cpp */,
+				F48E240C1E48A862001B7CD0 /* ImGuiAdapter.h */,
 			);
 			name = src;
 			sourceTree = "<group>";
@@ -268,6 +279,9 @@
 		F4433AF61DEF1B3B0058CD6C /* deps */ = {
 			isa = PBXGroup;
 			children = (
+				F48E24051E48A805001B7CD0 /* imgui_demo.cpp */,
+				F48E24061E48A805001B7CD0 /* imgui_draw.cpp */,
+				F48E24071E48A805001B7CD0 /* imgui.cpp */,
 				F4433AF31DEF1B1F0058CD6C /* glad.c */,
 			);
 			name = deps;
@@ -338,6 +352,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F48E24081E48A805001B7CD0 /* imgui_demo.cpp in Sources */,
+				F48E24091E48A805001B7CD0 /* imgui_draw.cpp in Sources */,
+				F48E240A1E48A805001B7CD0 /* imgui.cpp in Sources */,
 				F4433AF41DEF1B1F0058CD6C /* glad.c in Sources */,
 				F4433AC41DEEF7240058CD6C /* Keyboard.cpp in Sources */,
 				F4433ABF1DEEF7240058CD6C /* Renderer.cpp in Sources */,
@@ -361,6 +378,7 @@
 				F40F970B1E3132BC004D2C8F /* Bitmap.cpp in Sources */,
 				F4433ACE1DEEF7240058CD6C /* Shader.cpp in Sources */,
 				F4433AC51DEEF7240058CD6C /* Lighting.cpp in Sources */,
+				F48E240D1E48A862001B7CD0 /* ImGuiAdapter.cpp in Sources */,
 				F4433AD31DEEF7240058CD6C /* Transform.cpp in Sources */,
 				F4433ACB1DEEF7240058CD6C /* Mouse.cpp in Sources */,
 				F4433AC01DEEF7240058CD6C /* DiffuseMaterial.cpp in Sources */,
@@ -419,6 +437,7 @@
 					"../../deps/glm/include/**",
 					"../../deps/stb/include/**",
 					"../../deps/assimp/include/**",
+					"../../deps/imgui/include/**",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"../../deps/glfw/lib/mac/**",
@@ -472,6 +491,7 @@
 					"../../deps/glm/include/**",
 					"../../deps/stb/include/**",
 					"../../deps/assimp/include/**",
+					"../../deps/imgui/include/**",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"../../deps/glfw/lib/mac/**",

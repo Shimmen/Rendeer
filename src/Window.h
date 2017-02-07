@@ -36,12 +36,20 @@ public:
 	int GetFramebufferWidth() const;
 	int GetFramebufferHeight() const;
 	float GetAspectRatio() const;
+	void GetWindowSize(int *width, int *height) const;
 
 	bool IsVsyncEnabled() const;
 	void SetVsyncEnabled(bool enabled);
 	
 	bool IsCursorHidden() const;
 	void SetCursorHidden(bool hidden) const;
+
+	void Focus() const;
+	bool IsFocused() const;
+
+	const char *GetClipboardText() const;
+	void SetClipboardText(const std::string& text) const;
+	void SetClipboardText(const char *text) const;
 
 	const Keyboard& GetKeyboard() const;
 	const Mouse& GetMouse() const;

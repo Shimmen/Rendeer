@@ -42,10 +42,13 @@ private:
 	bool wasButtonPressed[MOUSE_BUTTON_COUNT];
 	bool wasButtonReleased[MOUSE_BUTTON_COUNT];
 
+	// Should only be used for getting the mouse delta etc. NOT for querying current position, since this accumulates errors and might "lag" behind.
 	double currentXPosition{ 0 };
 	double currentYPosition{ 0 };
 
 	double lastXPosition{0};
 	double lastYPosition{0};
+
+	GLFWwindow *glfwWindow;
 
 };

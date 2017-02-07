@@ -191,6 +191,11 @@ float Window::GetAspectRatio() const
 	return ar;
 }
 
+void Window::GetWindowSize(int *width, int *height) const
+{
+	glfwGetWindowSize(glfwWindow, width, height);
+}
+
 bool Window::IsVsyncEnabled() const
 {
 	return vsyncEnabled;
@@ -213,6 +218,32 @@ void Window::SetCursorHidden(bool hidden) const
 {
 	int mode = (hidden) ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL;
 	glfwSetInputMode(glfwWindow, GLFW_CURSOR, mode);
+}
+
+void Window::Focus() const
+{
+	glfwFocusWindow(glfwWindow);
+}
+
+bool Window::IsFocused() const
+{
+
+	return glfwGetWindowAttrib(glfwWindow, GLFW_FOCUSED);
+}
+
+const char *Window::GetClipboardText() const
+{
+	return glfwGetClipboardString(glfwWindow);
+}
+
+void Window::SetClipboardText(const std::string& text) const
+{
+	SetClipboardText(text.c_str());
+}
+
+void Window::SetClipboardText(const char *text) const
+{
+	glfwSetClipboardString(glfwWindow, text);
 }
 
 const Keyboard& Window::GetKeyboard() const
