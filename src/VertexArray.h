@@ -18,16 +18,14 @@ public:
 	void RenderWithElementArrayBuffer(GLenum polygonType, size_t indexCount, GLenum indexType = GL_UNSIGNED_INT, const GLvoid *offset = nullptr) const;
 	void RenderWithArrayBuffer(GLenum polygonType, int vertexCount, int vertexIndexOffset = 0) const;
 
-	// This will also enable the relevant vertex attribute array
-	void AddVertexAttribute(int index, int valueCount, GLenum valueType, int stride = 0, void *offset = nullptr, GLboolean normalize = GL_FALSE);
-
-public:
+	// NOTE: This will also enable the relevant vertex attribute array
+	void AddVertexAttribute(unsigned int index, int valueCount, GLenum valueType, int stride = 0, void *offset = nullptr, GLboolean normalize = GL_FALSE);
 
 	static int GetMaxNumberOfVertexAttributes();
 
 private:
 
-	static int maxNumberOfVertexAttributes;
+	static GLuint currentlyBound;
 
 };
 

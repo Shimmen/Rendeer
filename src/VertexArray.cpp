@@ -2,6 +2,8 @@
 
 #include <cassert>
 
+/*static*/ GLuint VertexArray::currentlyBound = 0;
+
 VertexArray::VertexArray()
 {
 	glGenVertexArrays(1, &handle);
@@ -14,12 +16,21 @@ VertexArray::~VertexArray()
 
 void VertexArray::Bind() const
 {
-	glBindVertexArray(handle);
+	if (currentlyBound != handle)
+	{
+		glBindVertexArray(handle);
+		assert(glIsVertexArray(handle));
+		currentlyBound = handle;
+	}
 }
 
 void VertexArray::Unbind() const
 {
-	glBindVertexArray(0);
+	if (currentlyBound != 0)
+	{
+		glBindVertexArray(0);
+		currentlyBound = 0;
+	}
 }
 
 void VertexArray::RenderWithElementArrayBuffer(GLenum polygonType, size_t indexCount, GLenum indexType, const GLvoid *offset) const
@@ -32,27 +43,19 @@ void VertexArray::RenderWithArrayBuffer(GLenum polygonType, int vertexCount, int
 	glDrawArrays(polygonType, vertexIndexOffset, vertexCount);
 }
 
-void VertexArray::AddVertexAttribute(int index, int valueCount, GLenum valueType, int stride, void *offset, GLboolean normalize)
+void VertexArray::AddVertexAttribute(unsigned int index, int valueCount, GLenum valueType, int stride, void *offset, GLboolean normalize)
 {
 	assert(index < VertexArray::GetMaxNumberOfVertexAttributes());
-
-	GLuint idx = static_cast<GLuint>(index);
-
-	glEnableVertexAttribArray(idx);
-	glVertexAttribPointer(idx, valueCount, valueType, normalize, stride, offset);
+	glEnableVertexAttribArray(index);
+	glVertexAttribPointer(index, valueCount, valueType, normalize, stride, offset);
 }
 
 int VertexArray::GetMaxNumberOfVertexAttributes()
 {
-	if (VertexArray::maxNumberOfVertexAttributes == -1)
+	static int maxCount = -1;
+	if (maxCount == -1)
 	{
-		GLint64 count;
-		glGetInteger64v(GL_MAX_VERTEX_ATTRIBS, &count);
-		VertexArray::maxNumberOfVertexAttributes = static_cast<int>(count);
+		glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &maxCount);
 	}
-
-	return VertexArray::maxNumberOfVertexAttributes;
+	return maxCount;
 }
-
-/* static */ int VertexArray::maxNumberOfVertexAttributes{ -1 };
-
