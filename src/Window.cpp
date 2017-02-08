@@ -77,7 +77,8 @@ Window::Window(int width, int height, bool fullscreen, bool vSync)
 	SetVsyncEnabled(vSync);
 	SetCursorHidden(false);
 
-	keyboard.reset(new Keyboard(glfwWindow));
+	glfwSetKeyCallback(glfwWindow, Window::KeyEventCallback);
+	//keyboard.reset(new Keyboard(glfwWindow));
 	mouse.reset(new Mouse(glfwWindow));
 }
 
@@ -108,7 +109,12 @@ void Window::PollEvents()
 	// Very important that these get called BEFORE polling new events
 	// If not, the wasPressed/Released arrays will be cleared as soon
 	// as they get filled in by glfwPollEvents().
-	keyboard->Update();
+
+	// Reset keyboard pressed & released keys for this frame
+	memset(wasKeyPressed, false, KEYBOARD_KEY_COUNT * sizeof(bool));
+	memset(wasKeyReleased, false, KEYBOARD_KEY_COUNT * sizeof(bool));
+
+	//keyboard->Update();
 	mouse->Update();
 	glfwPollEvents();
 }
@@ -246,12 +252,45 @@ void Window::SetClipboardText(const char *text) const
 	glfwSetClipboardString(glfwWindow, text);
 }
 
-const Keyboard& Window::GetKeyboard() const
-{
-	return *this->keyboard;
-}
-
 const Mouse& Window::GetMouse() const
 {
 	return *this->mouse;
+}
+
+bool Window::IsKeyDown(int key) const
+{
+	return isKeyDown[key];
+}
+
+bool Window::WasKeyPressed(int key) const
+{
+	return wasKeyPressed[key];
+}
+
+bool Window::WasKeyReleased(int key) const
+{
+	return wasKeyPressed[key];
+}
+
+/*static*/ void Window::KeyEventCallback(GLFWwindow *glfwWindow, int key, int scancode, int action, int mods)
+{
+	void *windowUserPtr = glfwGetWindowUserPointer(glfwWindow);
+	auto window = static_cast<Window *>(windowUserPtr);
+
+	switch (action)
+	{
+		case GLFW_PRESS:
+			window->wasKeyPressed[key] = true;
+			window->isKeyDown[key] = true;
+			break;
+
+		case GLFW_RELEASE:
+			window->wasKeyReleased[key] = true;
+			window->isKeyDown[key] = false;
+			break;
+
+		case GLFW_REPEAT:
+		default:
+			break;
+	}
 }

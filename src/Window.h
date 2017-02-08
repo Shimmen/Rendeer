@@ -6,7 +6,6 @@
 #include <string>
 #include <memory>
 
-#include "Keyboard.h"
 #include "Mouse.h"
 
 class Window
@@ -51,8 +50,21 @@ public:
 	void SetClipboardText(const std::string& text) const;
 	void SetClipboardText(const char *text) const;
 
-	const Keyboard& GetKeyboard() const;
 	const Mouse& GetMouse() const;
+
+	//
+	// Keyboard related
+	//
+
+	bool IsKeyDown(int key) const;
+	bool WasKeyPressed(int key) const;
+	bool WasKeyReleased(int key) const;
+
+	static void KeyEventCallback(GLFWwindow *glfwWindow, int key, int scancode, int action, int mods);
+
+	//
+	// Mouse related
+	//
 
 private:
 
@@ -65,12 +77,25 @@ private:
 	bool fullscreen;
 	bool vsyncEnabled;
 
+	//
+	// Keyboard related
+	//
+
+	// The highest possible KeyCode is GLFW_KEY_LAST.
+	static const int KEYBOARD_KEY_COUNT{ GLFW_KEY_LAST };
+
+	bool isKeyDown[KEYBOARD_KEY_COUNT] = { 0 };
+	bool wasKeyPressed[KEYBOARD_KEY_COUNT] = { 0 };
+	bool wasKeyReleased[KEYBOARD_KEY_COUNT] = { 0 };
+
+	//
+	// Mouse related
+	//
+
 	// The input classes and their callbacks require access to certain members of the Window class
-	friend class Keyboard;
 	friend class Mouse;
 
 	// Pointer types to initialization can be deferred to the constructor body
-	std::unique_ptr<Keyboard> keyboard;
 	std::unique_ptr<Mouse> mouse;
 
 private:

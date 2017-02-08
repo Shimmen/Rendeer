@@ -16,7 +16,6 @@
 		F4433AC11DEEF7240058CD6C /* Entity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4433A8D1DEEF7240058CD6C /* Entity.cpp */; };
 		F4433AC21DEEF7240058CD6C /* FrameBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4433A8F1DEEF7240058CD6C /* FrameBuffer.cpp */; };
 		F4433AC31DEEF7240058CD6C /* GBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4433A911DEEF7240058CD6C /* GBuffer.cpp */; };
-		F4433AC41DEEF7240058CD6C /* Keyboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4433A951DEEF7240058CD6C /* Keyboard.cpp */; };
 		F4433AC51DEEF7240058CD6C /* Lighting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4433A971DEEF7240058CD6C /* Lighting.cpp */; };
 		F4433AC61DEEF7240058CD6C /* Logger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4433A991DEEF7240058CD6C /* Logger.cpp */; };
 		F4433AC71DEEF7240058CD6C /* Main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4433A9B1DEEF7240058CD6C /* Main.cpp */; };
@@ -85,8 +84,6 @@
 		F4433A921DEEF7240058CD6C /* GBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GBuffer.h; path = ../../../src/GBuffer.h; sourceTree = "<group>"; };
 		F4433A931DEEF7240058CD6C /* GeneralUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GeneralUtil.h; path = ../../../src/GeneralUtil.h; sourceTree = "<group>"; };
 		F4433A941DEEF7240058CD6C /* Material.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Material.h; path = ../../../src/Material.h; sourceTree = "<group>"; };
-		F4433A951DEEF7240058CD6C /* Keyboard.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Keyboard.cpp; path = ../../../src/Keyboard.cpp; sourceTree = "<group>"; };
-		F4433A961DEEF7240058CD6C /* Keyboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Keyboard.h; path = ../../../src/Keyboard.h; sourceTree = "<group>"; };
 		F4433A971DEEF7240058CD6C /* Lighting.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Lighting.cpp; path = ../../../src/Lighting.cpp; sourceTree = "<group>"; };
 		F4433A981DEEF7240058CD6C /* Lighting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Lighting.h; path = ../../../src/Lighting.h; sourceTree = "<group>"; };
 		F4433A991DEEF7240058CD6C /* Logger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Logger.cpp; path = ../../../src/Logger.cpp; sourceTree = "<group>"; };
@@ -237,8 +234,6 @@
 				F4433A921DEEF7240058CD6C /* GBuffer.h */,
 				F4433A931DEEF7240058CD6C /* GeneralUtil.h */,
 				F4433A941DEEF7240058CD6C /* Material.h */,
-				F4433A951DEEF7240058CD6C /* Keyboard.cpp */,
-				F4433A961DEEF7240058CD6C /* Keyboard.h */,
 				F4433A971DEEF7240058CD6C /* Lighting.cpp */,
 				F4433A981DEEF7240058CD6C /* Lighting.h */,
 				F4433A991DEEF7240058CD6C /* Logger.cpp */,
@@ -356,7 +351,6 @@
 				F48E24091E48A805001B7CD0 /* imgui_draw.cpp in Sources */,
 				F48E240A1E48A805001B7CD0 /* imgui.cpp in Sources */,
 				F4433AF41DEF1B1F0058CD6C /* glad.c in Sources */,
-				F4433AC41DEEF7240058CD6C /* Keyboard.cpp in Sources */,
 				F4433ABF1DEEF7240058CD6C /* Renderer.cpp in Sources */,
 				F4433AC11DEEF7240058CD6C /* Entity.cpp in Sources */,
 				F4433AC71DEEF7240058CD6C /* Main.cpp in Sources */,

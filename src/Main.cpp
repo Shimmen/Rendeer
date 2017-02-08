@@ -140,7 +140,7 @@ int main(int argc, char *argv[])
 			camera->Update(deltaTime, window);
 		}
 
-		if (window.GetKeyboard().WasKeyPressed(GLFW_KEY_LEFT_ALT))
+		if (window.WasKeyPressed(GLFW_KEY_LEFT_ALT))
 		{
 			window.SetCursorHidden(!window.IsCursorHidden());
 		}
@@ -157,7 +157,7 @@ int main(int argc, char *argv[])
 			6.0f * sinf(1.3f * animation)
 		);
 
-		if (window.GetKeyboard().WasKeyPressed(GLFW_KEY_LEFT_CONTROL))
+		if (window.WasKeyPressed(GLFW_KEY_LEFT_CONTROL))
 		{
 			stickDirectionalLightToCamera = !stickDirectionalLightToCamera;
 		}

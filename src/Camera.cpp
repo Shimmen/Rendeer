@@ -106,14 +106,12 @@ void Camera::Update(float deltaTime, const Window& window)
 	const float baseSpeed = 4.0f; /* m/s */
 	const float speed = baseSpeed * deltaTime;
 
-	auto& keyboard = window.GetKeyboard();
-
-	if (keyboard.IsKeyDown(GLFW_KEY_W) || keyboard.IsKeyDown(GLFW_KEY_UP))    movement.z += speed;
-	if (keyboard.IsKeyDown(GLFW_KEY_S) || keyboard.IsKeyDown(GLFW_KEY_DOWN))  movement.z -= speed;
-	if (keyboard.IsKeyDown(GLFW_KEY_A) || keyboard.IsKeyDown(GLFW_KEY_LEFT))  movement.x -= speed;
-	if (keyboard.IsKeyDown(GLFW_KEY_D) || keyboard.IsKeyDown(GLFW_KEY_RIGHT)) movement.x += speed;
-	if (keyboard.IsKeyDown(GLFW_KEY_SPACE) || keyboard.IsKeyDown(GLFW_KEY_RIGHT_SHIFT))    movement.y += speed;
-	if (keyboard.IsKeyDown(GLFW_KEY_LEFT_SHIFT) || keyboard.IsKeyDown(GLFW_KEY_RIGHT_ALT)) movement.y -= speed;
+	if (window.IsKeyDown(GLFW_KEY_W) || window.IsKeyDown(GLFW_KEY_UP))    movement.z += speed;
+	if (window.IsKeyDown(GLFW_KEY_S) || window.IsKeyDown(GLFW_KEY_DOWN))  movement.z -= speed;
+	if (window.IsKeyDown(GLFW_KEY_A) || window.IsKeyDown(GLFW_KEY_LEFT))  movement.x -= speed;
+	if (window.IsKeyDown(GLFW_KEY_D) || window.IsKeyDown(GLFW_KEY_RIGHT)) movement.x += speed;
+	if (window.IsKeyDown(GLFW_KEY_SPACE) || window.IsKeyDown(GLFW_KEY_RIGHT_SHIFT))    movement.y += speed;
+	if (window.IsKeyDown(GLFW_KEY_LEFT_SHIFT) || window.IsKeyDown(GLFW_KEY_RIGHT_ALT)) movement.y -= speed;
 
 	// Rotate translation to model space and translate
 	movement = GetTransform().RotateVector(movement);
