@@ -4,6 +4,7 @@
 #include <memory>
 
 #include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -70,7 +71,7 @@ int main(int argc, char *argv[])
 		Bitmap{"textures/skybox_sunset/back.png"}
 	));
 
-	scene.SetAmbientColor(glm::vec3{ 0.02f, 0.02f, 0.02f });
+	scene.SetAmbientColor(glm::vec3{ 0.012f, 0.020f, 0.032f });
 
 	auto teapot = ModelLoader::Load("models/teapot/teapot.obj");
 	scene.AddChild(teapot)->GetTransform().SetScale(0.032f);
@@ -177,11 +178,24 @@ int main(int argc, char *argv[])
 			spotLight->GetTransform().SetPosition(cameraPosition).SetOrientation(cameraOrientation);
 		}
 
+		ImGui::Begin("Rendeer");
+		{
+			static bool showMetrics = false;
+			ImGui::Checkbox("Show metrics", &showMetrics);
+
+			if (showMetrics)
+			{
+				ImGui::ShowMetricsWindow();
+			}
+
+			static glm::vec3 ambientColor = scene.GetAmbientColor();
+			ImGui::ColorEdit3("Ambient color", glm::value_ptr(ambientColor));
+			scene.SetAmbientColor(ambientColor);
+		}
+		ImGui::End();
+
 		renderer.Render(scene);
-
-		ImGui::ShowTestWindow();
 		ImGui::Render();
-
 		window.SwapBuffers();
 	}
 
