@@ -2,6 +2,9 @@
 # Rendeer log
 rendeer.log
 
+# Saved ImGui session
+imbuing.ini
+
 # macOS & XCode files
 .DS_Store
 xcuserdata
