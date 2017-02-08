@@ -188,9 +188,12 @@ int main(int argc, char *argv[])
 				ImGui::ShowMetricsWindow();
 			}
 
-			static glm::vec3 ambientColor = scene.GetAmbientColor();
-			ImGui::ColorEdit3("Ambient color", glm::value_ptr(ambientColor));
-			scene.SetAmbientColor(ambientColor);
+			if (ImGui::CollapsingHeader("Scene"))
+			{
+				static glm::vec3 ambientColor = scene.GetAmbientColor();
+				ImGui::ColorEdit3("Ambient color", glm::value_ptr(ambientColor));
+				scene.SetAmbientColor(ambientColor);
+			}
 		}
 		ImGui::End();
 
