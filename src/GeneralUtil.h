@@ -6,6 +6,7 @@ namespace nonstd
 {
 	template <typename Enumeration>
 	inline
+	constexpr
 	typename std::underlying_type<Enumeration>::type as_integer(const Enumeration value)
 	{
 		return static_cast<typename std::underlying_type<Enumeration>::type>(value);

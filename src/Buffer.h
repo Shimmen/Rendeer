@@ -16,13 +16,6 @@ public:
 	Buffer();
 	~Buffer();
 
-	static std::vector<std::shared_ptr<Buffer>> GenerateBuffers(unsigned int count);
-
-protected:
-
-	// Only required for the GenerateBuffers function
-	Buffer(GLuint bufferHandle);
-
 public:
 
 	const Buffer& Bind(GLenum target) const;

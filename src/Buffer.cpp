@@ -9,19 +9,11 @@ Buffer::Buffer()
 	glGenBuffers(1, &handle);
 }
 
-Buffer::Buffer(GLuint bufferHandle)
-	: GLResource(bufferHandle)
-{
-}
-
 Buffer::~Buffer()
 {
 	// Make sure that all cached data on this buffer handle is invalidated, since a new buffer might be created
 	// with the same handle as this one which wouldn't be compatible with the current caching/optimizing.
 
-	// TODO: Delete the buffer!!!
-	//assert(glIsBuffer(handle));
-	/*
 	for (auto& pair : currentlyBound)
 	{
 		if (pair.second == handle)
@@ -32,27 +24,6 @@ Buffer::~Buffer()
 	}
 
 	glDeleteBuffers(1, &handle);
-	*/
-}
-
-/*static*/
-std::vector<std::shared_ptr<Buffer>> Buffer::GenerateBuffers(unsigned int count)
-{
-	static const int maxNumCreated = 32;
-	assert(count < maxNumCreated);
-	GLuint bufferHandles[maxNumCreated];
-	glGenBuffers(count, bufferHandles);
-
-	std::vector<std::shared_ptr<Buffer>> buffers;
-	buffers.reserve(count);
-
-	for (GLuint handle : bufferHandles)
-	{
-		// Use shared_ptr ctor instead of make_shared so the buffer ctor taking in a handle can be kept private easily
-		buffers.emplace_back(new Buffer{handle});
-	}
-
-	return buffers;
 }
 
 const Buffer& Buffer::Bind(GLenum target) const

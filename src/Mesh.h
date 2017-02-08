@@ -27,19 +27,6 @@ public:
 
 private:
 
-	enum class MeshBuffers
-	{
-		POSITION_BUFFER = 0,
-		NORMAL_BUFFER,
-		TANGENT_BUFFER,
-		TEXCOORD_BUFFER,
-		INDEX_BUFFER,
-
-		MESH_BUFFER_COUNT
-	};
-
-private:
-
 	VertexArray vertexArray;
 	size_t indexCount;
 
