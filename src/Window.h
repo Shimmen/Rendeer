@@ -55,6 +55,7 @@ public:
 	bool WasKeyReleased(int key) const;
 
 	static void KeyEventCallback(GLFWwindow *glfwWindow, int key, int scancode, int action, int mods);
+	static void CharEventCallback(GLFWwindow *glfwWindow, unsigned int codepoint, int mods);
 
 	//
 	// Mouse related
@@ -66,9 +67,11 @@ public:
 
 	glm::vec2 GetMousePosition() const;
 	glm::vec2 GetMouseDelta() const;
+	float GetScrollDelta() const;
 
 	static void MouseButtonEventCallback(GLFWwindow *glfwWindow, int button, int action, int mods);
 	static void MouseMovementEventCallback(GLFWwindow *glfwWindow, double xPos, double yPos);
+	static void MouseScrollEventCallback(GLFWwindow *glfwWindow, double xOffset, double yOffset);
 
 private:
 
@@ -107,9 +110,8 @@ private:
 	double lastXPosition{0};
 	double lastYPosition{0};
 
-	//
-	// REMOVE DATA BELOW!
-	//
+	double currentScollOffset{0};
+	double lastScrollOffset{0};
 
 private:
 

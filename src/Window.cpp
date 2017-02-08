@@ -3,6 +3,7 @@
 #include "Logger.h"
 #include "GLState.h"
 #include "FrameBuffer.h"
+#include "ImGuiAdapter.h"
 
 /*static*/ const Window *Window::currentWindow;
 
@@ -78,17 +79,14 @@ Window::Window(int width, int height, bool fullscreen, bool vSync)
 	SetCursorHidden(false);
 
 	glfwSetKeyCallback(glfwWindow, Window::KeyEventCallback);
+	glfwSetCharModsCallback(glfwWindow, Window::CharEventCallback);
 	glfwSetMouseButtonCallback(glfwWindow, Window::MouseButtonEventCallback);
 	glfwSetCursorPosCallback(glfwWindow, Window::MouseMovementEventCallback);
-	//keyboard.reset(new Keyboard(glfwWindow));
-	//mouse.reset(new Mouse(glfwWindow));
+	glfwSetScrollCallback(glfwWindow, Window::MouseScrollEventCallback);
 }
 
 Window::~Window()
 {
-	glfwSetKeyCallback(glfwWindow, nullptr);
-	glfwSetMouseButtonCallback(glfwWindow, nullptr);
-	glfwSetCursorPosCallback(glfwWindow, nullptr);
 	glfwDestroyWindow(glfwWindow);
 
 	// Destroy GLFW context if there are no more windows
@@ -111,6 +109,7 @@ void Window::PollEvents()
 	memset(wasButtonReleased, false, MOUSE_BUTTON_COUNT * sizeof(bool));
 	lastXPosition = currentXPosition;
 	lastYPosition = currentYPosition;
+	lastScrollOffset = currentScollOffset;
 
 	glfwPollEvents();
 }
@@ -284,6 +283,23 @@ bool Window::WasKeyReleased(int key) const
 		default:
 			break;
 	}
+
+	// Make sure the GUI gets key info
+	if (!window->IsCursorHidden())
+	{
+		ImGuiAdapter::KeyCallback(key, action);
+	}
+}
+
+/*static*/ void Window::CharEventCallback(GLFWwindow *glfwWindow, unsigned int codepoint, int mods)
+{
+	void *windowUserPtr = glfwGetWindowUserPointer(glfwWindow);
+	auto window = static_cast<Window *>(windowUserPtr);
+
+	if (!window->IsCursorHidden())
+	{
+		ImGuiAdapter::CharCallback(codepoint);
+	}
 }
 
 bool Window::IsButtonDown(int button) const
@@ -311,6 +327,11 @@ glm::vec2 Window::GetMousePosition() const
 glm::vec2 Window::GetMouseDelta() const
 {
 	return glm::vec2(currentXPosition - lastXPosition, currentYPosition - lastYPosition);
+}
+
+float Window::GetScrollDelta() const
+{
+	return static_cast<float>(currentScollOffset - lastScrollOffset);
 }
 
 /*static*/ void Window::MouseButtonEventCallback(GLFWwindow *glfwWindow, int button, int action, int mods)
@@ -343,4 +364,13 @@ glm::vec2 Window::GetMouseDelta() const
 
 	window->currentXPosition = xPos;
 	window->currentYPosition = yPos;
+}
+
+/*static*/ void Window::MouseScrollEventCallback(GLFWwindow *glfwWindow, double xOffset, double yOffset)
+{
+	void *windowUserPtr = glfwGetWindowUserPointer(glfwWindow);
+	auto window = static_cast<Window *>(windowUserPtr);
+
+	// Ignore x-offset for now...
+	window->currentScollOffset += yOffset;
 }

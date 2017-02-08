@@ -9,6 +9,8 @@
 // Static data
 //
 
+#define SCROLL_SENSITIVITY (0.2f)
+
 static const Window *window;
 
 static Shader *guiShader;
@@ -113,10 +115,6 @@ void ImGuiAdapter::NewFrame(float deltaTime)
 
 	io.DeltaTime = deltaTime;
 
-	//
-	// TODO: Handle inputs!
-	//
-
 	if (window->IsFocused() && !window->IsCursorHidden())
 	{
 		glm::vec2 mousePos = window->GetMousePosition();
@@ -132,7 +130,9 @@ void ImGuiAdapter::NewFrame(float deltaTime)
 		io.MouseDown[i] = window->WasButtonPressed(GLFW_MOUSE_BUTTON_1 + i) || window->IsButtonDown(GLFW_MOUSE_BUTTON_1 + i);
 	}
 
-	io.MouseWheel = 0.0f; // TODO: Implement!
+	io.MouseWheel += window->GetScrollDelta() * SCROLL_SENSITIVITY;
+
+	// NOTE: Keyboard input is handled through a callback
 
 	ImGui::NewFrame();
 }
@@ -197,4 +197,25 @@ void ImGuiAdapter::RenderDrawLists(ImDrawData *drawData)
 
 	// The rest should be okay
 	GL::Disable(GL_SCISSOR_TEST);
+}
+
+void ImGuiAdapter::KeyCallback(int key, int action)
+{
+	auto& io = ImGui::GetIO();
+	if (action == GLFW_PRESS) io.KeysDown[key] = true;
+	if (action == GLFW_RELEASE) io.KeysDown[key] = false;
+
+	// NOTE: Modifiers are not reliable across systems, so set them manually
+	io.KeyCtrl = io.KeysDown[GLFW_KEY_LEFT_CONTROL] || io.KeysDown[GLFW_KEY_RIGHT_CONTROL];
+	io.KeyShift = io.KeysDown[GLFW_KEY_LEFT_SHIFT] || io.KeysDown[GLFW_KEY_RIGHT_SHIFT];
+	io.KeyAlt = io.KeysDown[GLFW_KEY_LEFT_ALT] || io.KeysDown[GLFW_KEY_RIGHT_ALT];
+	io.KeySuper = io.KeysDown[GLFW_KEY_LEFT_SUPER] || io.KeysDown[GLFW_KEY_RIGHT_SUPER];
+}
+
+void ImGuiAdapter::CharCallback(unsigned int codepoint)
+{
+	if (codepoint > 0 && codepoint < 0x10000)
+	{
+		ImGui::GetIO().AddInputCharacter((unsigned short)codepoint);
+	}
 }

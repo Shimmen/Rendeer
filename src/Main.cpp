@@ -172,7 +172,7 @@ int main(int argc, char *argv[])
 
 		renderer.Render(scene);
 
-		ImGui::ShowMetricsWindow();
+		ImGui::ShowTestWindow();
 		ImGui::Render();
 
 		window.SwapBuffers();

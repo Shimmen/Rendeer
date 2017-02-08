@@ -18,4 +18,8 @@ namespace ImGuiAdapter
 	void NewFrame(float deltaTime);
 	void RenderDrawLists(ImDrawData *data);
 
+	// Call these functions from the actual key/char callbacks to be able to handle keyboard input
+	void KeyCallback(int key, int action);
+	void CharCallback(unsigned int codepoint);
+
 };
