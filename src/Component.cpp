@@ -24,6 +24,6 @@ void Component::SetOwnerEntity(Entity *ownerEntity)
 	}
 	else
 	{
-		Logger::GetDefaultLogger().Log("SetOwnerEntity called for Component that already has a owner set. Function call ignored.");
+		Logger::Log("SetOwnerEntity called for Component that already has a owner set. Function call ignored.");
 	}
 }

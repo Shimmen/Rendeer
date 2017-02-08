@@ -202,21 +202,17 @@ void Shader::CheckShaderErrors(GLuint shaderProgram, GLenum stage) const
 	glGetProgramiv(shaderProgram, stage, &success);
 	if (success == GL_FALSE)
 	{
-		const Logger& logger = Logger::GetDefaultLogger();
+		static GLchar errorMessage[2048] = {0};
+		glGetProgramInfoLog(shaderProgram, sizeof(errorMessage), nullptr, errorMessage);
+
 		if (stage == GL_LINK_STATUS)
 		{
-			logger.Log("Shader error: shader program could not be linked.");
+			Logger::Log("Error: shader program could not be linked: %s", errorMessage);
 		}
 		else if (stage == GL_VALIDATE_STATUS)
 		{
-			logger.Log("Shader error: shader program could not be validated.");
+			Logger::Log("Error: shader program could not be validated: %s", errorMessage);
 		}
-
-		GLchar errorMessage[2048];
-		memset(errorMessage, '\0', sizeof(errorMessage));
-		glGetProgramInfoLog(shaderProgram, sizeof(errorMessage), nullptr, errorMessage);
-
-		logger.Log("\terror message: " + std::string(errorMessage));
 	}
 }
 
@@ -251,7 +247,7 @@ void Shader::LocateAndRegisterUniforms()
 		}
 		else
 		{
-			Logger::GetDefaultLogger().Log("Tried to add uniform with name '" + name + "' which isn't active / doesn't exist!");
+			Logger::Log("Tried to add uniform with name '%s' which isn't active / doesn't exist!", name.c_str());
 		}
 	}
 	

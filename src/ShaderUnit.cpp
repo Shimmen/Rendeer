@@ -25,13 +25,10 @@ ShaderUnit::ShaderUnit(const std::string& shaderSourcePath, ShaderUnit::Type typ
 	glGetShaderiv(handle, GL_COMPILE_STATUS, &compilationSuccess);
 	if (compilationSuccess == GL_FALSE)
 	{
-		GLchar errorMessage[2048];
-		memset(errorMessage, '\0', sizeof(errorMessage));
+		static GLchar errorMessage[2048];
 		glGetShaderInfoLog(handle, sizeof(errorMessage), nullptr, errorMessage);
 
-		const Logger& logger = Logger::GetDefaultLogger();
-		logger.Log("Shader error: shader loaded with file path \"" + shaderSourcePath + "\" could not be compiled.");
-		logger.Log("\tcompiler error message:" + std::string(errorMessage));
+		Logger::Log("Error: shader file '%s' could not be compiled: %s", shaderSourcePath.c_str(), errorMessage);
 	}
 }
 
@@ -58,9 +55,7 @@ const std::string & ShaderUnit::GetSourceFilePath() const
 	std::ifstream file{ fullFilePath };
 	if (!file.is_open())
 	{
-		std::stringstream description;
-		description << "Error: could not open shader source file with name: \"" << filePath << "\"";
-		Logger::GetDefaultLogger().Log(description.str());
+		Logger::Log("Error: could not open shader source file with name '%s'", filePath.c_str());
 	}
 
 	std::string result;
@@ -80,7 +75,7 @@ const std::string & ShaderUnit::GetSourceFilePath() const
 	
 	if (file.bad())
 	{
-		Logger::GetDefaultLogger().Log("Some error while reading the file!");
+		Logger::Log("Error: some error while reading shader source file '%s'", filePath.c_str());
 	}
 
 	return result;

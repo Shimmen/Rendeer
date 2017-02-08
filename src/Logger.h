@@ -4,40 +4,27 @@
 #include <memory>
 #include <fstream>
 
-class Logger
+namespace Logger
 {
-public:
+	void Log(const char *format, ...);
+	void Log(const std::string& message);
 
-	static Logger& GetDefaultLogger();
+	void LogPadded(const char *message, char padding);
+	void LogPadded(const std::string& message, char padding);
 
-	static std::string GetStateDescription(bool variable);
+	void Heading(const std::string& heading);
+	void Subheading(const std::string& subheading);
 
-public:
-	
-	Logger(std::string logFilePath, bool logToTerminal);
-	Logger();
+	void HorizontalDivider(char charToUse);
+	void EmptyLine();
+	void LogTimestamp();
 
-	~Logger();
+
+	const char *BoolToString(bool variable);
 
 	void SetTerminalOutputEnabled(bool enabled);
-	void SetPreferredLineLength(int length);
+	void SetLogFileOutputEnabled(bool enabled);
 
-	void LogHeading(std::string heading) const;
-	void LogSubheading(std::string subheading) const;
-	void Log(std::string message) const;
-	void LogHorizontalDivider(char charToUse) const;
-	void LogEmptyLine() const;
-	void LogTimestamp() const;
-
-private:
-
-	std::string GenerateHorizontalDivider(char charToUse, int length) const;
-
-	// The output file stream, or null if not used by this instance
-	std::unique_ptr<std::ofstream> logFileStream;
-
-	bool terminalOutputEnabled{ true };
-	int preferredLineLength{ 79 };
 
 };
 

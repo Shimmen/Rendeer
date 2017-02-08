@@ -16,7 +16,7 @@ Window::Window(int width, int height, bool fullscreen, bool vSync)
 	{
 		if (!glfwInit())
 		{
-			Logger::GetDefaultLogger().Log("Error: could not initialize glfw! Application must terminate.");
+			Logger::Log("Error: could not initialize glfw! Application must terminate.");
 		}
 
 		// Set window related hints
@@ -57,12 +57,12 @@ Window::Window(int width, int height, bool fullscreen, bool vSync)
 			}
 			else
 			{
-				Logger::GetDefaultLogger().Log("Error: primary video mode could not be accessed for primary monitor.");
+				Logger::Log("Error: primary video mode could not be accessed for primary monitor.");
 			}
 		}
 		else
 		{
-			Logger::GetDefaultLogger().Log("Error: primary monitor could not be accessed.");
+			Logger::Log("Error: primary monitor could not be accessed.");
 		}
 	}
 	else

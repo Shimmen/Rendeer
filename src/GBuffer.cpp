@@ -18,7 +18,7 @@ GBuffer::GBuffer(int renderWidth, int renderHeight)
 	GLenum reason = 0;
 	if (!frameBuffer.IsComplete(&reason))
 	{
-		Logger::GetDefaultLogger().Log("Error: GBuffer framebuffer is incomplete! Reason: " + std::to_string(reason));
+		Logger::Log("Error: GBuffer framebuffer is incomplete! Reason: %#X", reason);
 	}
 }
 

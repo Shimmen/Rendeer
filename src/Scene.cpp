@@ -19,7 +19,7 @@ std::shared_ptr<CameraComponent> Scene::GetMainCamera() const
 		{
 			if (mainCamera != nullptr)
 			{
-				Logger::GetDefaultLogger().Log("More than one camera without target exist. Main camera not ambiguous!");
+				Logger::Log("More than one camera without target exist. Main camera not ambiguous!");
 			}
 
 			mainCamera = cameraComp;
@@ -28,7 +28,7 @@ std::shared_ptr<CameraComponent> Scene::GetMainCamera() const
 
 	if (mainCamera == nullptr)
 	{
-		Logger::GetDefaultLogger().Log("No camera without target exist. No main camera available!");
+		Logger::Log("No camera without target exist. No main camera available!");
 	}
 
 	return mainCamera;

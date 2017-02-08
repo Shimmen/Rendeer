@@ -20,7 +20,7 @@ Bitmap::Bitmap(const std::string& filePath)
 {
 	if (!nonstd::file_is_readable(filePath))
 	{
-		Logger::GetDefaultLogger().Log("Error: can't read file with name: " + filePath + ".");
+		Logger::Log("Error: can't read file with name '%s'", filePath.c_str());
 	}
 
 	stbi_set_flip_vertically_on_load(true);
@@ -40,8 +40,7 @@ Bitmap::Bitmap(const std::string& filePath)
 
 	if (stbiOwnedData == nullptr)
 	{
-		Logger::GetDefaultLogger().Log("Error: stbi could not load image with name: " + filePath + ".");
-		Logger::GetDefaultLogger().Log("       Reason: " + std::string(stbi_failure_reason()));
+		Logger::Log("Error: stbi could not load image with name '%s': %s", filePath.c_str(), stbi_failure_reason());
 	}
 	else
 	{

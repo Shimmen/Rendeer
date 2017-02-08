@@ -22,9 +22,7 @@
 	const aiScene* scene = importer.ReadFile(filename, RENDEER_ASSIMP_IMPORT_FLAGS_QUALITY);
 	if (!scene)
 	{
-		const Logger& logger = Logger::GetDefaultLogger();
-		logger.Log("Error: could not load model with filename: " + filename);
-		logger.Log("       Reason: " + std::string(importer.GetErrorString()));
+		Logger::Log("Error: could not load model with filename '%s': %s", filename.c_str(), importer.GetErrorString());
 		return entity;
 	}
 

@@ -125,7 +125,7 @@ bool Texture2D::Load(const std::string& filename, bool srgb, GLint magFilter, GL
 	FILE *file = fopen(filename.c_str(), "rb");
 	if (file == nullptr)
 	{
-		Logger::GetDefaultLogger().Log("Error: can't read file with name: '" + filename + "'.");
+		Logger::Log("Error: can't read file with name '%s'", filename.c_str());
 		return false;
 	}
 
@@ -148,8 +148,7 @@ bool Texture2D::Load(const std::string& filename, bool srgb, GLint magFilter, GL
 
 	if (pixels == nullptr)
 	{
-		Logger::GetDefaultLogger().Log("Error: stbi could not load image with name: '" + filename + "'.");
-		Logger::GetDefaultLogger().Log("       Reason: " + std::string(stbi_failure_reason()));
+		Logger::Log("Error: stbi could not load image with name '%s': %s", filename.c_str(), stbi_failure_reason());
 		return false;
 	}
 
@@ -193,7 +192,7 @@ GLint Texture2D::CalculateInternalFormat(GLint externalFormat, bool srgb, bool h
 
 	if (srgb && hdr)
 	{
-		Logger::GetDefaultLogger().Log("Error: Texture2D specified to be both SRGB and HDR, which isn't possible! Ignoring sRGB flag.");
+		Logger::Log("Error: Texture2D specified to be both SRGB and HDR, which isn't possible! Ignoring sRGB flag.");
 		srgb = false;
 	}
 

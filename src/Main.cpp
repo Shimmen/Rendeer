@@ -20,27 +20,34 @@
 int main(int argc, char *argv[])
 {
 	//
+	// Logging etc.
+	//
+
+	int width = 1280;
+	int height = 720;
+	bool fullscreen = false;
+	bool vsync = false;
+
+#if defined(_DEBUG) or defined(DEBUG)
+	Logger::Heading("Rendeer - debug build");
+#else
+	Logger::Heading("Rendeer - release build");
+#endif
+	Logger::Log(" - Resolution:\t %dx%d", width, height);
+	Logger::Log(" - Fullscreen:\t %s", Logger::BoolToString(fullscreen));
+	Logger::Log(" - Vsync:\t\t %s", Logger::BoolToString(vsync));
+
+	Logger::Subheading("Scene setup begin");
+	Logger::LogTimestamp();
+	Logger::EmptyLine();
+
+	//
 	// Setup
 	//
 
-	Window window{ 1280, 720, false, false };
+	Window window{ width, height, fullscreen, vsync };
 	Renderer renderer{ &window };
 	ImGuiAdapter::Init(&window);
-
-	// Log default startup stuff
-	Logger& logger = Logger::GetDefaultLogger();
-#if defined(_DEBUG)
-	logger.LogHeading("Rendeer - debug build");
-#else
-	logger.LogHeading("Rendeer - release build");
-#endif
-	logger.Log("Starting session with:");
-	logger.Log("\t- fullscreen " + Logger::GetStateDescription(window.IsFullscreen()));
-	logger.Log("\t- vsync " + Logger::GetStateDescription(window.IsVsyncEnabled()));
-
-	logger.LogSubheading("Scene setup begin");
-	logger.LogTimestamp();
-	logger.LogEmptyLine();
 
 	//
 	// Define scene
@@ -112,9 +119,9 @@ int main(int argc, char *argv[])
 	// Render/game loop
 	//
 
-	logger.LogSubheading("Render loop begin");
-	logger.LogTimestamp();
-	logger.LogEmptyLine();
+	Logger::Subheading("Render loop begin");
+	Logger::LogTimestamp();
+	Logger::EmptyLine();
 
 	glfwSetTime(0.0);
 	double currentTime = 0.0;
@@ -178,8 +185,12 @@ int main(int argc, char *argv[])
 		window.SwapBuffers();
 	}
 
-	logger.LogSubheading("Render loop end");
-	logger.LogTimestamp();
+	//
+	// Deinit
+	//
+
+	Logger::Subheading("Render loop end");
+	Logger::LogTimestamp();
 
 	ImGuiAdapter::Deinit();
 
