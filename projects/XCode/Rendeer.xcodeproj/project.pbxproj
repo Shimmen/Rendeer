@@ -21,7 +21,6 @@
 		F4433AC71DEEF7240058CD6C /* Main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4433A9B1DEEF7240058CD6C /* Main.cpp */; };
 		F4433AC81DEEF7240058CD6C /* Mesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4433A9C1DEEF7240058CD6C /* Mesh.cpp */; };
 		F4433ACA1DEEF7240058CD6C /* ModelLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4433AA01DEEF7240058CD6C /* ModelLoader.cpp */; };
-		F4433ACB1DEEF7240058CD6C /* Mouse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4433AA21DEEF7240058CD6C /* Mouse.cpp */; };
 		F4433ACC1DEEF7240058CD6C /* Drawables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4433AA41DEEF7240058CD6C /* Drawables.cpp */; };
 		F4433ACD1DEEF7240058CD6C /* Scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4433AA71DEEF7240058CD6C /* Scene.cpp */; };
 		F4433ACE1DEEF7240058CD6C /* Shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4433AA91DEEF7240058CD6C /* Shader.cpp */; };
@@ -93,8 +92,6 @@
 		F4433A9D1DEEF7240058CD6C /* Mesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Mesh.h; path = ../../../src/Mesh.h; sourceTree = "<group>"; };
 		F4433AA01DEEF7240058CD6C /* ModelLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ModelLoader.cpp; path = ../../../src/ModelLoader.cpp; sourceTree = "<group>"; };
 		F4433AA11DEEF7240058CD6C /* ModelLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ModelLoader.h; path = ../../../src/ModelLoader.h; sourceTree = "<group>"; };
-		F4433AA21DEEF7240058CD6C /* Mouse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Mouse.cpp; path = ../../../src/Mouse.cpp; sourceTree = "<group>"; };
-		F4433AA31DEEF7240058CD6C /* Mouse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Mouse.h; path = ../../../src/Mouse.h; sourceTree = "<group>"; };
 		F4433AA41DEEF7240058CD6C /* Drawables.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Drawables.cpp; path = ../../../src/Drawables.cpp; sourceTree = "<group>"; };
 		F4433AA51DEEF7240058CD6C /* Drawables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Drawables.h; path = ../../../src/Drawables.h; sourceTree = "<group>"; };
 		F4433AA61DEEF7240058CD6C /* Renderable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Renderable.h; path = ../../../src/Renderable.h; sourceTree = "<group>"; };
@@ -243,8 +240,6 @@
 				F4433A9D1DEEF7240058CD6C /* Mesh.h */,
 				F4433AA01DEEF7240058CD6C /* ModelLoader.cpp */,
 				F4433AA11DEEF7240058CD6C /* ModelLoader.h */,
-				F4433AA21DEEF7240058CD6C /* Mouse.cpp */,
-				F4433AA31DEEF7240058CD6C /* Mouse.h */,
 				F4433AA41DEEF7240058CD6C /* Drawables.cpp */,
 				F4433AA51DEEF7240058CD6C /* Drawables.h */,
 				F4433AA61DEEF7240058CD6C /* Renderable.h */,
@@ -374,7 +369,6 @@
 				F4433AC51DEEF7240058CD6C /* Lighting.cpp in Sources */,
 				F48E240D1E48A862001B7CD0 /* ImGuiAdapter.cpp in Sources */,
 				F4433AD31DEEF7240058CD6C /* Transform.cpp in Sources */,
-				F4433ACB1DEEF7240058CD6C /* Mouse.cpp in Sources */,
 				F4433AC01DEEF7240058CD6C /* DiffuseMaterial.cpp in Sources */,
 				F4433ACC1DEEF7240058CD6C /* Drawables.cpp in Sources */,
 				F4433AD51DEEF7240058CD6C /* VertexArray.cpp in Sources */,

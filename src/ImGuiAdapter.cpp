@@ -116,11 +116,10 @@ void ImGuiAdapter::NewFrame(float deltaTime)
 	//
 	// TODO: Handle inputs!
 	//
-	auto& mouse = window->GetMouse();
 
 	if (window->IsFocused() && !window->IsCursorHidden())
 	{
-		glm::vec2 mousePos = mouse.GetMousePosition();
+		glm::vec2 mousePos = window->GetMousePosition();
 		io.MousePos = ImVec2(mousePos.x, mousePos.y);
 	}
 	else
@@ -130,7 +129,7 @@ void ImGuiAdapter::NewFrame(float deltaTime)
 
 	for (int i = 0; i < 3; i++)
 	{
-		io.MouseDown[i] = mouse.WasButtonPressed(GLFW_MOUSE_BUTTON_1 + i) || mouse.IsButtonDown(GLFW_MOUSE_BUTTON_1 + i);
+		io.MouseDown[i] = window->WasButtonPressed(GLFW_MOUSE_BUTTON_1 + i) || window->IsButtonDown(GLFW_MOUSE_BUTTON_1 + i);
 	}
 
 	io.MouseWheel = 0.0f; // TODO: Implement!

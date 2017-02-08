@@ -2,11 +2,10 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
 
 #include <string>
 #include <memory>
-
-#include "Mouse.h"
 
 class Window
 {
@@ -15,12 +14,9 @@ public:
 	Window(int width, int height, bool fullscreen = false, bool vSync = true);
 	~Window();
 
-	static const Window *FromGlfwWindow(GLFWwindow *glfwWindow);
 	static const Window *CurrentWindow();
 
-	// Will poll window events and make sure the mouse & keyboard are up to date
 	void PollEvents();
-
 	void SwapBuffers() const;
 	bool IsCloseRequested() const;
 
@@ -50,8 +46,6 @@ public:
 	void SetClipboardText(const std::string& text) const;
 	void SetClipboardText(const char *text) const;
 
-	const Mouse& GetMouse() const;
-
 	//
 	// Keyboard related
 	//
@@ -65,6 +59,16 @@ public:
 	//
 	// Mouse related
 	//
+
+	bool IsButtonDown(int button) const;
+	bool WasButtonPressed(int button) const;
+	bool WasButtonReleased(int button) const;
+
+	glm::vec2 GetMousePosition() const;
+	glm::vec2 GetMouseDelta() const;
+
+	static void MouseButtonEventCallback(GLFWwindow *glfwWindow, int button, int action, int mods);
+	static void MouseMovementEventCallback(GLFWwindow *glfwWindow, double xPos, double yPos);
 
 private:
 
@@ -81,7 +85,6 @@ private:
 	// Keyboard related
 	//
 
-	// The highest possible KeyCode is GLFW_KEY_LAST.
 	static const int KEYBOARD_KEY_COUNT{ GLFW_KEY_LAST };
 
 	bool isKeyDown[KEYBOARD_KEY_COUNT] = { 0 };
@@ -92,11 +95,21 @@ private:
 	// Mouse related
 	//
 
-	// The input classes and their callbacks require access to certain members of the Window class
-	friend class Mouse;
+	static const int MOUSE_BUTTON_COUNT{ GLFW_MOUSE_BUTTON_LAST };
 
-	// Pointer types to initialization can be deferred to the constructor body
-	std::unique_ptr<Mouse> mouse;
+	bool isButtonDown[MOUSE_BUTTON_COUNT] = { 0 };
+	bool wasButtonPressed[MOUSE_BUTTON_COUNT] = { 0 };
+	bool wasButtonReleased[MOUSE_BUTTON_COUNT] = { 0 };
+
+	// Should only be used for getting the mouse delta etc. NOT for querying current position, since this accumulates errors and might "lag" behind.
+	double currentXPosition{0};
+	double currentYPosition{0};
+	double lastXPosition{0};
+	double lastYPosition{0};
+
+	//
+	// REMOVE DATA BELOW!
+	//
 
 private:
 

@@ -123,7 +123,7 @@ void Camera::Update(float deltaTime, const Window& window)
 		const float baseMouseSensitivity = 0.1f;
 		const float mouseSensitivity = baseMouseSensitivity * deltaTime;
 
-		glm::vec2 mouseDelta = window.GetMouse().GetMouseDelta();
+		glm::vec2 mouseDelta = window.GetMouseDelta();
 
 		GetTransform().Rotate(glm::vec3(0, 1, 0), mouseDelta.x * mouseSensitivity);
 		GetTransform().Rotate(GetTransform().GetRight(), mouseDelta.y * mouseSensitivity);

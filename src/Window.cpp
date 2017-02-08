@@ -78,8 +78,10 @@ Window::Window(int width, int height, bool fullscreen, bool vSync)
 	SetCursorHidden(false);
 
 	glfwSetKeyCallback(glfwWindow, Window::KeyEventCallback);
+	glfwSetMouseButtonCallback(glfwWindow, Window::MouseButtonEventCallback);
+	glfwSetCursorPosCallback(glfwWindow, Window::MouseMovementEventCallback);
 	//keyboard.reset(new Keyboard(glfwWindow));
-	mouse.reset(new Mouse(glfwWindow));
+	//mouse.reset(new Mouse(glfwWindow));
 }
 
 Window::~Window()
@@ -93,12 +95,6 @@ Window::~Window()
 	//glfwTerminate();
 }
 
-/*static*/ const Window *Window::FromGlfwWindow(GLFWwindow *glfwWindow)
-{
-	void *windowUserPtr = glfwGetWindowUserPointer(glfwWindow);
-	return static_cast<Window *>(windowUserPtr);
-}
-
 /*static*/ const Window *Window::CurrentWindow()
 {
 	return currentWindow;
@@ -106,16 +102,16 @@ Window::~Window()
 
 void Window::PollEvents()
 {
-	// Very important that these get called BEFORE polling new events
-	// If not, the wasPressed/Released arrays will be cleared as soon
-	// as they get filled in by glfwPollEvents().
-
 	// Reset keyboard pressed & released keys for this frame
 	memset(wasKeyPressed, false, KEYBOARD_KEY_COUNT * sizeof(bool));
 	memset(wasKeyReleased, false, KEYBOARD_KEY_COUNT * sizeof(bool));
 
-	//keyboard->Update();
-	mouse->Update();
+	// Reset & update mouse
+	memset(wasButtonPressed, false, MOUSE_BUTTON_COUNT * sizeof(bool));
+	memset(wasButtonReleased, false, MOUSE_BUTTON_COUNT * sizeof(bool));
+	lastXPosition = currentXPosition;
+	lastYPosition = currentYPosition;
+
 	glfwPollEvents();
 }
 
@@ -252,11 +248,6 @@ void Window::SetClipboardText(const char *text) const
 	glfwSetClipboardString(glfwWindow, text);
 }
 
-const Mouse& Window::GetMouse() const
-{
-	return *this->mouse;
-}
-
 bool Window::IsKeyDown(int key) const
 {
 	return isKeyDown[key];
@@ -293,4 +284,63 @@ bool Window::WasKeyReleased(int key) const
 		default:
 			break;
 	}
+}
+
+bool Window::IsButtonDown(int button) const
+{
+	return isButtonDown[button];
+}
+
+bool Window::WasButtonPressed(int button) const
+{
+	return wasButtonPressed[button];
+}
+
+bool Window::WasButtonReleased(int button) const
+{
+	return wasButtonReleased[button];
+}
+
+glm::vec2 Window::GetMousePosition() const
+{
+	double x, y;
+	glfwGetCursorPos(glfwWindow, &x, &y);
+	return glm::vec2(static_cast<float>(x), static_cast<float>(y));
+}
+
+glm::vec2 Window::GetMouseDelta() const
+{
+	return glm::vec2(currentXPosition - lastXPosition, currentYPosition - lastYPosition);
+}
+
+/*static*/ void Window::MouseButtonEventCallback(GLFWwindow *glfwWindow, int button, int action, int mods)
+{
+	void *windowUserPtr = glfwGetWindowUserPointer(glfwWindow);
+	auto window = static_cast<Window *>(windowUserPtr);
+
+	switch (action)
+	{
+		case GLFW_PRESS:
+			window->wasButtonPressed[button] = true;
+			window->isButtonDown[button] = true;
+			break;
+
+		case GLFW_RELEASE:
+			window->wasButtonReleased[button] = true;
+			window->isButtonDown[button] = false;
+			break;
+
+		case GLFW_REPEAT:
+		default:
+			break;
+	}
+}
+
+/*static*/ void Window::MouseMovementEventCallback(GLFWwindow *glfwWindow, double xPos, double yPos)
+{
+	void *windowUserPtr = glfwGetWindowUserPointer(glfwWindow);
+	auto window = static_cast<Window *>(windowUserPtr);
+
+	window->currentXPosition = xPos;
+	window->currentYPosition = yPos;
 }
