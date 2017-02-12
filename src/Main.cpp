@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
 #endif
 	Logger::Log(" - Resolution:\t %dx%d", width, height);
 	Logger::Log(" - Fullscreen:\t %s", Logger::BoolToString(fullscreen));
-	Logger::Log(" - Vsync:\t\t %s", Logger::BoolToString(vsync));
+	Logger::Log(" - Vsync:\t %s", Logger::BoolToString(vsync));
 
 	Logger::Subheading("Scene setup begin");
 	Logger::LogTimestamp();
@@ -194,10 +194,11 @@ int main(int argc, char *argv[])
 				ImGui::ColorEdit3("Ambient color", glm::value_ptr(ambientColor));
 				scene.SetAmbientColor(ambientColor);
 			}
-		}
-		ImGui::End();
 
-		renderer.Render(scene);
+			renderer.Render(scene);
+		}
+		ImGui::End(/* Rendeer */);
+
 		ImGui::Render();
 		window.SwapBuffers();
 	}

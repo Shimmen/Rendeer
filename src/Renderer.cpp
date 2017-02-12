@@ -1,5 +1,9 @@
 #include "Renderer.h"
 
+#include <imgui.h>
+
+#include <glm/gtc/type_ptr.hpp>
+
 #include "GLState.h"
 #include "Renderable.h"
 
@@ -88,9 +92,20 @@ void Renderer::Render(const Scene& scene)
 	GL::SetBlending(false);
 
 	postProcessShader.Bind();
-	//auxTexture1.Bind(0);
 	lightAccumulationTexture.Bind(0);
 	postProcessShader.SetUniform("u_texture", 0);
+
+	static bool useChromaAb = true;
+	static float chromaAbAmount = 2.5f;
+
+	if (ImGui::CollapsingHeader("Post-process"))
+	{
+		ImGui::Checkbox("Chromatic Aberration", &useChromaAb);
+		ImGui::SliderFloat("Amount", &chromaAbAmount, 0.0f, 20.0f);
+	}
+
+	postProcessShader.SetUniform("u_chroma_ab_amount", (useChromaAb) ? chromaAbAmount : 0.0f);
+
 	ScreenAlignedQuad::Render();
 }
 
