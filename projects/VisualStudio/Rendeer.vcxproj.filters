@@ -38,9 +38,6 @@
     <ClCompile Include="..\..\src\GBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Keyboard.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\Lighting.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -54,9 +51,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\ModelLoader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Mouse.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Scene.cpp">
@@ -101,6 +95,18 @@
     <ClCompile Include="..\..\src\Renderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\deps\imgui\src\imgui.cpp">
+      <Filter>Build Deps</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\deps\imgui\src\imgui_demo.cpp">
+      <Filter>Build Deps</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\deps\imgui\src\imgui_draw.cpp">
+      <Filter>Build Deps</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ImGuiAdapter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\Bitmap.h">
@@ -130,9 +136,6 @@
     <ClInclude Include="..\..\src\GeneralUtil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Keyboard.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\Lighting.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -143,9 +146,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\ModelLoader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Mouse.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Renderable.h">
@@ -194,6 +194,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Renderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ImGuiAdapter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

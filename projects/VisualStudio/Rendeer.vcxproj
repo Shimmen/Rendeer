@@ -38,7 +38,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(ProjectDir)..\..\deps\glad\include;$(ProjectDir)..\..\deps\glfw\include;$(ProjectDir)..\..\deps\assimp\include;$(ProjectDir)..\..\deps\stb\include;$(ProjectDir)..\..\deps\glm\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)..\..\deps\glad\include;$(ProjectDir)..\..\deps\glfw\include;$(ProjectDir)..\..\deps\assimp\include;$(ProjectDir)..\..\deps\stb\include;$(ProjectDir)..\..\deps\glm\include;$(ProjectDir)..\..\deps\imgui\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)..\..\deps\assimp\lib\win64;$(ProjectDir)..\..\deps\glfw\lib\win64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -48,6 +48,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\deps\glad\src\glad.c" />
+    <ClCompile Include="..\..\deps\imgui\src\imgui.cpp" />
+    <ClCompile Include="..\..\deps\imgui\src\imgui_demo.cpp" />
+    <ClCompile Include="..\..\deps\imgui\src\imgui_draw.cpp" />
     <ClCompile Include="..\..\src\Bitmap.cpp" />
     <ClCompile Include="..\..\src\Buffer.cpp" />
     <ClCompile Include="..\..\src\Camera.cpp" />
@@ -58,13 +61,12 @@
     <ClCompile Include="..\..\src\FrameBuffer.cpp" />
     <ClCompile Include="..\..\src\GBuffer.cpp" />
     <ClCompile Include="..\..\src\GLState.cpp" />
-    <ClCompile Include="..\..\src\Keyboard.cpp" />
+    <ClCompile Include="..\..\src\ImGuiAdapter.cpp" />
     <ClCompile Include="..\..\src\Lighting.cpp" />
     <ClCompile Include="..\..\src\Logger.cpp" />
     <ClCompile Include="..\..\src\Main.cpp" />
     <ClCompile Include="..\..\src\Mesh.cpp" />
     <ClCompile Include="..\..\src\ModelLoader.cpp" />
-    <ClCompile Include="..\..\src\Mouse.cpp" />
     <ClCompile Include="..\..\src\Renderer.cpp" />
     <ClCompile Include="..\..\src\Scene.cpp" />
     <ClCompile Include="..\..\src\Shader.cpp" />
@@ -90,13 +92,12 @@
     <ClInclude Include="..\..\src\GeneralUtil.h" />
     <ClInclude Include="..\..\src\GLResource.h" />
     <ClInclude Include="..\..\src\GLState.h" />
-    <ClInclude Include="..\..\src\Keyboard.h" />
+    <ClInclude Include="..\..\src\ImGuiAdapter.h" />
     <ClInclude Include="..\..\src\Lighting.h" />
     <ClInclude Include="..\..\src\Logger.h" />
     <ClInclude Include="..\..\src\Material.h" />
     <ClInclude Include="..\..\src\Mesh.h" />
     <ClInclude Include="..\..\src\ModelLoader.h" />
-    <ClInclude Include="..\..\src\Mouse.h" />
     <ClInclude Include="..\..\src\Renderable.h" />
     <ClInclude Include="..\..\src\Renderer.h" />
     <ClInclude Include="..\..\src\Scene.h" />
