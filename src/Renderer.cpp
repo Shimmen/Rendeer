@@ -102,8 +102,7 @@ void Renderer::Render(const Scene& scene)
 	GL::SetBlending(false);
 
 	postProcessShader.Bind();
-	lightAccumulationTexture.Bind(0);
-	postProcessShader.SetUniform("u_texture", 0);
+	postProcessShader.SetUniform("u_texture", lightAccumulationTexture.Bind(0));
 
 	static bool useChromaAb = true;
 	static float chromaAbAmount = 2.5f;
@@ -113,6 +112,13 @@ void Renderer::Render(const Scene& scene)
 		ImGui::Checkbox("Chromatic Aberration", &useChromaAb);
 		ImGui::SliderFloat("Amount", &chromaAbAmount, 0.0f, 20.0f);
 	}
+
+	postProcessShader.SetUniform("u_bloom_weights", bloomWeights);
+	postProcessShader.SetUniform("u_bloom_1", bloomBlurs[1].Bind(1));
+	postProcessShader.SetUniform("u_bloom_2", bloomBlurs[3].Bind(2));
+	postProcessShader.SetUniform("u_bloom_3", bloomBlurs[5].Bind(3));
+	postProcessShader.SetUniform("u_bloom_4", bloomBlurs[7].Bind(4));
+	postProcessShader.SetUniform("u_bloom_master_weight", bloomMasterWeight);
 
 	postProcessShader.SetUniform("u_chroma_ab_amount", (useChromaAb) ? chromaAbAmount : 0.0f);
 
@@ -241,6 +247,8 @@ void Renderer::GenerateBloom()
 	if (ImGui::CollapsingHeader("Bloom"))
 	{
 		ImGui::SliderFloat("Luminance threshold", &brightPassFilterThreshold, 0.0f, 3.0f);
+		ImGui::SliderFloat("Bloom master weight", &bloomMasterWeight, 0.0f, 1.0f);
+		ImGui::SliderFloat4("Bloom weights", glm::value_ptr(bloomWeights), 0.0f, 1.0f);
 	}
 
 	GL::SetBlending(false);

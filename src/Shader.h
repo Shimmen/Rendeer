@@ -33,6 +33,7 @@ public:
 	bool SetUniform(const std::string& uniformName, float floatValue) const;
 	bool SetUniform(const std::string& uniformName, const glm::vec2& vector2) const;
 	bool SetUniform(const std::string& uniformName, const glm::vec3& vector3) const;
+	bool SetUniform(const std::string& uniformName, const glm::vec4& vector4) const;
 	bool SetUniform(const std::string& uniformName, const glm::mat3& matrix3) const;
 	bool SetUniform(const std::string& uniformName, const glm::mat4& matrix4) const;
 

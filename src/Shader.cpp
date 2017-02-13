@@ -123,6 +123,19 @@ bool Shader::SetUniform(const std::string& uniformName, const glm::vec3& vector3
 	}
 }
 
+bool Shader::SetUniform(const std::string& uniformName, const glm::vec4& vector4) const
+{
+	if (auto uniform = GetUniformWithName(uniformName))
+	{
+		uniform->Set(vector4);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
 bool Shader::SetUniform(const std::string& uniformName, const glm::mat3& matrix3) const
 {
 	if (auto uniform = GetUniformWithName(uniformName))

@@ -63,6 +63,8 @@ private:
 	FrameBuffer bloomBlurFBs[2 * Renderer::numBloomBlurs];
 	Texture2D bloomBrightPass;
 	FrameBuffer bloomBrightPassFB{};
+	glm::vec4 bloomWeights{0.30, 0.26 ,0.05, 0.00};
+	float bloomMasterWeight{ 0.5f };
 
 	// Final post-process
 	Shader postProcessShader{ "Generic/ScreenSpaceQuad.vsh", "Postprocess/Postprocess.fsh" };

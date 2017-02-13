@@ -8,6 +8,14 @@ layout(location=0) out vec4 o_fragment_color;
 noperspective in vec2 v_tex_coord;
 
 uniform sampler2D u_texture;
+
+uniform vec4 u_bloom_weights;
+uniform sampler2D u_bloom_1;
+uniform sampler2D u_bloom_2;
+uniform sampler2D u_bloom_3;
+uniform sampler2D u_bloom_4;
+uniform float u_bloom_master_weight;
+
 uniform float u_chroma_ab_amount;
 
 //
@@ -39,6 +47,15 @@ vec3 sampleChromaticAberration(in sampler2D tex, in vec2 uv, in float amount)
 void main()
 {
 	vec3 fragment = sampleChromaticAberration(u_texture, v_tex_coord, u_chroma_ab_amount);
+
+	// Add weighted blur into image
+	vec4 bloom = vec4(0.0);
+	bloom += texture(u_bloom_1, v_tex_coord) * u_bloom_weights.x;
+	bloom += texture(u_bloom_2, v_tex_coord) * u_bloom_weights.y;
+	bloom += texture(u_bloom_3, v_tex_coord) * u_bloom_weights.z;
+	bloom += texture(u_bloom_4, v_tex_coord) * u_bloom_weights.w;
+	fragment += bloom.rgb * u_bloom_master_weight;
+
 	vec3 ldrFragment = uncharted2_ToneMap(fragment);
 
 	// Write out color value

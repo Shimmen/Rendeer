@@ -40,6 +40,12 @@ void Uniform::Set(const glm::vec3& vector3) const
 	glUniform3fv(location, 1, glm::value_ptr(vector3));
 }
 
+void Uniform::Set(const glm::vec4& vector4) const
+{
+	shader.Bind();
+	glUniform4fv(location, 1, glm::value_ptr(vector4));
+}
+
 void Uniform::Set(const glm::mat3& matrix3) const
 {
 	shader.Bind();
