@@ -41,11 +41,6 @@ public:
 	float GetMaxAnisotropy() const;
 	void SetAnisotropy(float level);
 
-	// Creates and returns a framebuffer with this as color attachement zero.
-	// The result of this is cached, so this can be called multiple times and
-	// the same frame buffer will be returned!
-	std::shared_ptr<FrameBuffer> AsFrameBuffer() const;
-
 	inline int GetWidth() const { return width; }
 	inline int GetHeight() const { return height; }
 	inline int GetSize() const { assert(width == height); return width; }

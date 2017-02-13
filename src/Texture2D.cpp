@@ -205,18 +205,6 @@ bool Texture2D::Load(const std::string& filename, bool srgb, GLint magFilter, GL
 	return true;
 }
 
-std::shared_ptr<FrameBuffer> Texture2D::AsFrameBuffer() const
-{
-	if (textureAsTarget == nullptr)
-	{
-		textureAsTarget = std::make_shared<FrameBuffer>();
-		textureAsTarget->Attach(this, GL_COLOR_ATTACHMENT0);
-	}
-	GLenum status{};
-	assert(textureAsTarget->IsComplete(&status));
-	return textureAsTarget;
-}
-
 GLenum Texture2D::CalculateSourceFormat(int numComponents) const
 {
 	assert(numComponents >= 1 && numComponents <= 4);

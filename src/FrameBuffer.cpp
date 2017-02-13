@@ -16,7 +16,7 @@ FrameBuffer::~FrameBuffer()
 	glDeleteFramebuffers(1, &handle);
 }
 
-void FrameBuffer::Attach(const Texture2D *texture, GLenum attachment)
+void FrameBuffer::Attach(const Texture2D *texture, GLenum attachment, GLint mipLevel)
 {
 	// Check sizes to see if they match. It's not a requirement, but I have a feeling this will save me from some bugs...
 	if (attachments.size() != 0)
@@ -27,7 +27,7 @@ void FrameBuffer::Attach(const Texture2D *texture, GLenum attachment)
 	}
 
 	BindAsDrawFrameBuffer(false, false);
-	glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, attachment, GL_TEXTURE_2D, texture->GetTextureHandle(), 0);
+	glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, attachment, GL_TEXTURE_2D, texture->GetTextureHandle(), mipLevel);
 
 	// Store attachment textures and draw buffers
 	attachments[attachment] = texture;

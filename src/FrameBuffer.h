@@ -17,7 +17,7 @@ public:
 	FrameBuffer();
 	virtual ~FrameBuffer();
 
-	void Attach(const Texture2D *texture, GLenum attachment);
+	void Attach(const Texture2D *texture, GLenum attachment, GLint mipLevel = 0);
 	const Texture2D *GetAttached(GLenum attachment) const;
 	int GetNumAttached() const;
 

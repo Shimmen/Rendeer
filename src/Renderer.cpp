@@ -19,18 +19,29 @@ Renderer::Renderer(const Window *const window)
 	lightAccumulationTexture.Make(w, h, GL_RGBA, GL_RGBA16F);
 	lightAccumulationTexture.SetFilter(GL_NEAREST);
 	lightAccumulationBuffer.Attach(&lightAccumulationTexture, GL_COLOR_ATTACHMENT0);
-	//lightAccumulationBuffer.Attach(&gBuffer.depth, GL_DEPTH_ATTACHMENT);
+	lightAccumulationBuffer.Attach(&gBuffer.depth, GL_DEPTH_ATTACHMENT);
 	assert(lightAccumulationBuffer.IsComplete());
 
 	int ww = w / 2;
 	int hh = h / 2;
 	bloomBrightPass.Make(ww, hh, GL_RGB, GL_RGB16F);
 	bloomBrightPass.SetFilter(GL_NEAREST);
+	bloomBrightPassFB.Attach(&bloomBrightPass, GL_COLOR_ATTACHMENT0);
 	for (int i = 0; i < numBloomBlurs; i++)
 	{
+		int fst = 2 * i;
+		int snd = 2 * i + 1;
+
 		// Set up two textures per size to be able to do V+H blur pass per size
-		bloomBlurs[2 * i + 0].Make(ww, hh, GL_RGB, GL_RGB16F);
-		bloomBlurs[2 * i + 1].Make(ww, hh, GL_RGB, GL_RGB16F);
+		bloomBlurs[fst].Make(ww, hh, GL_RGB, GL_RGB16F);
+		bloomBlurs[snd].Make(ww, hh, GL_RGB, GL_RGB16F);
+
+		bloomBlurs[fst].SetWrap(GL_CLAMP_TO_EDGE);
+		bloomBlurs[snd].SetWrap(GL_CLAMP_TO_EDGE);
+
+		bloomBlurFBs[fst].Attach(&bloomBlurs[2 * i + 0], GL_COLOR_ATTACHMENT0); assert(bloomBlurFBs[2 * i + 0].IsComplete());
+		bloomBlurFBs[snd].Attach(&bloomBlurs[2 * i + 1], GL_COLOR_ATTACHMENT0); assert(bloomBlurFBs[2 * i + 1].IsComplete());
+
 		ww /= 2;
 		hh /= 2;
 	}
@@ -83,7 +94,7 @@ void Renderer::Render(const Scene& scene)
 
 	GenerateBloom();
 
-	RenderTextureToScreen(bloomBrightPass); return;
+	//RenderTextureToScreen(bloomBrightPass); return;
 
 	// Render light accumulation buffer onto screen with final post processing step(like tone mapping etc.)
 	window->BindAsDrawFrameBuffer();
@@ -235,38 +246,33 @@ void Renderer::GenerateBloom()
 	GL::SetBlending(false);
 	GL::SetDepthTest(false);
 
-	bloomBrightPass.AsFrameBuffer()->BindAsDrawFrameBuffer();
-	static Shader highPass{"Generic/ScreenSpaceQuad.vsh", "Filtering/HighPassFilter.fsh"};
+	static const Shader highPass{"Generic/ScreenSpaceQuad.vsh", "Filtering/HighPassFilter.fsh"};
 	highPass.Bind();
 	highPass.SetUniform("u_threshold", brightPassFilterThreshold);
 	highPass.SetUniform("u_texture", lightAccumulationTexture.Bind(0));
+	bloomBrightPassFB.BindAsDrawFrameBuffer();
 	ScreenAlignedQuad::Render();
 	
 	// Generate mipmaps/downsamples that will be available for the blur passes
 	bloomBrightPass.GenerateMipmaps();
 
-	static Shader gaussianBlurV{ "Filtering/GaussianBlurV.vsh", "Filtering/GaussianBlur.fsh" };
-	static Shader gaussianBlurH{ "Filtering/GaussianBlurH.vsh", "Filtering/GaussianBlur.fsh" };
+	static const Shader gaussianBlurV{ "Filtering/GaussianBlurV.vsh", "Filtering/GaussianBlur.fsh" };
+	static const Shader gaussianBlurH{ "Filtering/GaussianBlurH.vsh", "Filtering/GaussianBlur.fsh" };
 
 	for (int i = 0; i < numBloomBlurs; i++)
 	{
-		// Make sure to use the relevent bloomBrightPass mip/downsample
-		// (making sure to match the resolution of the bloomBlurs texture)
-		bloomBrightPass.Bind();
-		bloomBrightPass.SetMipmapBase(i);
-
-		bloomBlurs[2 * i].AsFrameBuffer()->BindAsDrawFrameBuffer();
+		bloomBlurFBs[2 * i].BindAsDrawFrameBuffer();
 		gaussianBlurV.Bind();
+		gaussianBlurV.SetUniform("u_texture_lod", i); // Sample from i:th mip level (i.e. downsample bright pass)
 		gaussianBlurV.SetUniform("u_texture", bloomBrightPass.Bind(0));
 		ScreenAlignedQuad::Render();
 
-		bloomBlurs[2 * i + 1].AsFrameBuffer()->BindAsDrawFrameBuffer();
+		bloomBlurFBs[2 * i + 1].BindAsDrawFrameBuffer();
 		gaussianBlurH.Bind();
+		gaussianBlurH.SetUniform("u_texture_lod", 0); // Sampling from same size texture
 		gaussianBlurH.SetUniform("u_texture", bloomBlurs[2 * i].Bind(0));
 		ScreenAlignedQuad::Render();
 	}
-
-	bloomBrightPass.SetMipmapBase(0);
 }
 
 void Renderer::RenderCameras(std::vector<std::shared_ptr<Entity>> cameras) const

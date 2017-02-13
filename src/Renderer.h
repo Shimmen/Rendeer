@@ -60,7 +60,9 @@ private:
 	// Bloom
 	static const int numBloomBlurs{ 4 };
 	Texture2D bloomBlurs[2 * Renderer::numBloomBlurs];
+	FrameBuffer bloomBlurFBs[2 * Renderer::numBloomBlurs];
 	Texture2D bloomBrightPass;
+	FrameBuffer bloomBrightPassFB{};
 
 	// Final post-process
 	Shader postProcessShader{ "Generic/ScreenSpaceQuad.vsh", "Postprocess/Postprocess.fsh" };
