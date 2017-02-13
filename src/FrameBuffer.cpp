@@ -48,6 +48,11 @@ const Texture2D *FrameBuffer::GetAttached(GLenum attachment) const
 	return nullptr;
 }
 
+int FrameBuffer::GetNumAttached() const
+{
+	return attachments.size();
+}
+
 bool FrameBuffer::IsComplete(GLenum *statusIfNotComplete) const
 {
 	BindAsDrawFrameBuffer(false, false);

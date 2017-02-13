@@ -19,6 +19,7 @@ public:
 
 	void Attach(const Texture2D *texture, GLenum attachment);
 	const Texture2D *GetAttached(GLenum attachment) const;
+	int GetNumAttached() const;
 
 	bool IsComplete(GLenum *statusIfNotComplete = nullptr) const;
 

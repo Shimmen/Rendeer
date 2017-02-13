@@ -2,10 +2,13 @@
 
 #include "TextureBase.h"
 
-#include "glm/fwd.hpp"
-
 #include <string>
+#include <memory>
+
+#include <glm/fwd.hpp>
 #include <glad/glad.h>
+
+class FrameBuffer;
 
 class Texture2D: public TextureBase
 {
@@ -17,14 +20,19 @@ public:
 
 	Texture2D(int width, int height, GLenum format, GLenum internalFormat, GLint wrapMode, GLint magFilter, GLint minFilter, GLenum type = GL_UNSIGNED_BYTE, const GLvoid *data = nullptr);
 
+	void Make(int width, int height, GLenum format, GLenum internalFormat);
 	bool Load(const std::string& filename, bool srgb, GLint magFilter = GL_LINEAR, GLint wrapMode = GL_REPEAT, bool generateMipmaps = true);
 	
 	int Bind(GLuint textureBinding = 0) const;
 
 	void SetMinFilter(GLint minFilter);
 	void SetMagFilter(GLint magFilter);
+	void SetFilter(GLint filter);
+
 	void SetWrapS(GLint wrapS);
 	void SetWrapT(GLint wrapT);
+	void SetWrap(GLint wrap);
+
 	void SetBorderColor(float r, float g, float b, float a);
 
 	void GenerateMipmaps();
@@ -32,6 +40,11 @@ public:
 
 	float GetMaxAnisotropy() const;
 	void SetAnisotropy(float level);
+
+	// Creates and returns a framebuffer with this as color attachement zero.
+	// The result of this is cached, so this can be called multiple times and
+	// the same frame buffer will be returned!
+	std::shared_ptr<FrameBuffer> AsFrameBuffer() const;
 
 	inline int GetWidth() const { return width; }
 	inline int GetHeight() const { return height; }
@@ -46,5 +59,7 @@ private:
 
 	int width;
 	int height;
+
+	mutable std::shared_ptr<FrameBuffer> textureAsTarget{};
 
 };

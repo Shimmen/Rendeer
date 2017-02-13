@@ -7,6 +7,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Logger.h"
+#include "FrameBuffer.h"
 
 Texture2D::Texture2D()
 	: Texture2D{ "textures/default.png", true }
@@ -79,6 +80,12 @@ void Texture2D::SetMagFilter(GLint magFilter)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
 }
 
+void Texture2D::SetFilter(GLint filter)
+{
+	SetMinFilter(filter);
+	SetMagFilter(filter);
+}
+
 void Texture2D::SetWrapS(GLint wrapS)
 {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapS);
@@ -89,6 +96,11 @@ void Texture2D::SetWrapT(GLint wrapT)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapT);
 }
 
+void Texture2D::SetWrap(GLint wrap)
+{
+	SetWrapS(wrap);
+	SetWrapT(wrap);
+}
 
 void Texture2D::SetBorderColor(float r, float g, float b, float a)
 {
@@ -118,6 +130,24 @@ void Texture2D::SetAnisotropy(float level)
 	static GLfloat maxAnisotropy = GetMaxAnisotropy();
 	float anisotropy = fminf(1.0f, fmaxf(level, maxAnisotropy));
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, anisotropy);
+}
+
+void Texture2D::Make(int width, int height, GLenum format, GLenum internalFormat)
+{
+	Bind();
+
+	this->width = width;
+	this->height = height;
+
+	// These *probably shouldn't* matter since there is no input data, but I really don't know...
+	GLenum inputType = GL_UNSIGNED_BYTE;
+	const GLvoid *inputData = nullptr;
+	
+	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, inputType, inputData);
+
+	// Default to linear (must be set to something)
+	SetMinFilter(GL_LINEAR);
+	SetMagFilter(GL_LINEAR);
 }
 
 bool Texture2D::Load(const std::string& filename, bool srgb, GLint magFilter, GLint wrapMode, bool generateMipmaps)
@@ -173,6 +203,18 @@ bool Texture2D::Load(const std::string& filename, bool srgb, GLint magFilter, GL
 	}
 
 	return true;
+}
+
+std::shared_ptr<FrameBuffer> Texture2D::AsFrameBuffer() const
+{
+	if (textureAsTarget == nullptr)
+	{
+		textureAsTarget = std::make_shared<FrameBuffer>();
+		textureAsTarget->Attach(this, GL_COLOR_ATTACHMENT0);
+	}
+	GLenum status{};
+	assert(textureAsTarget->IsComplete(&status));
+	return textureAsTarget;
 }
 
 GLenum Texture2D::CalculateSourceFormat(int numComponents) const
