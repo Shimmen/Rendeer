@@ -138,16 +138,19 @@ void Window::MakeCurrent() const
 	}
 }
 
-void Window::BindAsDrawFrameBuffer() const
+void Window::BindAsDrawFrameBuffer(bool setViewport) const
 {
 	// Bind framebuffer 0, i.e. the window for this context. To be compatible with the FrameBuffer class, make sure to set
 	// the last bound draw framebuffer to this one! This function is a friend function of the FrameBuffer class for this reason.
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 	FrameBuffer::lastBoundDraw = 0;
 
-	int width, height;
-	GetFramebufferSize(&width, &height);
-	GL::SetViewport(0, 0, width, height);
+	if (setViewport)
+	{
+		int width, height;
+		GetFramebufferSize(&width, &height);
+		GL::SetViewport(0, 0, width, height);
+	}
 
 	// TODO: Should draw buffers reset to COLOR0 & DEPTH?
 }

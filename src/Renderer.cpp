@@ -22,11 +22,16 @@ Renderer::Renderer(const Window *const window)
 	lightAccumulationBuffer.Attach(&gBuffer.depth, GL_DEPTH_ATTACHMENT);
 	assert(lightAccumulationBuffer.IsComplete());
 
+	// Make bloom bright pass 2x downsampled from main image
 	int ww = w / 2;
 	int hh = h / 2;
 	bloomBrightPass.Make(ww, hh, GL_RGB, GL_RGB16F);
-	bloomBrightPass.SetFilter(GL_NEAREST);
+	bloomBrightPass.SetFilter(GL_LINEAR);
 	bloomBrightPassFB.Attach(&bloomBrightPass, GL_COLOR_ATTACHMENT0);
+
+	// Generate bloom blur textures, starting at 4x downsample from bright pass
+	ww /= 4;
+	hh /= 4;
 	for (int i = 0; i < numBloomBlurs; i++)
 	{
 		int fst = 2 * i;
@@ -36,11 +41,11 @@ Renderer::Renderer(const Window *const window)
 		bloomBlurs[fst].Make(ww, hh, GL_RGB, GL_RGB16F);
 		bloomBlurs[snd].Make(ww, hh, GL_RGB, GL_RGB16F);
 
-		bloomBlurs[fst].SetWrap(GL_CLAMP_TO_EDGE);
-		bloomBlurs[snd].SetWrap(GL_CLAMP_TO_EDGE);
+		bloomBlurFBs[fst].Attach(&bloomBlurs[fst], GL_COLOR_ATTACHMENT0);
+		assert(bloomBlurFBs[fst].IsComplete());
 
-		bloomBlurFBs[fst].Attach(&bloomBlurs[2 * i + 0], GL_COLOR_ATTACHMENT0); assert(bloomBlurFBs[2 * i + 0].IsComplete());
-		bloomBlurFBs[snd].Attach(&bloomBlurs[2 * i + 1], GL_COLOR_ATTACHMENT0); assert(bloomBlurFBs[2 * i + 1].IsComplete());
+		bloomBlurFBs[snd].Attach(&bloomBlurs[snd], GL_COLOR_ATTACHMENT0);
+		assert(bloomBlurFBs[snd].IsComplete());
 
 		ww /= 2;
 		hh /= 2;
@@ -94,8 +99,6 @@ void Renderer::Render(const Scene& scene)
 
 	GenerateBloom();
 
-	//RenderTextureToScreen(bloomBrightPass); return;
-
 	// Render light accumulation buffer onto screen with final post processing step(like tone mapping etc.)
 	window->BindAsDrawFrameBuffer();
 	GL::SetDepthTest(false);
@@ -116,8 +119,6 @@ void Renderer::Render(const Scene& scene)
 	postProcessShader.SetUniform("u_bloom_weights", bloomWeights);
 	postProcessShader.SetUniform("u_bloom_1", bloomBlurs[1].Bind(1));
 	postProcessShader.SetUniform("u_bloom_2", bloomBlurs[3].Bind(2));
-	postProcessShader.SetUniform("u_bloom_3", bloomBlurs[5].Bind(3));
-	postProcessShader.SetUniform("u_bloom_4", bloomBlurs[7].Bind(4));
 	postProcessShader.SetUniform("u_bloom_master_weight", bloomMasterWeight);
 
 	postProcessShader.SetUniform("u_chroma_ab_amount", (useChromaAb) ? chromaAbAmount : 0.0f);
@@ -248,7 +249,8 @@ void Renderer::GenerateBloom()
 	{
 		ImGui::SliderFloat("Luminance threshold", &brightPassFilterThreshold, 0.0f, 3.0f);
 		ImGui::SliderFloat("Bloom master weight", &bloomMasterWeight, 0.0f, 1.0f);
-		ImGui::SliderFloat4("Bloom weights", glm::value_ptr(bloomWeights), 0.0f, 1.0f);
+		ImGui::SliderFloat2("Bloom weights", glm::value_ptr(bloomWeights), 0.0f, 1.0f);
+		ImGui::SliderInt("Blur passes per bloom", &numPassesPerBlur, 1, 20);
 	}
 
 	GL::SetBlending(false);
@@ -264,22 +266,41 @@ void Renderer::GenerateBloom()
 	// Generate mipmaps/downsamples that will be available for the blur passes
 	bloomBrightPass.GenerateMipmaps();
 
-	static const Shader gaussianBlurV{ "Filtering/GaussianBlurV.vsh", "Filtering/GaussianBlur.fsh" };
-	static const Shader gaussianBlurH{ "Filtering/GaussianBlurH.vsh", "Filtering/GaussianBlur.fsh" };
+	static const Shader gaussianBlurV{"Generic/ScreenSpaceQuad.vsh", "Filtering/GaussianBlurV.fsh"};
+	static const Shader gaussianBlurH{"Generic/ScreenSpaceQuad.vsh", "Filtering/GaussianBlurH.fsh"};
 
-	for (int i = 0; i < numBloomBlurs; i++)
+	for (int blur = 0; blur < numBloomBlurs; blur++)
 	{
-		bloomBlurFBs[2 * i].BindAsDrawFrameBuffer();
-		gaussianBlurV.Bind();
-		gaussianBlurV.SetUniform("u_texture_lod", i); // Sample from i:th mip level (i.e. downsample bright pass)
-		gaussianBlurV.SetUniform("u_texture", bloomBrightPass.Bind(0));
-		ScreenAlignedQuad::Render();
+		int fst = 2 * blur;
+		int snd = 2 * blur + 1;
 
-		bloomBlurFBs[2 * i + 1].BindAsDrawFrameBuffer();
-		gaussianBlurH.Bind();
-		gaussianBlurH.SetUniform("u_texture_lod", 0); // Sampling from same size texture
-		gaussianBlurH.SetUniform("u_texture", bloomBlurs[2 * i].Bind(0));
-		ScreenAlignedQuad::Render();
+		for (int pass = 0; pass < numPassesPerBlur; pass++)
+		{
+			bloomBlurFBs[fst].BindAsDrawFrameBuffer();
+			gaussianBlurV.Bind();
+			if (pass == 0)
+			{
+				// The bloom blurs have the same aspect ratio as the bloom bright pass and
+				// width & heights are power-of-two subdivisions of the bright pass size
+				float relSize = roundf(bloomBrightPass.GetWidth() / bloomBlurs[fst].GetWidth());
+				int exp = static_cast<int>(log2f(relSize));
+
+				gaussianBlurV.SetUniform("u_texture_lod", exp);
+				gaussianBlurV.SetUniform("u_texture", bloomBrightPass.Bind(0));
+			}
+			else
+			{
+				gaussianBlurV.SetUniform("u_texture_lod", 0);
+				gaussianBlurV.SetUniform("u_texture", bloomBlurs[snd].Bind(0));
+			}
+			ScreenAlignedQuad::Render();
+
+			bloomBlurFBs[snd].BindAsDrawFrameBuffer();
+			gaussianBlurH.Bind();
+			gaussianBlurH.SetUniform("u_texture_lod", 0);
+			gaussianBlurH.SetUniform("u_texture", bloomBlurs[fst].Bind(0));
+			ScreenAlignedQuad::Render();
+		}
 	}
 }
 
@@ -302,9 +323,9 @@ void Renderer::RenderCameras(std::vector<std::shared_ptr<Entity>> cameras) const
 	}
 }
 
-void Renderer::RenderTextureToScreen(const Texture2D& texture, bool alphaBlending)
+void Renderer::RenderTextureToScreen(const Texture2D& texture, bool alphaBlending, bool setViewport)
 {
-	window->BindAsDrawFrameBuffer();
+	window->BindAsDrawFrameBuffer(setViewport);
 	nofilterFilter.Bind();
 
 	texture.Bind(0);

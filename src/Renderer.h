@@ -58,19 +58,20 @@ private:
 	Shader skyboxShader{"Generic/Skybox.vsh", "Generic/Skybox.fsh"};
 
 	// Bloom
-	static const int numBloomBlurs{ 4 };
+	static const int numBloomBlurs{ 2 };
+	int numPassesPerBlur{ 4 };
 	Texture2D bloomBlurs[2 * Renderer::numBloomBlurs];
 	FrameBuffer bloomBlurFBs[2 * Renderer::numBloomBlurs];
 	Texture2D bloomBrightPass;
 	FrameBuffer bloomBrightPassFB{};
-	glm::vec4 bloomWeights{0.30, 0.26 ,0.05, 0.00};
-	float bloomMasterWeight{ 0.5f };
+	glm::vec2 bloomWeights{0.17f, 0.37f};
+	float bloomMasterWeight{0.5f};
 
 	// Final post-process
 	Shader postProcessShader{ "Generic/ScreenSpaceQuad.vsh", "Postprocess/Postprocess.fsh" };
 
 	// Debug stuff etc.
-public: void RenderTextureToScreen(const Texture2D& texture, bool alphaBlending = false);
+public: void RenderTextureToScreen(const Texture2D& texture, bool alphaBlending = false, bool setViewport = true);
 	Shader nofilterFilter{"Generic/ScreenSpaceQuad.vsh", "Filtering/Nofilter.fsh"};
 
 };

@@ -146,8 +146,10 @@ void Texture2D::Make(int width, int height, GLenum format, GLenum internalFormat
 	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, inputType, inputData);
 
 	// Default to linear (must be set to something)
-	SetMinFilter(GL_LINEAR);
-	SetMagFilter(GL_LINEAR);
+	SetFilter(GL_LINEAR);
+
+	// Default to clamp to egde (doesn't need to be set, but clamp to edge is a good default)
+	SetWrap(GL_CLAMP_TO_EDGE);
 }
 
 bool Texture2D::Load(const std::string& filename, bool srgb, GLint magFilter, GLint wrapMode, bool generateMipmaps)

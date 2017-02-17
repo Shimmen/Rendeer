@@ -35,7 +35,7 @@ protected:
 	static GLuint lastBoundRead;
 
 	// We want the window to be able to change the lastBound parameter to 0 when bound!
-	friend void Window::BindAsDrawFrameBuffer() const;
+	friend void Window::BindAsDrawFrameBuffer(bool) const;
 	friend void Window::BindAsReadFrameBuffer() const;
 
 };
