@@ -8,11 +8,11 @@
 #include "Logger.h"
 #include "GeneralUtil.h"
 
-ShaderUnit::ShaderUnit(const std::string& shaderSourcePath, ShaderUnit::Type type)
+ShaderUnit::ShaderUnit(const std::string& shaderSourcePath, ShaderUnit::Type type, const std::vector<std::string>& definitions)
 	: type{ type }
 	, sourceFilePath{ shaderSourcePath }
 {
-	std::string source = ReadShaderSourceFile(shaderSourcePath);
+	std::string source = ReadShaderSourceFile(shaderSourcePath, definitions);
 
 	GLenum shaderType = static_cast<GLenum>(type);
 	handle = glCreateShader(shaderType);
@@ -47,7 +47,7 @@ const std::string & ShaderUnit::GetSourceFilePath() const
 	return this->sourceFilePath;
 }
 
-/* static */ std::string ShaderUnit::ReadShaderSourceFile(const std::string & filePath)
+/* static */ std::string ShaderUnit::ReadShaderSourceFile(const std::string & filePath, const std::vector<std::string>& definitions)
 {
 	static const std::string pathPrefix = "shaders/";
 	const std::string fullFilePath = pathPrefix + filePath;
@@ -62,10 +62,19 @@ const std::string & ShaderUnit::GetSourceFilePath() const
 	std::string line;
 	while (std::getline(file, line))
 	{
-		if (IsIncludeLine(line))
+		if (line.find(VERSION_DIRECTIVE) != std::string::npos)
+		{
+			result.append(line + "\n");
+			for (auto defitition : definitions)
+			{
+				std::string defLine = "#define " + defitition + "\n";
+				result.append(defLine);
+			}
+		}
+		else if (line.find(INCLUDE_DIRECTIVE) != std::string::npos)
 		{
 			std::string fileName = GetFileNameFromIncludeLine(line);
-			result.append(ReadShaderSourceFile(fileName));
+			result.append(ReadShaderSourceFile(fileName, definitions));
 		}
 		else
 		{
@@ -79,12 +88,6 @@ const std::string & ShaderUnit::GetSourceFilePath() const
 	}
 
 	return result;
-}
-
-/* static */ bool ShaderUnit::IsIncludeLine(const std::string& line)
-{
-	size_t foundPosition = line.find(INCLUDE_DIRECTIVE);
-	return foundPosition != std::string::npos;
 }
 
 /* static */ std::string ShaderUnit::GetFileNameFromIncludeLine(const std::string& line)

@@ -21,7 +21,14 @@ void main()
 	for (int i = 1; i < 3; ++i)
 	{
 		// Offsets in array are defined in (sub-)pixel offsets
+#if defined(VERTICAL_PASS)
+		vec2 offset = vec2(0, offset[i]) / textureSize(u_texture, u_texture_lod);
+#elif defined(HORIZONTAL_PASS)
 		vec2 offset = vec2(offset[i], 0) / textureSize(u_texture, u_texture_lod);
+#else
+		#error "VERTICAL_PASS or HORIZONTAL_PASS must be defined (and not both)!"
+#endif
+
 
 		o_fragment_color += textureLod(u_texture, v_tex_coord + offset, u_texture_lod) * weight[i];
 		o_fragment_color += textureLod(u_texture, v_tex_coord - offset, u_texture_lod) * weight[i];

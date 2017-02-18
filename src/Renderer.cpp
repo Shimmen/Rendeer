@@ -266,8 +266,8 @@ void Renderer::GenerateBloom()
 	// Generate mipmaps/downsamples that will be available for the blur passes
 	bloomBrightPass.GenerateMipmaps();
 
-	static const Shader gaussianBlurV{"Generic/ScreenSpaceQuad.vsh", "Filtering/GaussianBlurV.fsh"};
-	static const Shader gaussianBlurH{"Generic/ScreenSpaceQuad.vsh", "Filtering/GaussianBlurH.fsh"};
+	static const Shader gaussianBlurV{"Generic/ScreenSpaceQuad.vsh", "Filtering/GaussianBlur.fsh", std::vector<std::string>{"VERTICAL_PASS"}};
+	static const Shader gaussianBlurH{"Generic/ScreenSpaceQuad.vsh", "Filtering/GaussianBlur.fsh", std::vector<std::string>{"HORIZONTAL_PASS"}};
 
 	for (int blur = 0; blur < numBloomBlurs; blur++)
 	{

@@ -1,12 +1,14 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 #include <glad/glad.h>
 
 #include "GLResource.h"
 
-#define INCLUDE_DIRECTIVE (std::string("#include "))
+#define INCLUDE_DIRECTIVE std::string("#include ")
+#define VERSION_DIRECTIVE std::string("#version ")
 
 class ShaderUnit: public GLResource
 {
@@ -21,7 +23,7 @@ public:
 
 public:
 
-	ShaderUnit(const std::string& shaderSourcePath, ShaderUnit::Type type);
+	ShaderUnit(const std::string& shaderSourcePath, ShaderUnit::Type type, const std::vector<std::string>& definitions);
 	~ShaderUnit();
 
 	ShaderUnit::Type GetType() const;
@@ -30,9 +32,8 @@ public:
 private:
 
 	// Reads and preprocesses a shader source file into a string
-	static std::string ReadShaderSourceFile(const std::string& filePath);
+	static std::string ReadShaderSourceFile(const std::string& filePath, const std::vector<std::string>& definitions);
 
-	static bool IsIncludeLine(const std::string& line);
 	static std::string GetFileNameFromIncludeLine(const std::string& line);
 
 private:

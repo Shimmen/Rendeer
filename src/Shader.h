@@ -21,7 +21,7 @@ class Shader: public GLResource
 {
 public:
 	
-	Shader(const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath);
+	Shader(const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath, std::vector<std::string> definitions = {});
 	~Shader();
 
 	void Bind() const;

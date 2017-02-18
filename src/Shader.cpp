@@ -11,27 +11,22 @@
 /* static */ int Shader::maxNumberOfUniformBufferBindings{ -1 };
 /* static */ GLuint Shader::currentlyBoundShaderProgram{ 0 };
 
-Shader::Shader(const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath)
+Shader::Shader(const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath, std::vector<std::string> definitions)
 {
-	// Create shader components/units
-	ShaderUnit vertexShader{ vertexShaderFilePath, ShaderUnit::Type::VERTEX_SHADER };
-	ShaderUnit fragmentShader{ fragmentShaderFilePath, ShaderUnit::Type::FRAGMENT_SHADER };
+	ShaderUnit vertexShader{ vertexShaderFilePath, ShaderUnit::Type::VERTEX_SHADER, definitions };
+	ShaderUnit fragmentShader{ fragmentShaderFilePath, ShaderUnit::Type::FRAGMENT_SHADER, definitions };
 
-	// Create program and attach components
 	handle = glCreateProgram();
 	glAttachShader(handle, vertexShader.getHandle());
 	glAttachShader(handle, fragmentShader.getHandle());
 
-	// Link program
 	glLinkProgram(handle);
 	CheckShaderErrors(handle, GL_LINK_STATUS);
 
-	// TODO: Create a Validate function for validating
-	// Validate program
+	// TODO: Create a Validate function for validating (can't do it here)
 	//glValidateProgram(handle);
 	//CheckShaderErrors(handle, GL_VALIDATE_STATUS);
 
-	// Release shader components from the program
 	glDetachShader(handle, vertexShader.getHandle());
 	glDetachShader(handle, fragmentShader.getHandle());
 	
