@@ -58,27 +58,26 @@ const std::string & ShaderUnit::GetSourceFilePath() const
 		Logger::Log("Error: could not open shader source file with name '%s'", filePath.c_str());
 	}
 
-	std::string result;
+	std::stringstream result;
 	std::string line;
 	while (std::getline(file, line))
 	{
 		if (line.find(VERSION_DIRECTIVE) != std::string::npos)
 		{
-			result.append(line + "\n");
-			for (auto defitition : definitions)
+			result << line << std::endl;
+			for (auto definition : definitions)
 			{
-				std::string defLine = "#define " + defitition + "\n";
-				result.append(defLine);
+				result << DEFINE_DIRECTIVE << definition << std::endl;
 			}
 		}
 		else if (line.find(INCLUDE_DIRECTIVE) != std::string::npos)
 		{
 			std::string fileName = GetFileNameFromIncludeLine(line);
-			result.append(ReadShaderSourceFile(fileName, definitions));
+			result << ReadShaderSourceFile(fileName, definitions);
 		}
 		else
 		{
-			result.append(line + "\n");
+			result << line << std::endl;
 		}
 	}
 	
@@ -87,7 +86,7 @@ const std::string & ShaderUnit::GetSourceFilePath() const
 		Logger::Log("Error: some error while reading shader source file '%s'", filePath.c_str());
 	}
 
-	return result;
+	return result.str();
 }
 
 /* static */ std::string ShaderUnit::GetFileNameFromIncludeLine(const std::string& line)
@@ -96,7 +95,7 @@ const std::string & ShaderUnit::GetSourceFilePath() const
 	std::string trimmed = nonstd::trim_whitespace(line);
 
 	// Remove include directive, leaving only the filename and decorations
-	std::string decoratedFilename = trimmed.substr(INCLUDE_DIRECTIVE.length());
+	std::string decoratedFilename = trimmed.substr(strlen(INCLUDE_DIRECTIVE));
 	
 	// Replace any quotation marks, tabs, and semicolons with spaces
 	std::replace(decoratedFilename.begin(), decoratedFilename.end(), ';',  ' ');

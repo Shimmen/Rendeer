@@ -7,8 +7,9 @@
 
 #include "GLResource.h"
 
-#define INCLUDE_DIRECTIVE std::string("#include ")
-#define VERSION_DIRECTIVE std::string("#version ")
+#define INCLUDE_DIRECTIVE ("#include ")
+#define VERSION_DIRECTIVE ("#version ")
+#define DEFINE_DIRECTIVE  ("#define ")
 
 class ShaderUnit: public GLResource
 {
