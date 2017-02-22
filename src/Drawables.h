@@ -33,3 +33,19 @@ private:
 	VertexArray vertexArray;
 
 };
+
+class Sphere
+{
+public:
+
+	static void Render();
+
+private:
+
+	Sphere();
+	~Sphere() {}
+
+	VertexArray vertexArray;
+	size_t indexCount;
+
+};

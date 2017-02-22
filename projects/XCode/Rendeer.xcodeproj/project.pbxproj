@@ -46,6 +46,7 @@
 		F48E240A1E48A805001B7CD0 /* imgui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F48E24071E48A805001B7CD0 /* imgui.cpp */; };
 		F48E240D1E48A862001B7CD0 /* ImGuiAdapter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F48E240B1E48A862001B7CD0 /* ImGuiAdapter.cpp */; };
 		F4B34AAB1E377EE900781A19 /* GLState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4B34AAA1E377EE900781A19 /* GLState.cpp */; };
+		F4EAD2101E5C759000B3CA1E /* Geometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4EAD20E1E5C759000B3CA1E /* Geometry.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -132,6 +133,8 @@
 		F4B34AA91E377D7600781A19 /* GLState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLState.h; path = ../../../src/GLState.h; sourceTree = "<group>"; };
 		F4B34AAA1E377EE900781A19 /* GLState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GLState.cpp; path = ../../../src/GLState.cpp; sourceTree = "<group>"; };
 		F4E48A2A1DF0D8E300F6AFAC /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; name = assets; path = ../../../assets; sourceTree = "<group>"; };
+		F4EAD20E1E5C759000B3CA1E /* Geometry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Geometry.cpp; path = ../../../src/Geometry.cpp; sourceTree = "<group>"; };
+		F4EAD20F1E5C759000B3CA1E /* Geometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Geometry.h; path = ../../../src/Geometry.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -247,6 +250,8 @@
 				F4433ABA1DEEF7240058CD6C /* Window.h */,
 				F48E240B1E48A862001B7CD0 /* ImGuiAdapter.cpp */,
 				F48E240C1E48A862001B7CD0 /* ImGuiAdapter.h */,
+				F4EAD20E1E5C759000B3CA1E /* Geometry.cpp */,
+				F4EAD20F1E5C759000B3CA1E /* Geometry.h */,
 			);
 			name = src;
 			sourceTree = "<group>";
@@ -351,6 +356,7 @@
 				F4433AC71DEEF7240058CD6C /* Main.cpp in Sources */,
 				F4433AD01DEEF7240058CD6C /* Texture2D.cpp in Sources */,
 				F4433AD41DEEF7240058CD6C /* Uniform.cpp in Sources */,
+				F4EAD2101E5C759000B3CA1E /* Geometry.cpp in Sources */,
 				F4433AD61DEEF7240058CD6C /* Window.cpp in Sources */,
 				F4433ABE1DEEF7240058CD6C /* Component.cpp in Sources */,
 				F4433ABD1DEEF7240058CD6C /* Camera.cpp in Sources */,

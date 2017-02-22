@@ -1,6 +1,7 @@
 #include "Drawables.h"
 
 #include "Buffer.h"
+#include "Geometry.h"
 
 ScreenAlignedQuad::ScreenAlignedQuad()
 {
@@ -97,4 +98,29 @@ SkyboxCube::SkyboxCube()
 	skyboxCube.vertexArray.Bind();
 	skyboxCube.vertexArray.RenderWithArrayBuffer(GL_TRIANGLES, vertexCount, 0);
 	skyboxCube.vertexArray.Unbind();
+}
+
+Sphere::Sphere()
+{
+	auto sphere = Geometry::Sphere(12, 12, 1.0f, false, false, false);
+	indexCount = sphere->GetIndices().size();
+
+	vertexArray.Bind();
+
+	Buffer vertexBuffer;
+	vertexBuffer.Bind(GL_ARRAY_BUFFER).SetData(sphere->GetPositions(), GL_STATIC_DRAW);
+	vertexArray.AddVertexAttribute(0, 3, GL_FLOAT);
+
+	Buffer indexBuffer;
+	indexBuffer.Bind(GL_ELEMENT_ARRAY_BUFFER).SetData(sphere->GetIndices(), GL_STATIC_DRAW);
+
+	vertexArray.Unbind();
+}
+
+/*static*/ void Sphere::Render()
+{
+	static const Sphere sphere{};
+	sphere.vertexArray.Bind();
+	sphere.vertexArray.RenderWithElementArrayBuffer(GL_TRIANGLES, sphere.indexCount);
+	sphere.vertexArray.Unbind();
 }

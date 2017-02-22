@@ -31,14 +31,16 @@ protected:
 
 	virtual void Init() {};
 
-protected:
-
 	const std::shared_ptr<Shader> shader;
 
 	bool castsShadows{false};
 
+public:
+
 	glm::vec3 color;
 	float intensity;
+
+private:
 
 	const Uniform *colorUniform;
 	const Uniform *intensityUniform;
@@ -55,9 +57,11 @@ public:
 	void SetUniforms(const Renderer& renderer, const CameraComponent& camera) const;
 	Camera GetLightCamera(const CameraComponent& mainCamera, int shadowMapSize) const;
 
-private:
+public:
 
 	bool usingDynamicCameraPositioning;
+
+private:
 
 	const Uniform *directionUniform;
 	const Uniform *inverseProjectionUniform;
@@ -91,10 +95,12 @@ public:
 	void SetUniforms(const Renderer& renderer, const CameraComponent& camera) const;
 	Camera GetLightCamera(const CameraComponent& mainCamera, int shadowMapSize) const;
 
-private:
+public:
 
 	float outerConeAngle;
 	float innerConeAngle;
+
+private:
 
 	const Uniform *positionUniform;
 	const Uniform *directionUniform;

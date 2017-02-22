@@ -185,3 +185,9 @@ STATIC void GL::SetCullFace(GLenum face)
 		glCullFace(face);
 	}
 }
+
+STATIC void GL::SetPolygonMode(GLenum polygonMode)
+{
+	// TODO: Save/optimize state!
+	glPolygonMode(GL_FRONT_AND_BACK, polygonMode);
+}

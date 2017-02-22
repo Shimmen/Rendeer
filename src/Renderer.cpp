@@ -1,5 +1,7 @@
 #include "Renderer.h"
 
+#include <memory>
+
 #include <imgui.h>
 
 #include <glm/gtc/type_ptr.hpp>
@@ -207,6 +209,9 @@ void Renderer::LightPass(const Scene& scene, const std::vector<std::shared_ptr<E
 		GL::SetBlendEquation(GL_FUNC_ADD, GL_FUNC_ADD);
 		GL::SetBlendFunction(GL_ONE, GL_ONE, GL_ONE, GL_ONE);
 
+		// TODO: If the light is a point light, bind the close or near point light shader, set its uniforms and render the light...
+		// And later, don't give the lights their own shader, let those details be renderer specific (deferred in this case) and make
+		// the light struct real simple and data based. Probably do the same with materials, but that's an even later problem!
 		auto& lightShader = light->GetShader();
 		gBuffer.BindAsUniform(lightShader);
 		light->SetUniforms(*this, camera);
@@ -222,6 +227,46 @@ void Renderer::LightPass(const Scene& scene, const std::vector<std::shared_ptr<E
 		ScreenAlignedQuad::Render();
 
 		GL::SetBlending(false);
+	}
+
+	static bool drawPointLightWireframes = true;
+	if (ImGui::CollapsingHeader("Light pass"))
+	{
+		ImGui::Checkbox("Draw point light wireframes", &drawPointLightWireframes);
+	}
+
+	if (drawPointLightWireframes)
+	{
+		GL::SetFaceCulling(false);
+		GL::SetDepthTest(true);
+		GL::SetDepthFunction(GL_LEQUAL);
+
+		wireframeShader.Bind();
+		GL::SetPolygonMode(GL_LINE);
+
+		glm::mat4 viewProjection = camera.GetProjectionMatrix() * camera.GetViewMatrix();
+		wireframeShader.SetUniform("u_view_projection", viewProjection);
+
+		for (auto& light : lights)
+		{
+			// TODO: Redo light class to avoid all this crap.
+			auto pointLight = light->GetComponent<PointLight>();
+			if (pointLight != nullptr)
+			{
+				float radius = pointLight->intensity * 6.5f; // TODO: Get a proper radius!
+				glm::vec3 position = pointLight->GetOwnerEntity().GetTransform().GetPositionInWorld();
+
+				glm::mat4 scale = glm::scale(glm::mat4{ 1.0f }, glm::vec3{radius, radius, radius});
+				glm::mat4 translation = glm::translate(glm::mat4{ 1.0f }, position);
+
+				wireframeShader.SetUniform("u_model_matrix", translation * scale);
+
+				Sphere::Render();
+			}
+		}
+
+		GL::SetPolygonMode(GL_FILL);
+		GL::SetFaceCulling(true);
 	}
 }
 

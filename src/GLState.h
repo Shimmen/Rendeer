@@ -92,6 +92,9 @@ public:
 	static inline GLenum GetCullFace() { return state.cullFace; }
 	static void SetCullFace(GLenum face);
 
+	// Drawing
+	static void SetPolygonMode(GLenum polygonMode);
+
 	// Generic functions (should be avoided if possible since they don't do any caching and similar optimisations)
 	static inline void Enable(GLenum key) { glEnable(key); }
 	static inline void Disable(GLenum key) { glDisable(key); }
