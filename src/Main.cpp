@@ -10,6 +10,7 @@
 #include <GLFW/glfw3.h>
 
 #include "Mesh.h"
+#include "Light.h"
 #include "Scene.h"
 #include "Window.h"
 #include "Renderer.h"
@@ -85,12 +86,14 @@ int main(int argc, char *argv[])
 
 	auto pointLight = scene.NewChild();
 	pointLight->AddComponent(std::make_shared<PointLight>(glm::vec3{ 1.0f, 0.1f, 0.15f }, 1.35f));
+	pointLight->AddComponent(Light::Point(glm::vec3{ 1.0f, 0.1f, 0.15f }, 1.35f));
 
 	auto spotLight = scene.NewChild();
 	spotLight->GetTransform()
 		.SetPosition(glm::vec3{ 0, 10.0f, 0 })
 		.SetOrientation(glm::angleAxis(3.141592f / 2.0f, glm::vec3{1, 0, 0 }));
 	spotLight->AddComponent(std::make_shared<SpotLight>(glm::vec3{ 1.0f, 0.6f, 0.6f }, 12.0f, glm::radians(40.0f), glm::radians(5.0f)));
+	spotLight->AddComponent(Light::Spot(glm::vec3{ 1.0f, 0.6f, 0.6f }, 12.0f, glm::radians(40.0f), glm::radians(5.0f)));
 
 	// Set up the extra camera
 	auto extraCamera = std::make_shared<CameraComponent>(16.0f / 9.0f, 0.1f, 1000.0f, glm::radians(50.0f));

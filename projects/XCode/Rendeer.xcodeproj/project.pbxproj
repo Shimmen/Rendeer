@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		F40F970B1E3132BC004D2C8F /* Bitmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F40F97091E3132BC004D2C8F /* Bitmap.cpp */; };
+		F40FB14F1E5E4B3D004EA71F /* Light.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F40FB14D1E5E4B3D004EA71F /* Light.cpp */; };
 		F4433ABC1DEEF7240058CD6C /* Buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4433A831DEEF7240058CD6C /* Buffer.cpp */; };
 		F4433ABD1DEEF7240058CD6C /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4433A851DEEF7240058CD6C /* Camera.cpp */; };
 		F4433ABE1DEEF7240058CD6C /* Component.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4433A871DEEF7240058CD6C /* Component.cpp */; };
@@ -64,6 +65,8 @@
 /* Begin PBXFileReference section */
 		F40F97091E3132BC004D2C8F /* Bitmap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Bitmap.cpp; path = ../../../src/Bitmap.cpp; sourceTree = "<group>"; };
 		F40F970A1E3132BC004D2C8F /* Bitmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Bitmap.h; path = ../../../src/Bitmap.h; sourceTree = "<group>"; };
+		F40FB14D1E5E4B3D004EA71F /* Light.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Light.cpp; path = ../../../src/Light.cpp; sourceTree = "<group>"; };
+		F40FB14E1E5E4B3D004EA71F /* Light.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Light.h; path = ../../../src/Light.h; sourceTree = "<group>"; };
 		F41859231E2F729E00E20FB6 /* GLResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLResource.h; path = ../../../src/GLResource.h; sourceTree = "<group>"; };
 		F4433A781DEEF6370058CD6C /* Rendeer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Rendeer; sourceTree = BUILT_PRODUCTS_DIR; };
 		F4433A831DEEF7240058CD6C /* Buffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Buffer.cpp; path = ../../../src/Buffer.cpp; sourceTree = "<group>"; };
@@ -252,6 +255,8 @@
 				F48E240C1E48A862001B7CD0 /* ImGuiAdapter.h */,
 				F4EAD20E1E5C759000B3CA1E /* Geometry.cpp */,
 				F4EAD20F1E5C759000B3CA1E /* Geometry.h */,
+				F40FB14D1E5E4B3D004EA71F /* Light.cpp */,
+				F40FB14E1E5E4B3D004EA71F /* Light.h */,
 			);
 			name = src;
 			sourceTree = "<group>";
@@ -347,6 +352,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F40FB14F1E5E4B3D004EA71F /* Light.cpp in Sources */,
 				F48E24081E48A805001B7CD0 /* imgui_demo.cpp in Sources */,
 				F48E24091E48A805001B7CD0 /* imgui_draw.cpp in Sources */,
 				F48E240A1E48A805001B7CD0 /* imgui.cpp in Sources */,
