@@ -48,13 +48,13 @@ private:
 //
 // An entity containing a CameraComponent that encapsulates all camera behaviour (like movement and view/projection)
 //
-class Camera: public Entity
+class CameraEntity: public Entity
 {
 public:
 
-	Camera();
-	Camera(glm::vec3 position, glm::quat orientation);
-	Camera(glm::vec3 position, glm::quat orientation,
+	CameraEntity();
+	CameraEntity(glm::vec3 position, glm::quat orientation);
+	CameraEntity(glm::vec3 position, glm::quat orientation,
 		float aspectRatio, float nearPlane, float farPlane, float fovOrSize, CameraComponent::CameraType type = CameraComponent::CameraType::PERSPECTIVE);
 
 	void Update(float deltaTime, const Window& window);

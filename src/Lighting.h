@@ -21,7 +21,7 @@ public:
 	virtual ~LightComponent() {}
 
 	virtual void SetUniforms(const Renderer& renderer, const CameraComponent& camera) const;
-	virtual Camera GetLightCamera(const CameraComponent& mainCamera, int shadowMapSize) const = 0;
+	virtual CameraEntity GetLightCamera(const CameraComponent& mainCamera, int shadowMapSize) const = 0;
 
 	const Shader& GetShader() const { return *shader; }
 
@@ -55,7 +55,7 @@ public:
 	virtual ~DirectionalLight() {}
 
 	void SetUniforms(const Renderer& renderer, const CameraComponent& camera) const;
-	Camera GetLightCamera(const CameraComponent& mainCamera, int shadowMapSize) const;
+	CameraEntity GetLightCamera(const CameraComponent& mainCamera, int shadowMapSize) const;
 
 public:
 
@@ -76,7 +76,7 @@ public:
 	virtual ~PointLight() {}
 
 	void SetUniforms(const Renderer& renderer, const CameraComponent& camera) const;
-	Camera GetLightCamera(const CameraComponent& mainCamera, int shadowMapSize) const;
+	CameraEntity GetLightCamera(const CameraComponent& mainCamera, int shadowMapSize) const;
 
 private:
 
@@ -93,7 +93,7 @@ public:
 	virtual ~SpotLight() {}
 
 	void SetUniforms(const Renderer& renderer, const CameraComponent& camera) const;
-	Camera GetLightCamera(const CameraComponent& mainCamera, int shadowMapSize) const;
+	CameraEntity GetLightCamera(const CameraComponent& mainCamera, int shadowMapSize) const;
 
 public:
 

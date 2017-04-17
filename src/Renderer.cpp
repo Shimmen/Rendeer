@@ -319,7 +319,7 @@ void SetCommmonLightUniforms(const Light& light, const Shader& lightShader, cons
 void SetShadowRelatedLightUniforms(const Light& light, const Shader& lightShader, const Texture2D& shadowMap, const CameraComponent& camera)
 {
 	const Transform& lightTransform = light.GetOwnerEntity().GetTransform();
-	Camera lightCamera{ lightTransform.GetPositionInWorld(), lightTransform.GetOrientationInWorld() };
+	CameraEntity lightCamera{ lightTransform.GetPositionInWorld(), lightTransform.GetOrientationInWorld() };
 	glm::mat4 lightViewProjection = lightCamera.GetProjectionMatrix() * lightCamera.GetViewMatrix();
 
 	shadowMap.Bind(8);
@@ -360,7 +360,7 @@ void Renderer::LightPassNew(const Scene& scene, const EntityList& geometry, cons
 			shadowMapGenerator.Bind();
 
 			const Transform& lightTransform = light->GetOwnerEntity().GetTransform();
-			Camera lightCamera{ lightTransform.GetPositionInWorld(), lightTransform.GetOrientationInWorld() };
+			CameraEntity lightCamera{ lightTransform.GetPositionInWorld(), lightTransform.GetOrientationInWorld() };
 			glm::mat4 lightViewProjection = lightCamera.GetProjectionMatrix() * lightCamera.GetViewMatrix();
 			shadowMapGenerator.SetUniform("u_view_projecion_matrix", lightViewProjection);
 

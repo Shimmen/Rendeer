@@ -44,7 +44,7 @@ void DirectionalLight::SetUniforms(const Renderer& renderer, const CameraCompone
 	inverseProjectionUniform->Set(glm::inverse((camera.GetProjectionMatrix())));
 }
 
-Camera DirectionalLight::GetLightCamera(const CameraComponent& mainCamera, int shadowMapSize) const
+CameraEntity DirectionalLight::GetLightCamera(const CameraComponent& mainCamera, int shadowMapSize) const
 {
 	const float cameraNear = 0.0f;
 	const float cameraFar = 100.0f;
@@ -72,7 +72,7 @@ Camera DirectionalLight::GetLightCamera(const CameraComponent& mainCamera, int s
 		worldLightPosition = glm::vec3(glm::rotate(worldLightOrientation, lightSpaceLightPosition));
 	}
 
-	return Camera(worldLightPosition, worldLightOrientation,
+	return CameraEntity(worldLightPosition, worldLightOrientation,
 	              1.0f, cameraNear, cameraFar, cameraScale, CameraComponent::CameraType::ORTHOGRAPHIC);
 }
 
@@ -95,10 +95,10 @@ void PointLight::SetUniforms(const Renderer& renderer, const CameraComponent& ca
 	inverseProjectionUniform->Set(glm::inverse((camera.GetProjectionMatrix())));
 }
 
-Camera PointLight::GetLightCamera(const CameraComponent& mainCamera, int shadowMapSize) const
+CameraEntity PointLight::GetLightCamera(const CameraComponent& mainCamera, int shadowMapSize) const
 {
 	// TODO: This doesn't make sense since it's omnidirectional
-	return Camera(GetOwnerEntity().GetTransform().GetPositionInWorld(),
+	return CameraEntity(GetOwnerEntity().GetTransform().GetPositionInWorld(),
 	              GetOwnerEntity().GetTransform().GetOrientationInWorld(),
 	              1.0f, 1.0f, 100.0f, glm::radians(90.0f), CameraComponent::CameraType::PERSPECTIVE);
 }
@@ -140,9 +140,9 @@ void SpotLight::SetUniforms(const Renderer& renderer, const CameraComponent& cam
 	inverseProjectionUniform->Set(glm::inverse((camera.GetProjectionMatrix())));
 }
 
-Camera SpotLight::GetLightCamera(const CameraComponent& mainCamera, int shadowMapSize) const
+CameraEntity SpotLight::GetLightCamera(const CameraComponent& mainCamera, int shadowMapSize) const
 {
-	return Camera(GetOwnerEntity().GetTransform().GetPositionInWorld(),
+	return CameraEntity(GetOwnerEntity().GetTransform().GetPositionInWorld(),
 	              GetOwnerEntity().GetTransform().GetOrientationInWorld(),
 	              1.0f, 1.0f, 100.0f, outerConeAngle, CameraComponent::CameraType::PERSPECTIVE);
 }

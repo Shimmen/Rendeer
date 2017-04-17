@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
 
 	Scene scene;
 
-	auto camera = std::make_shared<Camera>(
+	auto camera = std::make_shared<CameraEntity>(
 		glm::vec3{ 0, 1.7f, -5.0f },
 		glm::angleAxis(0.15f, glm::vec3{ 1, 0, 0 })
 	);

@@ -77,17 +77,17 @@ glm::mat4 CameraComponent::GetProjectionMatrix() const
 }
 
 
-Camera::Camera()
-	: Camera{glm::vec3{0, 0, 0}, glm::quat{}}
+CameraEntity::CameraEntity()
+	: CameraEntity{glm::vec3{0, 0, 0}, glm::quat{}}
 {
 }
 
-Camera::Camera(glm::vec3 position, glm::quat orientation)
-	: Camera{position, orientation, Window::CurrentWindow()->GetAspectRatio(), 0.1f, 1000.0f, glm::radians(75.0f), CameraComponent::CameraType::PERSPECTIVE}
+CameraEntity::CameraEntity(glm::vec3 position, glm::quat orientation)
+	: CameraEntity{position, orientation, Window::CurrentWindow()->GetAspectRatio(), 0.1f, 1000.0f, glm::radians(75.0f), CameraComponent::CameraType::PERSPECTIVE}
 {
 }
 
-Camera::Camera(glm::vec3 position, glm::quat orientation, float aspectRatio, float nearPlane, float farPlane, float fovOrSize, CameraComponent::CameraType type)
+CameraEntity::CameraEntity(glm::vec3 position, glm::quat orientation, float aspectRatio, float nearPlane, float farPlane, float fovOrSize, CameraComponent::CameraType type)
 {
 	GetTransform().SetPosition(position).SetOrientation(orientation);
 
@@ -96,7 +96,7 @@ Camera::Camera(glm::vec3 position, glm::quat orientation, float aspectRatio, flo
 	);
 }
 
-void Camera::Update(float deltaTime, const Window& window)
+void CameraEntity::Update(float deltaTime, const Window& window)
 {
 	// If the delta time is way to big, ignore it altogether
 	if (deltaTime > 0.5f) return;
@@ -130,13 +130,13 @@ void Camera::Update(float deltaTime, const Window& window)
 	}
 }
 
-glm::mat4 Camera::GetViewMatrix() const
+glm::mat4 CameraEntity::GetViewMatrix() const
 {
 	// Simply delegate to the CameraComponent
 	return GetComponent<CameraComponent>()->GetViewMatrix();
 }
 
-glm::mat4 Camera::GetProjectionMatrix() const
+glm::mat4 CameraEntity::GetProjectionMatrix() const
 {
 	// Simply delegate to the CameraComponent
 	return GetComponent<CameraComponent>()->GetProjectionMatrix();
