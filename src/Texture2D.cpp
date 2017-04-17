@@ -33,7 +33,8 @@ Texture2D::Texture2D(const std::string& filename, bool srgb, GLint magFilter, GL
 Texture2D::Texture2D(int width, int height, int numComponents, const unsigned char *data)
 	: TextureBase()
 	, width(width)
-	,height(height)
+	, height(height)
+	, numComponents(numComponents)
 {
 	Bind();
 
@@ -51,6 +52,7 @@ Texture2D::Texture2D(int width, int height, GLenum format, GLenum internalFormat
 	: TextureBase()
 	, width{ width }
 	, height{ height }
+	, numComponents{ NumComponentsFromFormat(format) }
 {
 	Bind();
 
@@ -167,7 +169,6 @@ bool Texture2D::Load(const std::string& filename, bool srgb, GLint magFilter, GL
 	bool hdr = stbi_is_hdr_from_file(file);
 	fseek(file, 0, SEEK_SET); // TODO: File a bug! Shouldn't need to rewind, right?
 	void *pixels;
-	int numComponents;
 
 	if (hdr)
 	{
@@ -255,4 +256,22 @@ GLint Texture2D::CalculateInternalFormat(GLint externalFormat, bool srgb, bool h
 
 	// This should never happen...
 	return -1;
+}
+
+int Texture2D::NumComponentsFromFormat(GLenum format) const
+{
+	switch (format)
+	{
+		case GL_RGBA:
+			return 4;
+		case GL_RGB:
+			return 3;
+		case GL_RG:
+			return 2;
+		case GL_RED:
+		case GL_DEPTH_COMPONENT:
+			return 1;
+		default:
+			return -1;
+	}
 }

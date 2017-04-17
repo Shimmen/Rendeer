@@ -222,6 +222,11 @@ void Window::SetCursorHidden(bool hidden) const
 {
 	int mode = (hidden) ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL;
 	glfwSetInputMode(glfwWindow, GLFW_CURSOR, mode);
+
+	// Reset these so that there won't be a sudden jump in delta position
+	glfwGetCursorPos(glfwWindow, &currentXPosition, &currentYPosition);
+	lastXPosition = currentXPosition;
+	lastYPosition = currentYPosition;
 }
 
 void Window::Focus() const

@@ -183,13 +183,7 @@ int main(int argc, char *argv[])
 
 		ImGui::Begin("Rendeer");
 		{
-			static bool showMetrics = false;
-			ImGui::Checkbox("Show metrics", &showMetrics);
-
-			if (showMetrics)
-			{
-				ImGui::ShowMetricsWindow();
-			}
+			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
 			if (ImGui::CollapsingHeader("Scene"))
 			{
@@ -212,8 +206,6 @@ int main(int argc, char *argv[])
 
 	Logger::Subheading("Render loop end");
 	Logger::LogTimestamp();
-
-	ImGuiAdapter::Deinit();
 
 	return 0;
 }

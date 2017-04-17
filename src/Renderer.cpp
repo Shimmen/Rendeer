@@ -96,8 +96,25 @@ void Renderer::Render(const Scene& scene)
 	auto mainCamera = scene.GetMainCamera();
 
 	GeometryPass(geometry, *mainCamera);
-	//LightPass(scene, geometry, lights, *mainCamera);
+	if (ImGui::CollapsingHeader("G-Buffer"))
+	{
+		float width = ImGui::GetWindowWidth();
+		float height = width / window->GetAspectRatio();
+		ImVec2 size(width, height);
+
+		ImGui::Text("Albedo:");
+		ImGui::Image(&gBuffer.albedo, size);
+		ImGui::Text("Depth:");
+		ImGui::Image(&gBuffer.depth, size);
+		ImGui::Text("Normal:");
+		ImGui::Image(&gBuffer.normal, size);
+		ImGui::Text("Material:");
+		ImGui::Image(&gBuffer.material, size);
+	}
+
 	ShadowMapGenerationPass(geometry, lightsNew);
+
+	//LightPass(scene, geometry, lights, *mainCamera);
 	LightPassNew(scene, geometry, lightsNew, *mainCamera);
 
 	if (scene.GetSkybox())

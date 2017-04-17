@@ -105,10 +105,10 @@ private:
 	bool wasButtonReleased[MOUSE_BUTTON_COUNT] = { 0 };
 
 	// Should only be used for getting the mouse delta etc. NOT for querying current position, since this accumulates errors and might "lag" behind.
-	double currentXPosition{0};
-	double currentYPosition{0};
-	double lastXPosition{0};
-	double lastYPosition{0};
+	mutable double currentXPosition{0};
+	mutable double currentYPosition{0};
+	mutable double lastXPosition{0};
+	mutable double lastYPosition{0};
 
 	double currentScollOffset{0};
 	double lastScrollOffset{0};

@@ -13,7 +13,6 @@ namespace ImGuiAdapter
 {
 
 	void Init(const Window *const window);
-	void Deinit();
 
 	void NewFrame(float deltaTime);
 	void RenderDrawLists(ImDrawData *data);

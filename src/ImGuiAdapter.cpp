@@ -13,12 +13,12 @@
 
 static const Window *window;
 
-static Shader *guiShader;
-static Texture2D *fontTexture;
+static std::shared_ptr<Shader> guiShader;
+static std::shared_ptr<Texture2D> fontTexture;
 
-static VertexArray *guiGeometry;
-static Buffer *vertices;
-static Buffer *indices;
+static std::shared_ptr<VertexArray> guiGeometry;
+static std::shared_ptr<Buffer> vertices;
+static std::shared_ptr<Buffer> indices;
 
 //
 // Functions
@@ -40,13 +40,13 @@ void ImGuiAdapter::Init(const Window *wind)
 {
 	window = wind;
 
-	guiShader = new Shader{"ImGui/Gui.vsh", "ImGui/Gui.fsh"};
+	guiShader = std::make_shared<Shader>("ImGui/Gui.vsh", "ImGui/Gui.fsh");
 
-	vertices = new Buffer();
-	indices = new Buffer();
+	vertices = std::make_shared<Buffer>();
+	indices = std::make_shared<Buffer>();
 
 #define OFFSET_OF(type, element) ((size_t)&(((type *)0)->element))
-	guiGeometry = new VertexArray();
+	guiGeometry = std::make_shared<VertexArray>();
 	guiGeometry->Bind();
 
 	vertices->Bind(GL_ARRAY_BUFFER);
@@ -61,9 +61,9 @@ void ImGuiAdapter::Init(const Window *wind)
 	auto& io = ImGui::GetIO();
 	unsigned char *pixels;
 	int width, height;
-	io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height); // TODO: Optimize storage!
-	fontTexture = new Texture2D(width, height, 4, pixels);
-	io.Fonts->TexID = (void *)(intptr_t)fontTexture->GetTextureHandle();
+	io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);
+	fontTexture = std::make_shared<Texture2D>(width, height, 4, pixels);
+	io.Fonts->TexID = (void *)(fontTexture.get()); // works fine, since it's only ever used here
 
 	// Keyboard mapping. ImGui will use those indices to peek into the io.KeyDown[] array.
 	io.KeyMap[ImGuiKey_Tab] = GLFW_KEY_TAB;
@@ -90,15 +90,6 @@ void ImGuiAdapter::Init(const Window *wind)
 
 	io.SetClipboardTextFn = SetClipboardText;
 	io.GetClipboardTextFn = GetClipboardText;
-}
-
-void ImGuiAdapter::Deinit()
-{
-	delete guiShader;
-	delete fontTexture;
-	delete guiGeometry;
-	delete vertices;
-	delete indices;
 }
 
 void ImGuiAdapter::NewFrame(float deltaTime)
@@ -162,7 +153,8 @@ void ImGuiAdapter::RenderDrawLists(ImDrawData *drawData)
 	};
 
 	guiShader->Bind();
-	guiShader->SetUniform("u_texture", fontTexture->Bind(0));
+
+	// Projection stays the same during a frame
 	guiShader->SetUniform("u_projection", projection);
 
 	guiGeometry->Bind();
@@ -186,7 +178,14 @@ void ImGuiAdapter::RenderDrawLists(ImDrawData *drawData)
 			}
 			else
 			{
-				// TODO: Handle different textures for different calls, etc. Currently every call has only access to the default font texture.
+				Texture2D *texture = (Texture2D *)pcmd->TextureId;
+				guiShader->SetUniform("u_texture", texture->Bind(0));
+
+				// If not the font texture, assume it's a "standard" GL texture and flip the y-axis
+				guiShader->SetUniform("u_flip_texture", texture != fontTexture.get());
+
+				guiShader->SetUniform("u_grayscale", texture->GetNumComponents() == 1);
+
 				glScissor((int)pcmd->ClipRect.x, (int)(fb_height - pcmd->ClipRect.w), (int)(pcmd->ClipRect.z - pcmd->ClipRect.x), (int)(pcmd->ClipRect.w - pcmd->ClipRect.y));
 				guiGeometry->RenderWithElementArrayBuffer(GL_TRIANGLES, (GLsizei)pcmd->ElemCount, sizeof(ImDrawIdx) == 2 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT, idx_buffer_offset);
 			}

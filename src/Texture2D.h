@@ -44,17 +44,18 @@ public:
 	inline int GetWidth() const { return width; }
 	inline int GetHeight() const { return height; }
 	inline int GetSize() const { assert(width == height); return width; }
+	inline int GetNumComponents() const { return numComponents; }
 
 private:
 
 	GLenum CalculateSourceFormat(int numComponents) const;
 	GLint CalculateInternalFormat(GLint externalFormat, bool srgb, bool hdr) const;
+	int NumComponentsFromFormat(GLenum format) const;
 
 private:
 
 	int width;
 	int height;
-
-	mutable std::shared_ptr<FrameBuffer> textureAsTarget{};
+	int numComponents;
 
 };
