@@ -5,6 +5,7 @@
 #include <glm/fwd.hpp>
 
 #include "Component.h"
+#include "Texture2D.h"
 
 class Light: public Component
 {
@@ -35,6 +36,9 @@ public:
 	// For spot light
 	float coneOuterAngle{ 0 };
 	float coneInnerAngle{ 0 };
+
+	// For shadow mapping
+	Texture2D *shadowMap;
 
 protected:
 

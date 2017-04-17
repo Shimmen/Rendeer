@@ -61,7 +61,7 @@ private:
 	// Shadow mapping
 	Texture2D shadowMap;
 	FrameBuffer shadowMapFramebuffer;
-	Shader shadowMapGenerator{ "Shadowing/ShadowMapGenerator.vsh" };
+	Shader shadowMapGenerator{ "Shadowing/ShadowMapGenerator.vsh", "Shadowing/ShadowMapGenerator.fsh" };
 
 	static constexpr int numShadowMaps = 4;
 	Texture2D shadowMaps[numShadowMaps];

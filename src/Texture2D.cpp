@@ -140,6 +140,7 @@ void Texture2D::Make(int width, int height, GLenum format, GLenum internalFormat
 
 	this->width = width;
 	this->height = height;
+	this->numComponents = NumComponentsFromFormat(format);
 
 	// These *probably shouldn't* matter since there is no input data, but I really don't know...
 	GLenum inputType = GL_UNSIGNED_BYTE;

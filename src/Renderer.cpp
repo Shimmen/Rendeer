@@ -189,9 +189,15 @@ void Renderer::GeometryPass(const EntityList& entities, const CameraComponent& c
 	}
 }
 
+CameraEntity LightCameraForSpotLight(const Light& spotLight)
+{
+	const Transform& transform = spotLight.GetOwnerEntity().GetTransform();
+	return CameraEntity(transform.GetPositionInWorld(), transform.GetOrientationInWorld(), spotLight.shadowMap->GetAspectRatio(), 0.5f, 1000.0f, spotLight.coneOuterAngle);
+}
+
 void Renderer::ShadowMapGenerationPass(const EntityList& geometry, const EntityList& lights)
 {
-	int numShadowCastingLights = 0;
+	int numActiveShadowMaps = 0;
 
 	for (auto lightEntity : lights)
 	{
@@ -202,9 +208,10 @@ void Renderer::ShadowMapGenerationPass(const EntityList& geometry, const EntityL
 
 		if (shouldRenderShadows)
 		{
-			numShadowCastingLights += 1;
+			int mapIndex = numActiveShadowMaps++;
+			shadowMapFBs[mapIndex].BindAsDrawFrameBuffer();
+			light->shadowMap = &shadowMaps[mapIndex];
 
-			shadowMapFramebuffer.BindAsDrawFrameBuffer();
 			GL::SetClearDepth(1.0f);
 			GL::Clear(GL_DEPTH_BUFFER_BIT);
 
@@ -215,26 +222,30 @@ void Renderer::ShadowMapGenerationPass(const EntityList& geometry, const EntityL
 
 			shadowMapGenerator.Bind();
 
-			const Transform& lightTransform = light->GetOwnerEntity().GetTransform();
-			CameraEntity lightCamera{ lightTransform.GetPositionInWorld(), lightTransform.GetOrientationInWorld() };
+			CameraEntity lightCamera = LightCameraForSpotLight(*light); // TODO: Check camera type!!!
 			shadowMapGenerator.SetUniform("u_view_projecion_matrix", lightCamera.GetViewProjection());
+
+			// TODO: Add GLState as GL::SetColorMask
+			glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 
 			for (auto entity : geometry)
 			{
 				shadowMapGenerator.SetUniform("u_model_matrix", entity->GetTransform().GetWorldMatrix());
 				entity->GetComponent<Renderable>()->GetMesh()->Render();
 			}
+
+			glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 		}
 	}
 
 	// Render shadow maps to GUI
-	if (numShadowCastingLights > 0 && ImGui::CollapsingHeader("Shadow maps"))
+	if (numActiveShadowMaps > 0 && ImGui::CollapsingHeader("Shadow maps"))
 	{
 		float width = ImGui::GetWindowWidth();
 
 		for (int i = 0; i < numShadowMaps; i++)
 		{
-			if (i >= numShadowCastingLights) break;
+			if (i >= numActiveShadowMaps) break;
 
 			ImGui::Text("Shadow map %d:", i);
 
@@ -396,39 +407,7 @@ void Renderer::LightPassNew(const Scene& scene, const EntityList& geometry, cons
 	GL::SetDepthTest(false);
 	ScreenAlignedQuad::Render();
 
-	for (auto lightEntity : lights)
 	{
-		auto light = lightEntity->GetComponent<Light>();
-		Light::Type lightType = light->GetType();
-		bool renderShadows = (lightType == Light::Type::SPOT);
-
-		// Render shadow maps if applicable (spot light only for now)
-		if (renderShadows)
-		{
-			shadowMapFramebuffer.BindAsDrawFrameBuffer();
-			GL::SetClearDepth(1.0f);
-			GL::Clear(GL_DEPTH_BUFFER_BIT);
-
-			GL::SetDepthMask(true);
-			GL::SetDepthTest(true);
-			GL::SetDepthFunction(GL_LEQUAL);
-			GL::SetFaceCulling(true);
-
-			shadowMapGenerator.Bind();
-
-			const Transform& lightTransform = light->GetOwnerEntity().GetTransform();
-			CameraEntity lightCamera{ lightTransform.GetPositionInWorld(), lightTransform.GetOrientationInWorld() };
-			shadowMapGenerator.SetUniform("u_view_projecion_matrix", lightCamera.GetViewProjection());
-
-			for (auto entity : geometry)
-			{
-				shadowMapGenerator.SetUniform("u_model_matrix", entity->GetTransform().GetWorldMatrix());
-				entity->GetComponent<Renderable>()->GetMesh()->Render();
-			}
-		}
-
-		lightAccumulationBuffer.BindAsDrawFrameBuffer();
-
 		// TODO: Logically the depth mask should be false, since I don't want to touch the depth at all from the lights, but I get really strage results if it's false!
 		// So I'm not sure... It might be some strange behaviour related to one texture in multiple frame buffers. Find out, somehow...
 		// HOWEVER, since depth test is disabled, depth writing is always disabled too, and this works.
@@ -439,6 +418,12 @@ void Renderer::LightPassNew(const Scene& scene, const EntityList& geometry, cons
 		GL::SetBlending(true);
 		GL::SetBlendEquation(GL_FUNC_ADD, GL_FUNC_ADD);
 		GL::SetBlendFunction(GL_ONE, GL_ONE, GL_ONE, GL_ONE);
+	}
+
+	for (auto lightEntity : lights)
+	{
+		auto light = lightEntity->GetComponent<Light>();
+		Light::Type lightType = light->GetType();
 
 		if (lightType == Light::Type::POINT)
 		{
@@ -486,7 +471,7 @@ void Renderer::LightPassNew(const Scene& scene, const EntityList& geometry, cons
 			auto viewSpaceLightForward = glm::rotate(conjugateCameraOrientation, lightForward);
 
 			SetCommmonLightUniforms(*light, spotLightShader, camera, gBuffer);
-			SetShadowRelatedLightUniforms(*light, spotLightShader, this->shadowMap, camera);
+			SetShadowRelatedLightUniforms(*light, spotLightShader, *light->shadowMap, camera);
 			spotLightShader.SetUniform("u_light_position", viewSpacePos);
 			spotLightShader.SetUniform("u_light_direction", viewSpaceLightForward);
 			spotLightShader.SetUniform("u_light_outer_cone_angle_cos", cosf(light->coneOuterAngle / 2.0f));
@@ -500,7 +485,7 @@ void Renderer::LightPassNew(const Scene& scene, const EntityList& geometry, cons
 			directionalLightShader.Bind();
 
 			SetCommmonLightUniforms(*light, directionalLightShader, camera, gBuffer);
-			SetShadowRelatedLightUniforms(*light, directionalLightShader, this->shadowMap, camera);
+			SetShadowRelatedLightUniforms(*light, directionalLightShader, *light->shadowMap, camera);
 			// TODO: Implement! Set light specific uniforms.
 
 			GL::SetDepthTest(false);
@@ -510,8 +495,6 @@ void Renderer::LightPassNew(const Scene& scene, const EntityList& geometry, cons
 		{
 			Logger::Log("Error: Tried to render light with unknown type.");
 		}
-
-		GL::SetBlending(false);
 	}
 
 
