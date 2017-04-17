@@ -30,13 +30,17 @@ public:
 
 private:
 
-	void GeometryPass(const std::vector<std::shared_ptr<Entity>>& entities, const CameraComponent& camera) const;
-	void LightPass(const Scene& scene, const std::vector<std::shared_ptr<Entity>>& geometry, const std::vector<std::shared_ptr<Entity>>& lights, const CameraComponent& camera) const;
-	void LightPassNew(const Scene& scene, const std::vector<std::shared_ptr<Entity>>& geometry, const std::vector<std::shared_ptr<Entity>>& lights, const CameraComponent& camera) const;
+	// Shorthand for using in all the passes below
+	typedef std::vector<std::shared_ptr<Entity>> EntityList;
+
+	void GeometryPass(const EntityList& entities, const CameraComponent& camera) const;
+	void ShadowMapGenerationPass(const EntityList& geometry, const EntityList& lights);
+	void LightPass(const Scene& scene, const EntityList& geometry, const EntityList& lights, const CameraComponent& camera) const;
+	void LightPassNew(const Scene& scene, const EntityList& geometry, const EntityList& lights, const CameraComponent& camera) const;
 	void DrawSkybox(const CameraComponent& camera, const TextureCube& skyboxTexture) const;
 	void GenerateBloom();
 
-	void RenderCameras(std::vector<std::shared_ptr<Entity>> cameras) const;
+	void RenderCameras(EntityList cameras) const;
 
 private:
 

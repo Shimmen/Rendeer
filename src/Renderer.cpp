@@ -79,16 +79,16 @@ void Renderer::Render(const Scene& scene)
 	}
 
 	// All entities that are renderable are considered to be geometry (for now)
-	std::vector<std::shared_ptr<Entity>> geometry{};
+	EntityList geometry{};
 	scene.GetEntities<Renderable>(geometry);
 
-	std::vector<std::shared_ptr<Entity>> lights{};
+	EntityList lights{};
 	scene.GetEntities<LightComponent>(lights);
 
-	std::vector<std::shared_ptr<Entity>> lightsNew{};
+	EntityList lightsNew{};
 	scene.GetEntities<Light>(lightsNew);
 
-	std::vector<std::shared_ptr<Entity>> cameras{};
+	EntityList cameras{};
 	scene.GetEntities<CameraComponent>(cameras);
 
 	RenderCameras(cameras);
@@ -97,6 +97,7 @@ void Renderer::Render(const Scene& scene)
 
 	GeometryPass(geometry, *mainCamera);
 	//LightPass(scene, geometry, lights, *mainCamera);
+	ShadowMapGenerationPass(geometry, lightsNew);
 	LightPassNew(scene, geometry, lightsNew, *mainCamera);
 
 	if (scene.GetSkybox())
@@ -133,7 +134,7 @@ void Renderer::Render(const Scene& scene)
 	ScreenAlignedQuad::Render();
 }
 
-void Renderer::GeometryPass(const std::vector<std::shared_ptr<Entity>>& entities, const CameraComponent& camera) const
+void Renderer::GeometryPass(const EntityList& entities, const CameraComponent& camera) const
 {
 	gBuffer.BindAsRenderTarget();
 	GL::SetClearDepth(1.0f);
@@ -161,7 +162,12 @@ void Renderer::GeometryPass(const std::vector<std::shared_ptr<Entity>>& entities
 	}
 }
 
-void Renderer::LightPass(const Scene& scene, const std::vector<std::shared_ptr<Entity>>& geometry, const std::vector<std::shared_ptr<Entity>>& lights, const CameraComponent& camera) const
+void Renderer::ShadowMapGenerationPass(const EntityList& geometry, const EntityList& lights)
+{
+
+}
+
+void Renderer::LightPass(const Scene& scene, const EntityList& geometry, const EntityList& lights, const CameraComponent& camera) const
 {
 	lightAccumulationBuffer.BindAsDrawFrameBuffer();
 
@@ -305,7 +311,7 @@ void SetShadowRelatedLightUniforms(const Light& light, const Shader& lightShader
 	lightShader.SetUniform("u_light_view_projection", lightViewProjection);
 }
 
-void Renderer::LightPassNew(const Scene& scene, const std::vector<std::shared_ptr<Entity>>& geometry, const std::vector<std::shared_ptr<Entity>>& lights, const CameraComponent& camera) const
+void Renderer::LightPassNew(const Scene& scene, const EntityList& geometry, const EntityList& lights, const CameraComponent& camera) const
 {
 	lightAccumulationBuffer.BindAsDrawFrameBuffer();
 
@@ -361,8 +367,6 @@ void Renderer::LightPassNew(const Scene& scene, const std::vector<std::shared_pt
 		GL::SetBlendEquation(GL_FUNC_ADD, GL_FUNC_ADD);
 		GL::SetBlendFunction(GL_ONE, GL_ONE, GL_ONE, GL_ONE);
 
-		const Shader *lightShader = nullptr;
-
 		if (lightType == Light::Type::POINT)
 		{
 
@@ -374,12 +378,11 @@ void Renderer::LightPassNew(const Scene& scene, const std::vector<std::shared_pt
 
 			if (distance > radius + cameraNear)
 			{
-				lightShader = &pointLightVolumeShader;
-				lightShader->Bind();
-				SetCommmonLightUniforms(*light, *lightShader, camera, gBuffer);
-				lightShader->SetUniform("u_light_position", viewSpacePos);
-				lightShader->SetUniform("u_light_world_position", light->GetOwnerEntity().GetTransform().GetPositionInWorld());
-				lightShader->SetUniform("u_view_projection_matrix", camera.GetProjectionMatrix() * camera.GetViewMatrix());
+				pointLightVolumeShader.Bind();
+				SetCommmonLightUniforms(*light, pointLightVolumeShader, camera, gBuffer);
+				pointLightVolumeShader.SetUniform("u_light_position", viewSpacePos);
+				pointLightVolumeShader.SetUniform("u_light_world_position", light->GetOwnerEntity().GetTransform().GetPositionInWorld());
+				pointLightVolumeShader.SetUniform("u_view_projection_matrix", camera.GetProjectionMatrix() * camera.GetViewMatrix());
 
 				GL::SetDepthTest(true);
 				GL::SetDepthMask(false);
@@ -387,11 +390,10 @@ void Renderer::LightPassNew(const Scene& scene, const std::vector<std::shared_pt
 			}
 			else
 			{
-				lightShader = &pointLightNearShader;
-				SetCommmonLightUniforms(*light, *lightShader, camera, gBuffer);
-				lightShader->SetUniform("u_light_position", viewSpacePos);
-				lightShader->SetUniform("u_view_projection_matrix", camera.GetProjectionMatrix() * camera.GetViewMatrix());
-				lightShader->Bind();
+				pointLightNearShader.Bind();
+				SetCommmonLightUniforms(*light, pointLightNearShader, camera, gBuffer);
+				pointLightNearShader.SetUniform("u_light_position", viewSpacePos);
+				pointLightNearShader.SetUniform("u_view_projection_matrix", camera.GetProjectionMatrix() * camera.GetViewMatrix());
 
 				GL::SetDepthTest(false);
 				ScreenAlignedQuad::Render();
@@ -400,7 +402,6 @@ void Renderer::LightPassNew(const Scene& scene, const std::vector<std::shared_pt
 		else if (lightType == Light::Type::SPOT)
 		{
 			spotLightShader.Bind();
-			lightShader = &spotLightShader;
 
 			auto viewSpacePos = glm::vec3(camera.GetViewMatrix() * glm::vec4(light->GetOwnerEntity().GetTransform().GetPositionInWorld(), 1.0f));
 			auto lightForward = light->GetOwnerEntity().GetTransform().GetForward();
@@ -408,12 +409,12 @@ void Renderer::LightPassNew(const Scene& scene, const std::vector<std::shared_pt
 			glm::quat conjugateCameraOrientation = glm::conjugate(camera.GetOwnerEntity().GetTransform().GetOrientationInWorld());
 			auto viewSpaceLightForward = glm::rotate(conjugateCameraOrientation, lightForward);
 
-			SetCommmonLightUniforms(*light, *lightShader, camera, gBuffer);
-			SetShadowRelatedLightUniforms(*light, *lightShader, this->shadowMap, camera);
-			lightShader->SetUniform("u_light_position", viewSpacePos);
-			lightShader->SetUniform("u_light_direction", viewSpaceLightForward);
-			lightShader->SetUniform("u_light_outer_cone_angle_cos", cosf(light->coneOuterAngle / 2.0f));
-			lightShader->SetUniform("u_light_inner_cone_angle_cos", cosf(light->coneInnerAngle / 2.0f));
+			SetCommmonLightUniforms(*light, spotLightShader, camera, gBuffer);
+			SetShadowRelatedLightUniforms(*light, spotLightShader, this->shadowMap, camera);
+			spotLightShader.SetUniform("u_light_position", viewSpacePos);
+			spotLightShader.SetUniform("u_light_direction", viewSpaceLightForward);
+			spotLightShader.SetUniform("u_light_outer_cone_angle_cos", cosf(light->coneOuterAngle / 2.0f));
+			spotLightShader.SetUniform("u_light_inner_cone_angle_cos", cosf(light->coneInnerAngle / 2.0f));
 
 			GL::SetDepthTest(false);
 			ScreenAlignedQuad::Render();
@@ -421,10 +422,9 @@ void Renderer::LightPassNew(const Scene& scene, const std::vector<std::shared_pt
 		else if (lightType == Light::Type::DIRECTIONAL)
 		{
 			directionalLightShader.Bind();
-			lightShader = &directionalLightShader;
 
-			SetCommmonLightUniforms(*light, *lightShader, camera, gBuffer);
-			SetShadowRelatedLightUniforms(*light, *lightShader, this->shadowMap, camera);
+			SetCommmonLightUniforms(*light, directionalLightShader, camera, gBuffer);
+			SetShadowRelatedLightUniforms(*light, directionalLightShader, this->shadowMap, camera);
 			// TODO: Implement! Set light specific uniforms.
 
 			GL::SetDepthTest(false);
@@ -558,7 +558,7 @@ void Renderer::GenerateBloom()
 	}
 }
 
-void Renderer::RenderCameras(std::vector<std::shared_ptr<Entity>> cameras) const
+void Renderer::RenderCameras(EntityList cameras) const
 {
 	for (auto camera : cameras)
 	{
