@@ -33,3 +33,9 @@ GBuffer extractGBufferData(in vec2 texCoord)
 	gBuffer.position = viewSpacePosition.xyz;
 	return gBuffer;
 }
+
+GBuffer extractGBufferDataFromWindowCoords()
+{
+	vec2 texCoord = gl_FragCoord.xy / textureSize(u_albedo, 0);
+	return extractGBufferData(texCoord);
+}

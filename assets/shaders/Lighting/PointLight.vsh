@@ -2,9 +2,10 @@
 
 layout(location=0) in vec3 a_position;
 
-uniform vec3 u_position;
-uniform float u_radius;
+uniform vec3 u_light_world_position;
+uniform float u_light_intensity;
 uniform mat4 u_view_projection_matrix;
+
 
 //
 // Draws a point-light light volume. Don't use this if the distance from the light to the camera
@@ -14,6 +15,7 @@ uniform mat4 u_view_projection_matrix;
 
 void main()
 {
-	vec4 worldPos = vec4(u_radius * a_position + u_position, 1.0);
-	gl_Position = u_view_projection_matrix *_worldPos;
+	float radius = u_light_intensity * 6.5;
+	vec4 worldPos = vec4(radius * a_position + u_light_world_position, 1.0); // TODO: This light pos should be world!!!
+	gl_Position = u_view_projection_matrix * worldPos;
 }

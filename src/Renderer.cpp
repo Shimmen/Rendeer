@@ -6,6 +6,7 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
+#include "Light.h"
 #include "GLState.h"
 #include "Renderable.h"
 
@@ -84,6 +85,9 @@ void Renderer::Render(const Scene& scene)
 	std::vector<std::shared_ptr<Entity>> lights{};
 	scene.GetEntities<LightComponent>(lights);
 
+	std::vector<std::shared_ptr<Entity>> lightsNew{};
+	scene.GetEntities<Light>(lightsNew);
+
 	std::vector<std::shared_ptr<Entity>> cameras{};
 	scene.GetEntities<CameraComponent>(cameras);
 
@@ -92,7 +96,8 @@ void Renderer::Render(const Scene& scene)
 	auto mainCamera = scene.GetMainCamera();
 
 	GeometryPass(geometry, *mainCamera);
-	LightPass(scene, geometry, lights, *mainCamera);
+	//LightPass(scene, geometry, lights, *mainCamera);
+	LightPassNew(scene, geometry, lightsNew, *mainCamera);
 
 	if (scene.GetSkybox())
 	{
@@ -254,6 +259,210 @@ void Renderer::LightPass(const Scene& scene, const std::vector<std::shared_ptr<E
 			if (pointLight != nullptr)
 			{
 				float radius = pointLight->intensity * 6.5f; // TODO: Get a proper radius!
+				glm::vec3 position = pointLight->GetOwnerEntity().GetTransform().GetPositionInWorld();
+
+				glm::mat4 scale = glm::scale(glm::mat4{ 1.0f }, glm::vec3{radius, radius, radius});
+				glm::mat4 translation = glm::translate(glm::mat4{ 1.0f }, position);
+
+				wireframeShader.SetUniform("u_model_matrix", translation * scale);
+
+				Sphere::Render();
+			}
+		}
+
+		GL::SetPolygonMode(GL_FILL);
+		GL::SetFaceCulling(true);
+	}
+}
+
+float CalculatePointLightRadius(const Light& light)
+{
+	//
+	// TODO: Implement properly!
+	//
+	return light.intensity * 6.5f;
+}
+
+void SetCommmonLightUniforms(const Light& light, const Shader& lightShader, const CameraComponent& camera, const GBuffer& gBuffer)
+{
+	// TODO: (can be optimized considering redundancy, i.e. inv-proj & g-buffer are same for all lights this frame)
+
+	lightShader.SetUniform("u_light_color", light.color);
+	lightShader.SetUniform("u_light_intensity", light.intensity);
+	lightShader.SetUniform("u_inverse_projection_matrix", glm::inverse(camera.GetProjectionMatrix()));
+	gBuffer.BindAsUniform(lightShader);
+}
+
+void SetShadowRelatedLightUniforms(const Light& light, const Shader& lightShader, const Texture2D& shadowMap, const CameraComponent& camera)
+{
+	const Transform& lightTransform = light.GetOwnerEntity().GetTransform();
+	Camera lightCamera{ lightTransform.GetPositionInWorld(), lightTransform.GetOrientationInWorld() };
+	glm::mat4 lightViewProjection = lightCamera.GetProjectionMatrix() * lightCamera.GetViewMatrix();
+
+	shadowMap.Bind(8);
+	lightShader.SetUniform("u_shadow_map", 8);
+	lightShader.SetUniform("u_inverse_view_matrix", glm::inverse(camera.GetViewMatrix()));
+	lightShader.SetUniform("u_light_view_projection", lightViewProjection);
+}
+
+void Renderer::LightPassNew(const Scene& scene, const std::vector<std::shared_ptr<Entity>>& geometry, const std::vector<std::shared_ptr<Entity>>& lights, const CameraComponent& camera) const
+{
+	lightAccumulationBuffer.BindAsDrawFrameBuffer();
+
+	// Ambient light pass (could be optimized to be done while filling g-buffer)
+	ambientShader.Bind();
+	ambientShader.SetUniform("u_color", scene.GetAmbientColor());
+	gBuffer.BindAsUniform(ambientShader);
+	GL::SetDepthTest(false);
+	ScreenAlignedQuad::Render();
+
+	for (auto lightEntity : lights)
+	{
+		auto light = lightEntity->GetComponent<Light>();
+		Light::Type lightType = light->GetType();
+		bool renderShadows = (lightType == Light::Type::SPOT);
+
+		// Render shadow maps if applicable (spot light only for now)
+		if (renderShadows)
+		{
+			shadowMapFramebuffer.BindAsDrawFrameBuffer();
+			GL::SetClearDepth(1.0f);
+			GL::Clear(GL_DEPTH_BUFFER_BIT);
+
+			GL::SetDepthMask(true);
+			GL::SetDepthTest(true);
+			GL::SetDepthFunction(GL_LEQUAL);
+			GL::SetFaceCulling(true);
+
+			shadowMapGenerator.Bind();
+
+			const Transform& lightTransform = light->GetOwnerEntity().GetTransform();
+			Camera lightCamera{ lightTransform.GetPositionInWorld(), lightTransform.GetOrientationInWorld() };
+			glm::mat4 lightViewProjection = lightCamera.GetProjectionMatrix() * lightCamera.GetViewMatrix();
+			shadowMapGenerator.SetUniform("u_view_projecion_matrix", lightViewProjection);
+
+			for (auto entity : geometry)
+			{
+				shadowMapGenerator.SetUniform("u_model_matrix", entity->GetTransform().GetWorldMatrix());
+				entity->GetComponent<Renderable>()->GetMesh()->Render();
+			}
+		}
+
+		lightAccumulationBuffer.BindAsDrawFrameBuffer();
+
+		// TODO: Logically the depth mask should be false, since I don't want to touch the depth at all from the lights, but I get really strage results if it's false!
+		// So I'm not sure... It might be some strange behaviour related to one texture in multiple frame buffers. Find out, somehow...
+		// HOWEVER, since depth test is disabled, depth writing is always disabled too, and this works.
+		GL::SetDepthTest(false);
+
+		GL::SetFaceCulling(false);
+
+		GL::SetBlending(true);
+		GL::SetBlendEquation(GL_FUNC_ADD, GL_FUNC_ADD);
+		GL::SetBlendFunction(GL_ONE, GL_ONE, GL_ONE, GL_ONE);
+
+		const Shader *lightShader = nullptr;
+
+		if (lightType == Light::Type::POINT)
+		{
+
+			float distance = glm::length(light->GetOwnerEntity().GetTransform().GetPositionInWorld() - camera.GetOwnerEntity().GetTransform().GetPositionInWorld());
+			float radius = CalculatePointLightRadius(*light);
+			float cameraNear = camera.GetNear();
+
+			auto viewSpacePos = glm::vec3(camera.GetViewMatrix() * glm::vec4(light->GetOwnerEntity().GetTransform().GetPositionInWorld(), 1.0f));
+
+			if (distance > radius + cameraNear)
+			{
+				lightShader = &pointLightVolumeShader;
+				lightShader->Bind();
+				SetCommmonLightUniforms(*light, *lightShader, camera, gBuffer);
+				lightShader->SetUniform("u_light_position", viewSpacePos);
+				lightShader->SetUniform("u_light_world_position", light->GetOwnerEntity().GetTransform().GetPositionInWorld());
+				lightShader->SetUniform("u_view_projection_matrix", camera.GetProjectionMatrix() * camera.GetViewMatrix());
+
+				GL::SetDepthTest(true);
+				GL::SetDepthMask(false);
+				Sphere::Render();
+			}
+			else
+			{
+				lightShader = &pointLightNearShader;
+				SetCommmonLightUniforms(*light, *lightShader, camera, gBuffer);
+				lightShader->SetUniform("u_light_position", viewSpacePos);
+				lightShader->SetUniform("u_view_projection_matrix", camera.GetProjectionMatrix() * camera.GetViewMatrix());
+				lightShader->Bind();
+
+				GL::SetDepthTest(false);
+				ScreenAlignedQuad::Render();
+			}
+		}
+		else if (lightType == Light::Type::SPOT)
+		{
+			spotLightShader.Bind();
+			lightShader = &spotLightShader;
+
+			auto viewSpacePos = glm::vec3(camera.GetViewMatrix() * glm::vec4(light->GetOwnerEntity().GetTransform().GetPositionInWorld(), 1.0f));
+			auto lightForward = light->GetOwnerEntity().GetTransform().GetForward();
+
+			glm::quat conjugateCameraOrientation = glm::conjugate(camera.GetOwnerEntity().GetTransform().GetOrientationInWorld());
+			auto viewSpaceLightForward = glm::rotate(conjugateCameraOrientation, lightForward);
+
+			SetCommmonLightUniforms(*light, *lightShader, camera, gBuffer);
+			SetShadowRelatedLightUniforms(*light, *lightShader, this->shadowMap, camera);
+			lightShader->SetUniform("u_light_position", viewSpacePos);
+			lightShader->SetUniform("u_light_direction", viewSpaceLightForward);
+			lightShader->SetUniform("u_light_outer_cone_angle_cos", cosf(light->coneOuterAngle / 2.0f));
+			lightShader->SetUniform("u_light_inner_cone_angle_cos", cosf(light->coneInnerAngle / 2.0f));
+
+			GL::SetDepthTest(false);
+			ScreenAlignedQuad::Render();
+		}
+		else if (lightType == Light::Type::DIRECTIONAL)
+		{
+			directionalLightShader.Bind();
+			lightShader = &directionalLightShader;
+
+			SetCommmonLightUniforms(*light, *lightShader, camera, gBuffer);
+			SetShadowRelatedLightUniforms(*light, *lightShader, this->shadowMap, camera);
+			// TODO: Implement! Set light specific uniforms.
+
+			GL::SetDepthTest(false);
+			ScreenAlignedQuad::Render();
+		}
+		else
+		{
+			Logger::Log("Error: Tried to render light with unknown type.");
+		}
+
+		GL::SetBlending(false);
+	}
+
+
+	static bool drawPointLightWireframes = true;
+	if (ImGui::CollapsingHeader("Light pass"))
+	{
+		ImGui::Checkbox("Draw point light wireframes", &drawPointLightWireframes);
+	}
+
+	if (drawPointLightWireframes)
+	{
+		GL::SetFaceCulling(false);
+		GL::SetDepthTest(true);
+		GL::SetDepthFunction(GL_LEQUAL);
+
+		wireframeShader.Bind();
+		GL::SetPolygonMode(GL_LINE);
+
+		glm::mat4 viewProjection = camera.GetProjectionMatrix() * camera.GetViewMatrix();
+		wireframeShader.SetUniform("u_view_projection", viewProjection);
+
+		for (auto& light : lights)
+		{
+			auto pointLight = light->GetComponent<Light>();
+			if (pointLight != nullptr && pointLight->GetType() == Light::Type::POINT)
+			{
+				float radius = CalculatePointLightRadius(*pointLight);
 				glm::vec3 position = pointLight->GetOwnerEntity().GetTransform().GetPositionInWorld();
 
 				glm::mat4 scale = glm::scale(glm::mat4{ 1.0f }, glm::vec3{radius, radius, radius});

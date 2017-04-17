@@ -32,6 +32,7 @@ private:
 
 	void GeometryPass(const std::vector<std::shared_ptr<Entity>>& entities, const CameraComponent& camera) const;
 	void LightPass(const Scene& scene, const std::vector<std::shared_ptr<Entity>>& geometry, const std::vector<std::shared_ptr<Entity>>& lights, const CameraComponent& camera) const;
+	void LightPassNew(const Scene& scene, const std::vector<std::shared_ptr<Entity>>& geometry, const std::vector<std::shared_ptr<Entity>>& lights, const CameraComponent& camera) const;
 	void DrawSkybox(const CameraComponent& camera, const TextureCube& skyboxTexture) const;
 	void GenerateBloom();
 
@@ -46,8 +47,12 @@ private:
 	Texture2D lightAccumulationTexture;
 	FrameBuffer lightAccumulationBuffer{};
 
-	// Ambient light
+	// Light relating
 	Shader ambientShader{ "Generic/ScreenSpaceQuad.vsh", "Lighting/AmbientLight.fsh" };
+	Shader pointLightVolumeShader{ "Lighting/PointLight.vsh", "Lighting/PointLight.fsh" };
+	Shader pointLightNearShader{ "Generic/ScreenSpaceQuad.vsh", "Lighting/PointLight.fsh"};
+	Shader spotLightShader{ "Generic/ScreenSpaceQuad.vsh", "Lighting/SpotLight.fsh" };
+	Shader directionalLightShader{ "Generic/ScreenSpaceQuad.vsh", "Lighting/DirectionalLight.fsh" };
 
 	// Shadow mapping
 	Texture2D shadowMap;

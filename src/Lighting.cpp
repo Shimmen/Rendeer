@@ -77,7 +77,7 @@ Camera DirectionalLight::GetLightCamera(const CameraComponent& mainCamera, int s
 }
 
 PointLight::PointLight(glm::vec3 color, float intensity)
-	: LightComponent{ new Shader{ "Generic/ScreenSpaceQuad.vsh", "Lighting/PointLight.fsh" }, color, intensity }
+: LightComponent{ new Shader{ "Generic/ScreenSpaceQuad.vsh", "Lighting/PointLight.fsh" }, color, intensity }
 {
 	castsShadows = false;
 

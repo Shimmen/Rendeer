@@ -9,40 +9,32 @@
 
 layout(location=0) out vec4 o_fragment_color;
 
-noperspective in vec2 v_tex_coord;
-
 uniform vec3  u_light_position;
 uniform vec3  u_light_color;
 uniform float u_light_intensity;
 
 void main()
 {
-	GBuffer gBuffer = extractGBufferData(v_tex_coord);
+	// If rendering point lights as full screen quads we could use the interpolated tex-coords, but might as well always use window coords.
+	GBuffer gBuffer = extractGBufferDataFromWindowCoords();
 
 	vec3 lightToFragment = gBuffer.position - u_light_position;
 	float lightToFragDistance = length(lightToFragment);
 
-	if(lightToFragDistance > ATTENUATION_MAX_LIGHT_RANGE)
-	{
-		o_fragment_color = vec4(0.0);
-	}
-	else
-	{
-		vec3 lightDirection = normalize(lightToFragment);
-		float attenuationFactor = attenuation(lightToFragDistance);
+	vec3 lightDirection = normalize(lightToFragment);
+	float attenuationFactor = attenuation(lightToFragDistance);
 
-		// Calculate diffuse light
-		float diffuseIntensity = u_light_intensity * lambertianFactor(gBuffer.normal, lightDirection) * attenuationFactor;
-		vec3 diffuseColor = gBuffer.albedo * u_light_color * diffuseIntensity;
+	// Calculate diffuse light
+	float diffuseIntensity = u_light_intensity * lambertianFactor(gBuffer.normal, lightDirection) * attenuationFactor;
+	vec3 diffuseColor = gBuffer.albedo * u_light_color * diffuseIntensity;
 
-		// Calculate specular light
-		vec3 fragToCamera = normalize(-gBuffer.position);
-		vec3 reflectedLight = normalize(reflect(lightDirection, gBuffer.normal));
-		float specularFactor = max(dot(reflectedLight, fragToCamera), 0.0);
-		specularFactor = pow(specularFactor, gBuffer.shininess);
-		vec3 specularColor =  u_light_color * specularFactor * attenuationFactor * gBuffer.specularIntensity;
+	// Calculate specular light
+	vec3 fragToCamera = normalize(-gBuffer.position);
+	vec3 reflectedLight = normalize(reflect(lightDirection, gBuffer.normal));
+	float specularFactor = max(dot(reflectedLight, fragToCamera), 0.0);
+	specularFactor = pow(specularFactor, gBuffer.shininess);
+	vec3 specularColor =  u_light_color * specularFactor * attenuationFactor * gBuffer.specularIntensity;
 
-		// Calculate the final fragment color
-		o_fragment_color = vec4(diffuseColor + specularColor, 1.0);
-	}
+	// Calculate the final fragment color
+	o_fragment_color = vec4(diffuseColor + specularColor, 1.0);
 }

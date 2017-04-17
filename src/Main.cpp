@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
 	auto pointLight = scene.NewChild();
 	pointLight->AddComponent(std::make_shared<PointLight>(glm::vec3{ 1.0f, 0.1f, 0.15f }, 1.35f));
 	pointLight->AddComponent(Light::Point(glm::vec3{ 1.0f, 0.1f, 0.15f }, 1.35f));
-
+/*
 	auto spotLight = scene.NewChild();
 	spotLight->GetTransform()
 		.SetPosition(glm::vec3{ 0, 10.0f, 0 })
@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
 		mat->specularIntensity = 0.0f;
 		mat->emissive = 0.25f;
 	}
-
+*/
 	//
 	// Render/game loop
 	//
@@ -178,7 +178,7 @@ int main(int argc, char *argv[])
 			// (Spot light must be attached directly to root node / scene for this to work properly)
 			auto cameraPosition = camera->GetTransform().GetPositionInWorld();
 			auto cameraOrientation = camera->GetTransform().GetOrientationInWorld();
-			spotLight->GetTransform().SetPosition(cameraPosition).SetOrientation(cameraOrientation);
+			//spotLight->GetTransform().SetPosition(cameraPosition).SetOrientation(cameraOrientation);
 		}
 
 		ImGui::Begin("Rendeer");

@@ -44,3 +44,17 @@ protected:
 	Type type;
 
 };
+
+/*
+ 
+ TODO (next steps):
+ 
+  - Redo light system
+  - Redo material system. (maybe not, maybe do it later? But at least move out shader from the class. So essentially yes...)
+  - Static environment mapping
+	  1. skybox reflections
+      2. single environment probe (renderered at startup)
+      3. multiple environment probes, blend at probe intersections, i.e. (   A      (blend)      B   )
+  - ?
+
+*/

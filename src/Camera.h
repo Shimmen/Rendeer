@@ -30,6 +30,8 @@ public:
 	glm::mat4 GetViewMatrix() const;
 	glm::mat4 GetProjectionMatrix() const;
 
+	float GetNear() const { return nearClippingPlane; };
+
 private:
 
 	std::shared_ptr<FrameBuffer> target;
