@@ -40,6 +40,11 @@ glm::mat4 CameraComponent::GetViewMatrix() const
 
 glm::mat4 CameraComponent::GetProjectionMatrix() const
 {
+	if (!invalidateProjection)
+	{
+		return projectionCache;
+	}
+
 	glm::mat4 projection = glm::mat4(0.0);
 
 	switch (this->type)
@@ -73,9 +78,16 @@ glm::mat4 CameraComponent::GetProjectionMatrix() const
 		} break;
 	}
 
+	this->projectionCache = projection;
+	this->invalidateProjection = false;
+
 	return projection;
 }
 
+glm::mat4 CameraComponent::GetViewProjection() const
+{
+	return GetProjectionMatrix() * GetViewMatrix();
+}
 
 CameraEntity::CameraEntity()
 	: CameraEntity{glm::vec3{0, 0, 0}, glm::quat{}}
@@ -140,4 +152,10 @@ glm::mat4 CameraEntity::GetProjectionMatrix() const
 {
 	// Simply delegate to the CameraComponent
 	return GetComponent<CameraComponent>()->GetProjectionMatrix();
+}
+
+glm::mat4 CameraEntity::GetViewProjection() const
+{
+	// Simply delegate to the CameraComponent
+	return GetComponent<CameraComponent>()->GetViewProjection();
 }

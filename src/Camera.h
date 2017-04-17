@@ -29,6 +29,7 @@ public:
 
 	glm::mat4 GetViewMatrix() const;
 	glm::mat4 GetProjectionMatrix() const;
+	glm::mat4 GetViewProjection() const;
 
 	float GetNear() const { return nearClippingPlane; };
 
@@ -42,6 +43,10 @@ private:
 	
 	CameraType type;
 	float fovOrSize;
+
+	// Cache
+	mutable bool invalidateProjection = true;
+	mutable glm::mat4 projectionCache{};
 
 };
 
@@ -62,5 +67,6 @@ public:
 	// Delegates to the CameraComponent
 	glm::mat4 GetViewMatrix() const;
 	glm::mat4 GetProjectionMatrix() const;
+	glm::mat4 GetViewProjection() const;
 
 };

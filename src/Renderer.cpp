@@ -181,7 +181,7 @@ void Renderer::GeometryPass(const EntityList& entities, const CameraComponent& c
 
 void Renderer::ShadowMapGenerationPass(const EntityList& geometry, const EntityList& lights)
 {
-
+	// TODO!
 }
 
 void Renderer::LightPass(const Scene& scene, const EntityList& geometry, const EntityList& lights, const CameraComponent& camera) const
@@ -200,7 +200,7 @@ void Renderer::LightPass(const Scene& scene, const EntityList& geometry, const E
 		auto light = lightEntity->GetComponent<LightComponent>();
 
 		auto lightCamera = light->GetLightCamera(camera, shadowMap.GetSize());
-		glm::mat4 lightViewProjection = lightCamera.GetProjectionMatrix() * lightCamera.GetViewMatrix();
+		glm::mat4 lightViewProjection = lightCamera.GetViewProjection();
 
 		// Render shadow maps if applicable
 		if (light->CastsShadows())
@@ -272,8 +272,7 @@ void Renderer::LightPass(const Scene& scene, const EntityList& geometry, const E
 		wireframeShader.Bind();
 		GL::SetPolygonMode(GL_LINE);
 
-		glm::mat4 viewProjection = camera.GetProjectionMatrix() * camera.GetViewMatrix();
-		wireframeShader.SetUniform("u_view_projection", viewProjection);
+		wireframeShader.SetUniform("u_view_projection", camera.GetViewProjection());
 
 		for (auto& light : lights)
 		{
@@ -281,7 +280,7 @@ void Renderer::LightPass(const Scene& scene, const EntityList& geometry, const E
 			auto pointLight = light->GetComponent<PointLight>();
 			if (pointLight != nullptr)
 			{
-				float radius = pointLight->intensity * 6.5f; // TODO: Get a proper radius!
+				float radius = pointLight->intensity * 6.5f; //CalculatePointLightRadius(pointLight);
 				glm::vec3 position = pointLight->GetOwnerEntity().GetTransform().GetPositionInWorld();
 
 				glm::mat4 scale = glm::scale(glm::mat4{ 1.0f }, glm::vec3{radius, radius, radius});
@@ -319,12 +318,11 @@ void SetShadowRelatedLightUniforms(const Light& light, const Shader& lightShader
 {
 	const Transform& lightTransform = light.GetOwnerEntity().GetTransform();
 	CameraEntity lightCamera{ lightTransform.GetPositionInWorld(), lightTransform.GetOrientationInWorld() };
-	glm::mat4 lightViewProjection = lightCamera.GetProjectionMatrix() * lightCamera.GetViewMatrix();
 
 	shadowMap.Bind(8);
 	lightShader.SetUniform("u_shadow_map", 8);
 	lightShader.SetUniform("u_inverse_view_matrix", glm::inverse(camera.GetViewMatrix()));
-	lightShader.SetUniform("u_light_view_projection", lightViewProjection);
+	lightShader.SetUniform("u_light_view_projection", lightCamera.GetViewProjection());
 }
 
 void Renderer::LightPassNew(const Scene& scene, const EntityList& geometry, const EntityList& lights, const CameraComponent& camera) const
@@ -360,8 +358,7 @@ void Renderer::LightPassNew(const Scene& scene, const EntityList& geometry, cons
 
 			const Transform& lightTransform = light->GetOwnerEntity().GetTransform();
 			CameraEntity lightCamera{ lightTransform.GetPositionInWorld(), lightTransform.GetOrientationInWorld() };
-			glm::mat4 lightViewProjection = lightCamera.GetProjectionMatrix() * lightCamera.GetViewMatrix();
-			shadowMapGenerator.SetUniform("u_view_projecion_matrix", lightViewProjection);
+			shadowMapGenerator.SetUniform("u_view_projecion_matrix", lightCamera.GetViewProjection());
 
 			for (auto entity : geometry)
 			{
@@ -397,7 +394,7 @@ void Renderer::LightPassNew(const Scene& scene, const EntityList& geometry, cons
 				pointLightVolumeShader.Bind();
 				SetCommmonLightUniforms(*light, pointLightVolumeShader, camera, gBuffer);
 				pointLightVolumeShader.SetUniform("u_light_position", viewSpacePos);
-				pointLightVolumeShader.SetUniform("u_view_projection_matrix", camera.GetProjectionMatrix() * camera.GetViewMatrix());
+				pointLightVolumeShader.SetUniform("u_view_projection_matrix", camera.GetViewProjection());
 
 				// For rendering the actual sphere
 				pointLightVolumeShader.SetUniform("u_light_world_position", light->GetOwnerEntity().GetTransform().GetPositionInWorld());
@@ -412,7 +409,7 @@ void Renderer::LightPassNew(const Scene& scene, const EntityList& geometry, cons
 				pointLightNearShader.Bind();
 				SetCommmonLightUniforms(*light, pointLightNearShader, camera, gBuffer);
 				pointLightNearShader.SetUniform("u_light_position", viewSpacePos);
-				pointLightNearShader.SetUniform("u_view_projection_matrix", camera.GetProjectionMatrix() * camera.GetViewMatrix());
+				pointLightNearShader.SetUniform("u_view_projection_matrix", camera.GetViewProjection());
 
 				GL::SetDepthTest(false);
 				ScreenAlignedQuad::Render();
@@ -473,8 +470,7 @@ void Renderer::LightPassNew(const Scene& scene, const EntityList& geometry, cons
 		wireframeShader.Bind();
 		GL::SetPolygonMode(GL_LINE);
 
-		glm::mat4 viewProjection = camera.GetProjectionMatrix() * camera.GetViewMatrix();
-		wireframeShader.SetUniform("u_view_projection", viewProjection);
+		wireframeShader.SetUniform("u_view_projection", camera.GetViewProjection());
 
 		for (auto& light : lights)
 		{
@@ -508,7 +504,7 @@ void Renderer::DrawSkybox(const CameraComponent& camera, const TextureCube& skyb
 	GL::SetDepthMask(true);
 
 	skyboxShader.Bind();
-	skyboxShader.SetUniform("u_view_rotation_matrix", glm::mat4(glm::mat3(camera.GetViewMatrix()))); // remove translation part
+	skyboxShader.SetUniform("u_view_rotation_matrix", glm::mat4(glm::mat3(camera.GetViewMatrix()))); // (removes translation part)
 	skyboxShader.SetUniform("u_projection_matrix", camera.GetProjectionMatrix());
 	skyboxTexture.Bind(35);
 	skyboxShader.SetUniform("u_skybox_texture", 35);
