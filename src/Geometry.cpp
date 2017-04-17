@@ -80,13 +80,13 @@ Geometry::Sphere(int sectors, int rings, float radius, bool genNormals, bool gen
 			const int i3 = (r + 1) * sectors + s;
 
 			// Triangles
-			*i++ = i0;
+			*i++ = i2;
 			*i++ = i1;
-			*i++ = i2;
-
 			*i++ = i0;
-			*i++ = i2;
+
 			*i++ = i3;
+			*i++ = i2;
+			*i++ = i0;
 
 
 			// Quads
