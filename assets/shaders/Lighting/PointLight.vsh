@@ -3,7 +3,7 @@
 layout(location=0) in vec3 a_position;
 
 uniform vec3 u_light_world_position;
-uniform float u_light_intensity;
+uniform float u_light_radius;
 uniform mat4 u_view_projection_matrix;
 
 
@@ -15,7 +15,6 @@ uniform mat4 u_view_projection_matrix;
 
 void main()
 {
-	float radius = u_light_intensity * 6.5;
-	vec4 worldPos = vec4(radius * a_position + u_light_world_position, 1.0); // TODO: This light pos should be world!!!
+	vec4 worldPos = vec4(u_light_radius * a_position + u_light_world_position, 1.0);
 	gl_Position = u_view_projection_matrix * worldPos;
 }

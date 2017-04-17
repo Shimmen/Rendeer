@@ -300,9 +300,8 @@ void Renderer::LightPass(const Scene& scene, const EntityList& geometry, const E
 
 float CalculatePointLightRadius(const Light& light)
 {
-	//
-	// TODO: Implement properly!
-	//
+	// The light/attenuation system isn't strictly radius base as it stands now, but this constant
+	// together with the cutoff for the attentuation together makes a sphere radius that works.
 	return light.intensity * 6.5f;
 }
 
@@ -398,8 +397,11 @@ void Renderer::LightPassNew(const Scene& scene, const EntityList& geometry, cons
 				pointLightVolumeShader.Bind();
 				SetCommmonLightUniforms(*light, pointLightVolumeShader, camera, gBuffer);
 				pointLightVolumeShader.SetUniform("u_light_position", viewSpacePos);
-				pointLightVolumeShader.SetUniform("u_light_world_position", light->GetOwnerEntity().GetTransform().GetPositionInWorld());
 				pointLightVolumeShader.SetUniform("u_view_projection_matrix", camera.GetProjectionMatrix() * camera.GetViewMatrix());
+
+				// For rendering the actual sphere
+				pointLightVolumeShader.SetUniform("u_light_world_position", light->GetOwnerEntity().GetTransform().GetPositionInWorld());
+				pointLightVolumeShader.SetUniform("u_light_radius", CalculatePointLightRadius(*light));
 
 				GL::SetDepthTest(true);
 				GL::SetDepthMask(false);

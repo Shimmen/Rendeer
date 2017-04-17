@@ -22,7 +22,7 @@ void main()
 	float lightToFragDistance = length(lightToFragment);
 
 	vec3 lightDirection = normalize(lightToFragment);
-	float attenuationFactor = attenuation(lightToFragDistance);
+	float attenuationFactor = attenuation(lightToFragDistance, u_light_intensity);
 
 	// Calculate diffuse light
 	float diffuseIntensity = u_light_intensity * lambertianFactor(gBuffer.normal, lightDirection) * attenuationFactor;

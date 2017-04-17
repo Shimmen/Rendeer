@@ -35,7 +35,7 @@ void main()
 
 	if(angleOfDeviation > u_light_outer_cone_angle_cos)
 	{
-		float attenuationFactor = attenuation(lightToFragDistance);
+		float attenuationFactor = attenuation(lightToFragDistance, u_light_intensity);
 		float coneDeviationFactor = smoothstep(u_light_outer_cone_angle_cos, u_light_inner_cone_angle_cos, angleOfDeviation);
 
 		// Calculate diffuse light

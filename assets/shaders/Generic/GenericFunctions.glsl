@@ -29,21 +29,24 @@ mat3 makeTbnMatrix(in vec3 normal, in vec3 tangent)
 	return mat3(tangent, biTangent, normal);
 }
 
-// TODO: How should this be handled?
-#define USE_MAX_LIGHT_RANGE 0
-
-// Since we use 8-bit color depth, a value lower that 1/256 is not visible. Therefore
-// we can find the max light range by solving x for:
-// (1 / x*x) < (1.0 / 256.0) => +-16
-#if USE_MAX_LIGHT_RANGE
-	#define ATTENUATION_MAX_LIGHT_RANGE 16.0
-#else
-	#define ATTENUATION_MAX_LIGHT_RANGE 999999.0
-#endif
-
-float attenuation(in float lightToFragDistance)
+// from https://imdoingitwrong.wordpress.com/2011/01/31/light-attenuation/
+const float cutoff = 0.024;
+float attenuation(float distance, float intensity)
 {
-	return 1.0 / (lightToFragDistance * lightToFragDistance);
+	float r = intensity; // use intensity as the radius
+	float d = max(distance - r, 0);
+
+	// calculate basic attenuation
+	float denom = d/r + 1;
+	float attenuation = 1 / (denom*denom);
+
+	// scale and bias attenuation such that:
+	//   attenuation == 0 at extent of max influence
+	//   attenuation == 1 when d == 0
+	attenuation = (attenuation - cutoff) / (1 - cutoff);
+	attenuation = max(attenuation, 0);
+
+	return attenuation;
 }
 
 #endif // _GENERIC_FUNCTIONS_GLSL
