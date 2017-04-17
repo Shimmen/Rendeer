@@ -20,7 +20,8 @@ class Buffer;
 class Shader: public GLResource
 {
 public:
-	
+
+	Shader(const std::string& vertexShaderFilePath, std::vector<std::string> definitions = {});
 	Shader(const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath, std::vector<std::string> definitions = {});
 	~Shader();
 

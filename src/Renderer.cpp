@@ -60,6 +60,16 @@ Renderer::Renderer(const Window *const window)
 	shadowMap.SetBorderColor(1, 1, 1, 1);
 	shadowMapFramebuffer.Attach(&shadowMap, GL_DEPTH_ATTACHMENT);
 	assert(shadowMapFramebuffer.IsComplete());
+
+	for (int i = 0; i < numShadowMaps; i++)
+	{
+		shadowMaps[i].Make(1024, 1024, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT16);
+		shadowMaps[i].SetFilter(GL_NEAREST);
+		shadowMaps[i].SetWrap(GL_CLAMP_TO_BORDER);
+		shadowMaps[i].SetBorderColor(1, 1, 1, 1);
+		shadowMapFBs[i].Attach(&shadowMaps[i], GL_DEPTH_ATTACHMENT);
+		assert(shadowMapFBs[i].IsComplete());
+	}
 }
 
 void Renderer::Render(const Scene& scene)
@@ -181,7 +191,57 @@ void Renderer::GeometryPass(const EntityList& entities, const CameraComponent& c
 
 void Renderer::ShadowMapGenerationPass(const EntityList& geometry, const EntityList& lights)
 {
-	// TODO!
+	int numShadowCastingLights = 0;
+
+	for (auto lightEntity : lights)
+	{
+		auto light = lightEntity->GetComponent<Light>();
+		Light::Type lightType = light->GetType();
+
+		bool shouldRenderShadows = (lightType == Light::Type::SPOT);
+
+		if (shouldRenderShadows)
+		{
+			numShadowCastingLights += 1;
+
+			shadowMapFramebuffer.BindAsDrawFrameBuffer();
+			GL::SetClearDepth(1.0f);
+			GL::Clear(GL_DEPTH_BUFFER_BIT);
+
+			GL::SetDepthMask(true);
+			GL::SetDepthTest(true);
+			GL::SetDepthFunction(GL_LEQUAL);
+			GL::SetFaceCulling(true);
+
+			shadowMapGenerator.Bind();
+
+			const Transform& lightTransform = light->GetOwnerEntity().GetTransform();
+			CameraEntity lightCamera{ lightTransform.GetPositionInWorld(), lightTransform.GetOrientationInWorld() };
+			shadowMapGenerator.SetUniform("u_view_projecion_matrix", lightCamera.GetViewProjection());
+
+			for (auto entity : geometry)
+			{
+				shadowMapGenerator.SetUniform("u_model_matrix", entity->GetTransform().GetWorldMatrix());
+				entity->GetComponent<Renderable>()->GetMesh()->Render();
+			}
+		}
+	}
+
+	// Render shadow maps to GUI
+	if (numShadowCastingLights > 0 && ImGui::CollapsingHeader("Shadow maps"))
+	{
+		float width = ImGui::GetWindowWidth();
+
+		for (int i = 0; i < numShadowMaps; i++)
+		{
+			if (i >= numShadowCastingLights) break;
+
+			ImGui::Text("Shadow map %d:", i);
+
+			float height = width / shadowMaps[i].GetAspectRatio();
+			ImGui::Image(&shadowMaps[i], ImVec2(width, height));
+		}
+	}
 }
 
 void Renderer::LightPass(const Scene& scene, const EntityList& geometry, const EntityList& lights, const CameraComponent& camera) const

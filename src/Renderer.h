@@ -61,7 +61,11 @@ private:
 	// Shadow mapping
 	Texture2D shadowMap;
 	FrameBuffer shadowMapFramebuffer;
-	Shader shadowMapGenerator{ "Shadowing/ShadowMapGenerator.vsh", "Shadowing/ShadowMapGenerator.fsh" };
+	Shader shadowMapGenerator{ "Shadowing/ShadowMapGenerator.vsh" };
+
+	static constexpr int numShadowMaps = 4;
+	Texture2D shadowMaps[numShadowMaps];
+	FrameBuffer shadowMapFBs[numShadowMaps];
 
 	// Skybox
 	Shader skyboxShader{"Generic/Skybox.vsh", "Generic/Skybox.fsh"};

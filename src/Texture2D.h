@@ -44,6 +44,7 @@ public:
 	inline int GetWidth() const { return width; }
 	inline int GetHeight() const { return height; }
 	inline int GetSize() const { assert(width == height); return width; }
+	inline float GetAspectRatio() const { return (float)width / (float)height; }
 	inline int GetNumComponents() const { return numComponents; }
 
 private:
