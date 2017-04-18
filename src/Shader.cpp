@@ -1,57 +1,90 @@
 ﻿#include "Shader.h"
 
+#include <fstream>
+#include <sstream>
+
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Logger.h"
 #include "Buffer.h"
 #include "Uniform.h"
-#include "ShaderUnit.h"
+#include "GeneralUtil.h"
 
-/* static */ int Shader::maxNumberOfUniformBufferBindings{ -1 };
+#define INCLUDE_DIRECTIVE ("#include ")
+#define VERSION_DIRECTIVE ("#version ")
+
+/* static */ std::vector<Shader *> Shader::createdShaders{};
 /* static */ GLuint Shader::currentlyBoundShaderProgram{ 0 };
+/* static */ int Shader::maxNumberOfUniformBufferBindings{ -1 };
 
-Shader::Shader(const std::string& vertexShaderFilePath, std::vector<std::string> definitions)
+Shader::Shader(const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath, const std::string& definitions)
+	: vertexShaderFilePath(vertexShaderFilePath)
+	, fragmentShaderFilePath(fragmentShaderFilePath)
+	, definitions(definitions)
 {
-	handle = glCreateProgram();
-
-	ShaderUnit vertexShader{ vertexShaderFilePath, ShaderUnit::Type::VERTEX_SHADER, definitions };
-	glAttachShader(handle, vertexShader.getHandle());
-
-	glLinkProgram(handle);
-	CheckShaderErrors(handle, GL_LINK_STATUS);
-
-	glDetachShader(handle, vertexShader.getHandle());
-
-	LocateAndRegisterUniforms();
-}
-
-Shader::Shader(const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath, std::vector<std::string> definitions)
-{
-	handle = glCreateProgram();
-
-	ShaderUnit vertexShader{ vertexShaderFilePath, ShaderUnit::Type::VERTEX_SHADER, definitions };
-	glAttachShader(handle, vertexShader.getHandle());
-
-	ShaderUnit fragmentShader{ fragmentShaderFilePath, ShaderUnit::Type::FRAGMENT_SHADER, definitions };
-	glAttachShader(handle, fragmentShader.getHandle());
-
-	glLinkProgram(handle);
-	CheckShaderErrors(handle, GL_LINK_STATUS);
-
-	// TODO: Create a Validate function for validating (can't do it here)
-	//glValidateProgram(handle);
-	//CheckShaderErrors(handle, GL_VALIDATE_STATUS);
-
-	glDetachShader(handle, vertexShader.getHandle());
-	glDetachShader(handle, fragmentShader.getHandle());
-	
-	LocateAndRegisterUniforms();
+	Reload();
+	createdShaders.push_back(this);
 }
 
 Shader::~Shader()
 {
-	glDeleteProgram(handle);
+	if (glIsProgram(handle))
+	{
+		glDeleteProgram(handle);
+	}
+}
+
+void Shader::Reload()
+{
+	GLuint program = glCreateProgram();
+
+	GLuint vertexShader = ReadAndCompileShader(vertexShaderFilePath, GL_VERTEX_SHADER, definitions);
+	GLuint fragmentShader = ReadAndCompileShader(fragmentShaderFilePath, GL_FRAGMENT_SHADER, definitions);
+	bool compilationSuccess = vertexShader != 0 && fragmentShader != 0;
+
+	glAttachShader(program, vertexShader);
+	glAttachShader(program, fragmentShader);
+
+	glLinkProgram(program);
+	bool linkSuccess = CheckShaderProgramErrors(program, GL_LINK_STATUS);
+
+	glDetachShader(program, vertexShader);
+	glDetachShader(program, fragmentShader);
+
+	glDeleteShader(vertexShader);
+	glDeleteShader(fragmentShader);
+
+	if (compilationSuccess && linkSuccess)
+	{
+		if (glIsProgram(handle))
+		{
+			glDeleteProgram(handle);
+		}
+		handle = program;
+		LocateAndRegisterUniforms();
+	}
+	else
+	{
+		Logger::Log("NOTE: Did not (re)load shader since there were errors!");
+	}
+}
+
+/*static*/ void Shader::ReloadAll()
+{
+	for (Shader *shader : createdShaders)
+	{
+		if (shader != nullptr)
+		{
+			shader->Reload();
+		}
+	}
+}
+
+bool Shader::Validate() const
+{
+	glValidateProgram(handle);
+	return CheckShaderProgramErrors(handle, GL_VALIDATE_STATUS);
 }
 
 void Shader::Bind() const
@@ -201,7 +234,93 @@ GLuint Shader::GetProgramHandle() const
 	return handle;
 }
 
-void Shader::CheckShaderErrors(GLuint shaderProgram, GLenum stage) const
+GLuint Shader::ReadAndCompileShader(const std::string& filePath, GLenum shaderType, const std::string& definitions)
+{
+	std::string source = ReadShaderSourceFile(filePath, definitions);
+	GLuint shader = glCreateShader(shaderType);
+
+	const GLchar *rawSource = source.c_str();
+	glShaderSource(shader, 1, &rawSource, nullptr);
+	glCompileShader(shader);
+
+	GLint compilationSuccess;
+	glGetShaderiv(shader, GL_COMPILE_STATUS, &compilationSuccess);
+	if (compilationSuccess == GL_FALSE)
+	{
+		static GLchar errorMessage[2048];
+		glGetShaderInfoLog(shader, sizeof(errorMessage), nullptr, errorMessage);
+
+		Logger::Log("Error: shader file '%s' could not be compiled: %s", filePath.c_str(), errorMessage);
+	}
+
+	if (compilationSuccess)
+	{
+		return shader;
+	}
+	else
+	{
+		glDeleteShader(shader);
+		return 0;
+	}
+}
+
+std::string Shader::ReadShaderSourceFile(const std::string & filePath, const std::string& definitions)
+{
+	static const std::string pathPrefix = "shaders/";
+	const std::string fullFilePath = pathPrefix + filePath;
+
+	std::ifstream file{ fullFilePath };
+	if (!file.is_open())
+	{
+		Logger::Log("Error: could not open shader source file with name '%s'", filePath.c_str());
+	}
+
+	std::stringstream result;
+	std::string line;
+	while (std::getline(file, line))
+	{
+		if (line.find(VERSION_DIRECTIVE) != std::string::npos)
+		{
+			result << line << std::endl;
+			result << definitions << std::endl;
+		}
+		else if (line.find(INCLUDE_DIRECTIVE) != std::string::npos)
+		{
+			std::string fileName = GetFileNameFromIncludeLine(line);
+			result << ReadShaderSourceFile(fileName, definitions);
+		}
+		else
+		{
+			result << line << std::endl;
+		}
+	}
+
+	if (file.bad())
+	{
+		Logger::Log("Error: some error while reading shader source file '%s'", filePath.c_str());
+	}
+
+	return result.str();
+}
+
+std::string Shader::GetFileNameFromIncludeLine(const std::string& line)
+{
+	// Trim whitespace from initial string
+	std::string trimmed = nonstd::trim_whitespace(line);
+
+	// Remove include directive, leaving only the filename and decorations
+	std::string decoratedFilename = trimmed.substr(strlen(INCLUDE_DIRECTIVE));
+
+	// Replace any quotation marks, tabs, and semicolons with spaces
+	std::replace(decoratedFilename.begin(), decoratedFilename.end(), ';',  ' ');
+	std::replace(decoratedFilename.begin(), decoratedFilename.end(), '"',  ' ');
+	std::replace(decoratedFilename.begin(), decoratedFilename.end(), '\t', ' ');
+
+	// Trim whitespace
+	return nonstd::trim_whitespace(decoratedFilename);
+}
+
+bool Shader::CheckShaderProgramErrors(GLuint shaderProgram, GLenum stage)
 {
 	assert(stage == GL_LINK_STATUS || stage == GL_VALIDATE_STATUS);
 
@@ -221,13 +340,19 @@ void Shader::CheckShaderErrors(GLuint shaderProgram, GLenum stage) const
 			Logger::Log("Error: shader program could not be validated: %s", errorMessage);
 		}
 	}
+
+	return success;
 }
 
 void Shader::LocateAndRegisterUniforms()
 {
 	static const int NAME_BUFFER_LENGTH = 512;
 
-	this->Bind();
+	// If a reload these will be filled and the old values serve no purpose.
+	uniforms.clear();
+	uniformBlockIndicies.clear();
+
+	Bind();
 
 	int activeUniformCount = 0;
 	glGetProgramiv(handle, GL_ACTIVE_UNIFORMS, &activeUniformCount);

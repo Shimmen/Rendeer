@@ -22,7 +22,7 @@ Renderer::Renderer(const Window *const window)
 	lightAccumulationTexture.Make(w, h, GL_RGBA, GL_RGBA16F);
 	lightAccumulationTexture.SetFilter(GL_NEAREST);
 	lightAccumulationBuffer.Attach(&lightAccumulationTexture, GL_COLOR_ATTACHMENT0);
-	lightAccumulationBuffer.Attach(&gBuffer.depth, GL_DEPTH_ATTACHMENT);
+	lightAccumulationBuffer.Attach(&gBuffer.depth, GL_DEPTH_ATTACHMENT);                                    // TODO: Give light accum its own depth buffer!!!!!!!!!!!
 	assert(lightAccumulationBuffer.IsComplete());
 
 	// Make bloom bright pass 2x downsampled from main image
@@ -578,8 +578,8 @@ void Renderer::GenerateBloom()
 	// Generate mipmaps/downsamples that will be available for the blur passes
 	bloomBrightPass.GenerateMipmaps();
 
-	static const Shader gaussianBlurV{"Generic/ScreenSpaceQuad.vsh", "Filtering/GaussianBlur.fsh", std::vector<std::string>{"VERTICAL_PASS"}};
-	static const Shader gaussianBlurH{"Generic/ScreenSpaceQuad.vsh", "Filtering/GaussianBlur.fsh", std::vector<std::string>{"HORIZONTAL_PASS"}};
+	static const Shader gaussianBlurV{"Generic/ScreenSpaceQuad.vsh", "Filtering/GaussianBlur.fsh", "#define VERTICAL_PASS"};
+	static const Shader gaussianBlurH{"Generic/ScreenSpaceQuad.vsh", "Filtering/GaussianBlur.fsh", "#define HORIZONTAL_PASS"};
 
 	for (int blur = 0; blur < numBloomBlurs; blur++)
 	{

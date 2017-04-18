@@ -21,10 +21,13 @@ class Shader: public GLResource
 {
 public:
 
-	Shader(const std::string& vertexShaderFilePath, std::vector<std::string> definitions = {});
-	Shader(const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath, std::vector<std::string> definitions = {});
+	Shader(const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath, const std::string& definitions = "");
 	~Shader();
 
+	void Reload();
+	static void ReloadAll();
+
+	bool Validate() const;
 	void Bind() const;
 
 	bool HasUniformWithName(const std::string& uniformName) const;
@@ -38,32 +41,33 @@ public:
 	bool SetUniform(const std::string& uniformName, const glm::mat3& matrix3) const;
 	bool SetUniform(const std::string& uniformName, const glm::mat4& matrix4) const;
 
-	/* TODO: Implement!
-	bool SetUniform(const std::string& uniformName, const TextureBase& texture, int binding) const;
-	*/
-
 	bool SetUniformBlock(const std::string& uniformBlockName, const Buffer& buffer) const;
 	GLuint GetNextUniformBlockBinding() const;
 
 	GLuint GetProgramHandle() const;
 
 private:
-	
-	void CheckShaderErrors(GLuint shaderProgram, GLenum stage) const;
+
+	static GLuint ReadAndCompileShader(const std::string& filePath, GLenum shaderType, const std::string& definitions);
+	static std::string ReadShaderSourceFile(const std::string& filePath, const std::string& definitions);
+	static std::string GetFileNameFromIncludeLine(const std::string& line);
+	static bool CheckShaderProgramErrors(GLuint shaderProgram, GLenum stage);
+
 	void LocateAndRegisterUniforms();
 
 private:
+
+	std::string vertexShaderFilePath;
+	std::string fragmentShaderFilePath;
+	std::string definitions;
 
 	std::map<std::string, Uniform> uniforms;
 	std::map<std::string, GLuint> uniformBlockIndicies;
 	mutable GLuint nextUniformBlockBinding;
 
-public:
+	static std::vector<Shader *> createdShaders;
 
 	static int GetMaxNumberOfUniformBufferBindings();
-
-private:
-
 	static int maxNumberOfUniformBufferBindings;
 	static GLuint currentlyBoundShaderProgram;
 

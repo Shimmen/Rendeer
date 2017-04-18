@@ -185,6 +185,11 @@ int main(int argc, char *argv[])
 		{
 			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
+			if (ImGui::Button("Reload all shaders"))
+			{
+				Shader::ReloadAll();
+			}
+
 			if (ImGui::CollapsingHeader("Scene"))
 			{
 				static glm::vec3 ambientColor = scene.GetAmbientColor();

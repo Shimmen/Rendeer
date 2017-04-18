@@ -25,7 +25,6 @@
 		F4433ACC1DEEF7240058CD6C /* Drawables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4433AA41DEEF7240058CD6C /* Drawables.cpp */; };
 		F4433ACD1DEEF7240058CD6C /* Scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4433AA71DEEF7240058CD6C /* Scene.cpp */; };
 		F4433ACE1DEEF7240058CD6C /* Shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4433AA91DEEF7240058CD6C /* Shader.cpp */; };
-		F4433ACF1DEEF7240058CD6C /* ShaderUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4433AAB1DEEF7240058CD6C /* ShaderUnit.cpp */; };
 		F4433AD01DEEF7240058CD6C /* Texture2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4433AAD1DEEF7240058CD6C /* Texture2D.cpp */; };
 		F4433AD11DEEF7240058CD6C /* TextureBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4433AAF1DEEF7240058CD6C /* TextureBase.cpp */; };
 		F4433AD21DEEF7240058CD6C /* TextureCube.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4433AB11DEEF7240058CD6C /* TextureCube.cpp */; };
@@ -103,8 +102,6 @@
 		F4433AA81DEEF7240058CD6C /* Scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Scene.h; path = ../../../src/Scene.h; sourceTree = "<group>"; };
 		F4433AA91DEEF7240058CD6C /* Shader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Shader.cpp; path = ../../../src/Shader.cpp; sourceTree = "<group>"; };
 		F4433AAA1DEEF7240058CD6C /* Shader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Shader.h; path = ../../../src/Shader.h; sourceTree = "<group>"; };
-		F4433AAB1DEEF7240058CD6C /* ShaderUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShaderUnit.cpp; path = ../../../src/ShaderUnit.cpp; sourceTree = "<group>"; };
-		F4433AAC1DEEF7240058CD6C /* ShaderUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShaderUnit.h; path = ../../../src/ShaderUnit.h; sourceTree = "<group>"; };
 		F4433AAD1DEEF7240058CD6C /* Texture2D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Texture2D.cpp; path = ../../../src/Texture2D.cpp; sourceTree = "<group>"; };
 		F4433AAE1DEEF7240058CD6C /* Texture2D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Texture2D.h; path = ../../../src/Texture2D.h; sourceTree = "<group>"; };
 		F4433AAF1DEEF7240058CD6C /* TextureBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextureBase.cpp; path = ../../../src/TextureBase.cpp; sourceTree = "<group>"; };
@@ -170,8 +167,6 @@
 				F4433A901DEEF7240058CD6C /* FrameBuffer.h */,
 				F4433AA91DEEF7240058CD6C /* Shader.cpp */,
 				F4433AAA1DEEF7240058CD6C /* Shader.h */,
-				F4433AAB1DEEF7240058CD6C /* ShaderUnit.cpp */,
-				F4433AAC1DEEF7240058CD6C /* ShaderUnit.h */,
 				F4433AAD1DEEF7240058CD6C /* Texture2D.cpp */,
 				F4433AAE1DEEF7240058CD6C /* Texture2D.h */,
 				F4433AAF1DEEF7240058CD6C /* TextureBase.cpp */,
@@ -384,7 +379,6 @@
 				F4433AC01DEEF7240058CD6C /* DiffuseMaterial.cpp in Sources */,
 				F4433ACC1DEEF7240058CD6C /* Drawables.cpp in Sources */,
 				F4433AD51DEEF7240058CD6C /* VertexArray.cpp in Sources */,
-				F4433ACF1DEEF7240058CD6C /* ShaderUnit.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

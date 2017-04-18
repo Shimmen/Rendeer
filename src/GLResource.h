@@ -13,7 +13,7 @@ public:
 
 protected:
 
-	GLuint handle;
+	GLuint handle{0};
 
 private:
 
