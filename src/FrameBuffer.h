@@ -26,6 +26,8 @@ public:
 	void BindAsDrawFrameBuffer(bool setViewport = true, bool setDrawBuffers = true) const;
 	void BindAsReadFrameBuffer() const;
 
+	void CopyTo(FrameBuffer& other, GLenum mask, GLenum filter = GL_NEAREST) const;
+
 protected:
 
 	std::vector<GLenum> drawBuffers;

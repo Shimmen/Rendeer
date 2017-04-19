@@ -106,3 +106,15 @@ void FrameBuffer::BindAsReadFrameBuffer() const
 		lastBoundRead = handle;
 	}
 }
+
+void FrameBuffer::CopyTo(FrameBuffer& other, GLenum mask, GLenum filter) const
+{
+	this->BindAsReadFrameBuffer();
+	other.BindAsDrawFrameBuffer();
+
+	// NOTE: Currently all attachments are of the same size, so this works.
+	auto src = this->attachments.begin()->second;
+	auto dst = other.attachments.begin()->second;
+
+	glBlitFramebuffer(0, 0, src->GetWidth(), src->GetHeight(), 0, 0, dst->GetWidth(), dst->GetHeight(), mask, filter);
+}

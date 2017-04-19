@@ -21,8 +21,10 @@ Renderer::Renderer(const Window *const window)
 
 	lightAccumulationTexture.Make(w, h, GL_RGBA, GL_RGBA16F);
 	lightAccumulationTexture.SetFilter(GL_NEAREST);
+	lightAccumulationDepth.Make(w, h, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT16);
+	lightAccumulationDepth.SetFilter(GL_NEAREST);
 	lightAccumulationBuffer.Attach(&lightAccumulationTexture, GL_COLOR_ATTACHMENT0);
-	lightAccumulationBuffer.Attach(&gBuffer.depth, GL_DEPTH_ATTACHMENT);                                    // TODO: Give light accum its own depth buffer!!!!!!!!!!!
+	lightAccumulationBuffer.Attach(&lightAccumulationDepth, GL_DEPTH_ATTACHMENT);
 	assert(lightAccumulationBuffer.IsComplete());
 
 	// Make bloom bright pass 2x downsampled from main image
@@ -53,13 +55,6 @@ Renderer::Renderer(const Window *const window)
 		ww /= 2;
 		hh /= 2;
 	}
-
-	shadowMap.Make(2048, 2048, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT16);
-	shadowMap.SetFilter(GL_NEAREST);
-	shadowMap.SetWrap(GL_CLAMP_TO_BORDER);
-	shadowMap.SetBorderColor(1, 1, 1, 1);
-	shadowMapFramebuffer.Attach(&shadowMap, GL_DEPTH_ATTACHMENT);
-	assert(shadowMapFramebuffer.IsComplete());
 
 	for (int i = 0; i < numShadowMaps; i++)
 	{
@@ -161,7 +156,7 @@ void Renderer::Render(const Scene& scene)
 	ScreenAlignedQuad::Render();
 }
 
-void Renderer::GeometryPass(const EntityList& entities, const CameraComponent& camera) const
+void Renderer::GeometryPass(const EntityList& entities, const CameraComponent& camera)
 {
 	gBuffer.BindAsRenderTarget();
 	GL::SetClearDepth(1.0f);
@@ -255,7 +250,7 @@ void Renderer::ShadowMapGenerationPass(const EntityList& geometry, const EntityL
 	}
 }
 
-void Renderer::LightPass(const Scene& scene, const EntityList& geometry, const EntityList& lights, const CameraComponent& camera) const
+void Renderer::LightPass(const Scene& scene, const EntityList& geometry, const EntityList& lights, const CameraComponent& camera)
 {
 	lightAccumulationBuffer.BindAsDrawFrameBuffer();
 
@@ -396,8 +391,9 @@ void SetShadowRelatedLightUniforms(const Light& light, const Shader& lightShader
 	lightShader.SetUniform("u_light_view_projection", lightCamera.GetViewProjection());
 }
 
-void Renderer::LightPassNew(const Scene& scene, const EntityList& geometry, const EntityList& lights, const CameraComponent& camera) const
+void Renderer::LightPassNew(const Scene& scene, const EntityList& geometry, const EntityList& lights, const CameraComponent& camera)
 {
+	gBuffer.GetInternalFrameBuffer().CopyTo(lightAccumulationBuffer, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 	lightAccumulationBuffer.BindAsDrawFrameBuffer();
 
 	// Ambient light pass (could be optimized to be done while filling g-buffer)
@@ -405,20 +401,15 @@ void Renderer::LightPassNew(const Scene& scene, const EntityList& geometry, cons
 	ambientShader.SetUniform("u_color", scene.GetAmbientColor());
 	gBuffer.BindAsUniform(ambientShader);
 	GL::SetDepthTest(false);
+	GL::SetDepthMask(false);
+	GL::SetBlending(false);
 	ScreenAlignedQuad::Render();
 
-	{
-		// TODO: Logically the depth mask should be false, since I don't want to touch the depth at all from the lights, but I get really strage results if it's false!
-		// So I'm not sure... It might be some strange behaviour related to one texture in multiple frame buffers. Find out, somehow...
-		// HOWEVER, since depth test is disabled, depth writing is always disabled too, and this works.
-		GL::SetDepthTest(false);
+	GL::SetFaceCulling(true);
 
-		GL::SetFaceCulling(false);
-
-		GL::SetBlending(true);
-		GL::SetBlendEquation(GL_FUNC_ADD, GL_FUNC_ADD);
-		GL::SetBlendFunction(GL_ONE, GL_ONE, GL_ONE, GL_ONE);
-	}
+	GL::SetBlending(true);
+	GL::SetBlendEquation(GL_FUNC_ADD, GL_FUNC_ADD);
+	GL::SetBlendFunction(GL_ONE, GL_ONE, GL_ONE, GL_ONE);
 
 	for (auto lightEntity : lights)
 	{
@@ -457,6 +448,7 @@ void Renderer::LightPassNew(const Scene& scene, const EntityList& geometry, cons
 				pointLightNearShader.SetUniform("u_view_projection_matrix", camera.GetViewProjection());
 
 				GL::SetDepthTest(false);
+				GL::SetDepthMask(false);
 				ScreenAlignedQuad::Render();
 			}
 		}
@@ -478,6 +470,7 @@ void Renderer::LightPassNew(const Scene& scene, const EntityList& geometry, cons
 			spotLightShader.SetUniform("u_light_inner_cone_angle_cos", cosf(light->coneInnerAngle / 2.0f));
 
 			GL::SetDepthTest(false);
+			GL::SetDepthMask(false);
 			ScreenAlignedQuad::Render();
 		}
 		else if (lightType == Light::Type::DIRECTIONAL)
@@ -489,6 +482,7 @@ void Renderer::LightPassNew(const Scene& scene, const EntityList& geometry, cons
 			// TODO: Implement! Set light specific uniforms.
 
 			GL::SetDepthTest(false);
+			GL::SetDepthMask(false);
 			ScreenAlignedQuad::Render();
 		}
 		else
@@ -502,6 +496,11 @@ void Renderer::LightPassNew(const Scene& scene, const EntityList& geometry, cons
 	if (ImGui::CollapsingHeader("Light pass"))
 	{
 		ImGui::Checkbox("Draw point light wireframes", &drawPointLightWireframes);
+
+		ImGui::Text("Light accumulation depth:");
+		float width = ImGui::GetWindowWidth();
+		float height = width / lightAccumulationDepth.GetAspectRatio();
+		ImGui::Image(const_cast<Texture2D *>(&lightAccumulationDepth), ImVec2(width, height));
 	}
 
 	if (drawPointLightWireframes)
@@ -537,7 +536,7 @@ void Renderer::LightPassNew(const Scene& scene, const EntityList& geometry, cons
 	}
 }
 
-void Renderer::DrawSkybox(const CameraComponent& camera, const TextureCube& skyboxTexture) const
+void Renderer::DrawSkybox(const CameraComponent& camera, const TextureCube& skyboxTexture)
 {
 	lightAccumulationBuffer.BindAsDrawFrameBuffer();
 
@@ -616,7 +615,7 @@ void Renderer::GenerateBloom()
 	}
 }
 
-void Renderer::RenderCameras(EntityList cameras) const
+void Renderer::RenderCameras(EntityList cameras)
 {
 	for (auto camera : cameras)
 	{

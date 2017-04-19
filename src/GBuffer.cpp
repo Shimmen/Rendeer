@@ -47,3 +47,8 @@ void GBuffer::BindAsUniform(const Shader& lightShader) const
 	depth.Bind(currentUnit);
 	lightShader.SetUniform("u_depth", currentUnit--);
 }
+
+const FrameBuffer& GBuffer::GetInternalFrameBuffer() const
+{
+	return frameBuffer;
+}

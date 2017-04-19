@@ -15,6 +15,8 @@ public:
 	void BindAsRenderTarget() const;
 	void BindAsUniform(const Shader& lightShader) const;
 
+	const FrameBuffer& GetInternalFrameBuffer() const;
+
 public:
 
 	Texture2D albedo;

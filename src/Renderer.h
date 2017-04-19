@@ -33,14 +33,14 @@ private:
 	// Shorthand for using in all the passes below
 	typedef std::vector<std::shared_ptr<Entity>> EntityList;
 
-	void GeometryPass(const EntityList& entities, const CameraComponent& camera) const;
+	void GeometryPass(const EntityList& entities, const CameraComponent& camera);
 	void ShadowMapGenerationPass(const EntityList& geometry, const EntityList& lights);
-	void LightPass(const Scene& scene, const EntityList& geometry, const EntityList& lights, const CameraComponent& camera) const;
-	void LightPassNew(const Scene& scene, const EntityList& geometry, const EntityList& lights, const CameraComponent& camera) const;
-	void DrawSkybox(const CameraComponent& camera, const TextureCube& skyboxTexture) const;
+	void LightPass(const Scene& scene, const EntityList& geometry, const EntityList& lights, const CameraComponent& camera);
+	void LightPassNew(const Scene& scene, const EntityList& geometry, const EntityList& lights, const CameraComponent& camera);
+	void DrawSkybox(const CameraComponent& camera, const TextureCube& skyboxTexture);
 	void GenerateBloom();
 
-	void RenderCameras(EntityList cameras) const;
+	void RenderCameras(EntityList cameras);
 
 private:
 
@@ -49,6 +49,7 @@ private:
 	// Deferred pipeling default frame buffers and textures
 	GBuffer gBuffer;
 	Texture2D lightAccumulationTexture;
+	Texture2D lightAccumulationDepth;
 	FrameBuffer lightAccumulationBuffer{};
 
 	// Light relating
