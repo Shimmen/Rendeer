@@ -76,6 +76,7 @@ void Renderer::Render(const Scene& scene)
 
 		GL::SetFrontFace(GL_CW);
 		GL::SetCullFace(GL_BACK);
+		GL::SetFaceCulling(true);
 
 		GL::Enable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 		GL::Enable(GL_FRAMEBUFFER_SRGB);
@@ -101,21 +102,6 @@ void Renderer::Render(const Scene& scene)
 	auto mainCamera = scene.GetMainCamera();
 
 	GeometryPass(geometry, *mainCamera);
-	if (ImGui::CollapsingHeader("G-Buffer"))
-	{
-		float width = ImGui::GetWindowWidth();
-		float height = width / window->GetAspectRatio();
-		ImVec2 size(width, height);
-
-		ImGui::Text("Albedo:");
-		ImGui::Image(&gBuffer.albedo, size);
-		ImGui::Text("Depth:");
-		ImGui::Image(&gBuffer.depth, size);
-		ImGui::Text("Normal:");
-		ImGui::Image(&gBuffer.normal, size);
-		ImGui::Text("Material:");
-		ImGui::Image(&gBuffer.material, size);
-	}
 
 	ShadowMapGenerationPass(geometry, lightsNew);
 
@@ -129,31 +115,7 @@ void Renderer::Render(const Scene& scene)
 
 	GenerateBloom();
 
-	// Render light accumulation buffer onto screen with final post processing step(like tone mapping etc.)
-	window->BindAsDrawFrameBuffer();
-	GL::SetDepthTest(false);
-	GL::SetBlending(false);
-
-	postProcessShader.Bind();
-	postProcessShader.SetUniform("u_texture", lightAccumulationTexture.Bind(0));
-
-	static bool useChromaAb = true;
-	static float chromaAbAmount = 2.5f;
-
-	if (ImGui::CollapsingHeader("Final post-process"))
-	{
-		ImGui::Checkbox("Chromatic Aberration", &useChromaAb);
-		ImGui::SliderFloat("Amount", &chromaAbAmount, 0.0f, 20.0f);
-	}
-
-	postProcessShader.SetUniform("u_bloom_weights", bloomWeights);
-	postProcessShader.SetUniform("u_bloom_1", bloomBlurs[1].Bind(1));
-	postProcessShader.SetUniform("u_bloom_2", bloomBlurs[3].Bind(2));
-	postProcessShader.SetUniform("u_bloom_master_weight", bloomMasterWeight);
-
-	postProcessShader.SetUniform("u_chroma_ab_amount", (useChromaAb) ? chromaAbAmount : 0.0f);
-
-	ScreenAlignedQuad::Render();
+	PostProcessPass();
 }
 
 void Renderer::GeometryPass(const EntityList& entities, const CameraComponent& camera)
@@ -181,6 +143,18 @@ void Renderer::GeometryPass(const EntityList& entities, const CameraComponent& c
 
 			renderable->GetMesh()->Render();
 		}
+	}
+
+	if (ImGui::CollapsingHeader("G-Buffer"))
+	{
+		ImGui::Text("Albedo:");
+		DrawUIImage(gBuffer.albedo);
+		ImGui::Text("Depth:");
+		DrawUIImage(gBuffer.depth);
+		ImGui::Text("Normal:");
+		DrawUIImage(gBuffer.normal);
+		ImGui::Text("Material:");
+		DrawUIImage(gBuffer.material);
 	}
 }
 
@@ -236,16 +210,11 @@ void Renderer::ShadowMapGenerationPass(const EntityList& geometry, const EntityL
 	// Render shadow maps to GUI
 	if (numActiveShadowMaps > 0 && ImGui::CollapsingHeader("Shadow maps"))
 	{
-		float width = ImGui::GetWindowWidth();
-
 		for (int i = 0; i < numShadowMaps; i++)
 		{
 			if (i >= numActiveShadowMaps) break;
-
 			ImGui::Text("Shadow map %d:", i);
-
-			float height = width / shadowMaps[i].GetAspectRatio();
-			ImGui::Image(&shadowMaps[i], ImVec2(width, height));
+			DrawUIImage(shadowMaps[i]);
 		}
 	}
 }
@@ -498,9 +467,7 @@ void Renderer::LightPassNew(const Scene& scene, const EntityList& geometry, cons
 		ImGui::Checkbox("Draw point light wireframes", &drawPointLightWireframes);
 
 		ImGui::Text("Light accumulation depth:");
-		float width = ImGui::GetWindowWidth();
-		float height = width / lightAccumulationDepth.GetAspectRatio();
-		ImGui::Image(const_cast<Texture2D *>(&lightAccumulationDepth), ImVec2(width, height));
+		DrawUIImage(lightAccumulationDepth);
 	}
 
 	if (drawPointLightWireframes)
@@ -556,13 +523,6 @@ void Renderer::DrawSkybox(const CameraComponent& camera, const TextureCube& skyb
 void Renderer::GenerateBloom()
 {
 	static float brightPassFilterThreshold = 0.1f;
-	if (ImGui::CollapsingHeader("Bloom"))
-	{
-		ImGui::SliderFloat("Luminance threshold", &brightPassFilterThreshold, 0.0f, 3.0f);
-		ImGui::SliderFloat("Bloom master weight", &bloomMasterWeight, 0.0f, 1.0f);
-		ImGui::SliderFloat2("Bloom weights", glm::value_ptr(bloomWeights), 0.0f, 1.0f);
-		ImGui::SliderInt("Blur passes per bloom", &numPassesPerBlur, 1, 20);
-	}
 
 	GL::SetBlending(false);
 	GL::SetDepthTest(false);
@@ -576,6 +536,15 @@ void Renderer::GenerateBloom()
 	
 	// Generate mipmaps/downsamples that will be available for the blur passes
 	bloomBrightPass.GenerateMipmaps();
+
+	if (ImGui::CollapsingHeader("Bloom"))
+	{
+		ImGui::SliderFloat("Luminance threshold", &brightPassFilterThreshold, 0.0f, 3.0f);
+		DrawUIImage(bloomBrightPass);
+		ImGui::SliderFloat("Bloom master weight", &bloomMasterWeight, 0.0f, 1.0f);
+		ImGui::SliderFloat2("Bloom weights", glm::value_ptr(bloomWeights), 0.0f, 1.0f);
+		ImGui::SliderInt("Blur passes per bloom", &numPassesPerBlur, 1, 20);
+	}
 
 	static const Shader gaussianBlurV{"Generic/ScreenSpaceQuad.vsh", "Filtering/GaussianBlur.fsh", "#define VERTICAL_PASS"};
 	static const Shader gaussianBlurH{"Generic/ScreenSpaceQuad.vsh", "Filtering/GaussianBlur.fsh", "#define HORIZONTAL_PASS"};
@@ -615,6 +584,48 @@ void Renderer::GenerateBloom()
 	}
 }
 
+void Renderer::PostProcessPass()
+{
+	window->BindAsDrawFrameBuffer();
+
+	GL::SetDepthTest(false);
+	GL::SetFaceCulling(true);
+	GL::SetBlending(false);
+
+	postProcessShader.Bind();
+	postProcessShader.SetUniform("u_texture", lightAccumulationTexture.Bind(0));
+
+	static bool useChromaAb = true;
+	static float chromaAbAmount = 1.7f;
+
+	static float exposure = 3.0f;
+	static float whiteBalance = 11.2f;
+
+	if (ImGui::CollapsingHeader("Post-process"))
+	{
+		ImGui::Checkbox("Chromatic Aberration", &useChromaAb);
+		ImGui::SliderFloat("Amount", &chromaAbAmount, 0.0f, 15.0f);
+
+		ImGui::Separator();
+
+		ImGui::Text("Tone mapping");
+		ImGui::SliderFloat("Exposure", &exposure, 0.01f, 25.0f);
+		ImGui::SliderFloat("White balance", &whiteBalance, 0.0f, 20.0f);
+	}
+
+	postProcessShader.SetUniform("u_bloom_weights", bloomWeights);
+	postProcessShader.SetUniform("u_bloom_1", bloomBlurs[1].Bind(1));
+	postProcessShader.SetUniform("u_bloom_2", bloomBlurs[3].Bind(2));
+	postProcessShader.SetUniform("u_bloom_master_weight", bloomMasterWeight);
+
+	postProcessShader.SetUniform("u_chroma_ab_amount", (useChromaAb) ? chromaAbAmount : 0.0f);
+
+	postProcessShader.SetUniform("u_exposure", exposure);
+	postProcessShader.SetUniform("u_white_balance", whiteBalance);
+
+	ScreenAlignedQuad::Render();
+}
+
 void Renderer::RenderCameras(EntityList cameras)
 {
 	for (auto camera : cameras)
@@ -632,6 +643,15 @@ void Renderer::RenderCameras(EntityList cameras)
 			glBlitFramebuffer(0, 0, window->GetFramebufferWidth(), window->GetFramebufferHeight(), 0, 0, 853, 480, GL_COLOR_BUFFER_BIT, GL_LINEAR); // HACK: Hardcoded sizes!
 		}
 	}
+}
+
+void Renderer::DrawUIImage(const Texture2D &image) const
+{
+	float width = ImGui::GetWindowWidth();
+	float height = width / image.GetAspectRatio();
+
+	// The image will NOT be modified! I promise...
+	ImGui::Image(const_cast<Texture2D *>(&image), ImVec2(width, height));
 }
 
 void Renderer::RenderTextureToScreen(const Texture2D& texture, bool alphaBlending, bool setViewport)

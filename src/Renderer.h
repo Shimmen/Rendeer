@@ -39,6 +39,7 @@ private:
 	void LightPassNew(const Scene& scene, const EntityList& geometry, const EntityList& lights, const CameraComponent& camera);
 	void DrawSkybox(const CameraComponent& camera, const TextureCube& skyboxTexture);
 	void GenerateBloom();
+	void PostProcessPass();
 
 	void RenderCameras(EntityList cameras);
 
@@ -83,6 +84,9 @@ private:
 
 	// Final post-process
 	Shader postProcessShader{ "Generic/ScreenSpaceQuad.vsh", "Postprocess/Postprocess.fsh" };
+
+	// UI Helpers
+	void DrawUIImage(const Texture2D& image) const;
 
 	// Debug stuff etc.
 	void RenderTextureToScreen(const Texture2D& texture, bool alphaBlending = false, bool setViewport = true);

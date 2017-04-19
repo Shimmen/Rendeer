@@ -11,7 +11,8 @@ vec3 simpleReinhardToneMap(in vec3 hdrColor)
 	return (hdrColor / (hdrColor + vec3(1.0)));
 }
 
-vec3 uncharted2_ToneMap(in vec3 hdrColor)
+// from	http://filmicworlds.com/blog/filmic-tonemapping-operators/
+vec3 uncharted2_ToneMap(in vec3 x)
 {
 	const float A = 0.15;
 	const float B = 0.50;
@@ -20,10 +21,7 @@ vec3 uncharted2_ToneMap(in vec3 hdrColor)
 	const float E = 0.02;
 	const float F = 0.30;
 
-	const vec3 exposureBias = vec3(3.0);
-	hdrColor *= exposureBias;
-
-	return ((hdrColor * (A * hdrColor + C * B) + D * E) / (hdrColor * (A * hdrColor + B) + D * F)) - E / F;
+	return ((x*(A*x+C*B)+D*E)/(x*(A*x+B)+D*F))-E/F;
 }
 
 #endif // _TONE_MAPPING_GLSL

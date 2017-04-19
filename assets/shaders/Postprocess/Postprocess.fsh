@@ -16,6 +16,9 @@ uniform float u_bloom_master_weight;
 
 uniform float u_chroma_ab_amount;
 
+uniform float u_exposure;
+uniform float u_white_balance;
+
 //
 // Offset outwards from the center, more or less depending on the distance from center.
 // This is similar to what would happen in a curved camera lens, but of course it's
@@ -42,6 +45,17 @@ vec3 sampleChromaticAberration(in sampler2D tex, in vec2 uv, in float amount)
 	return color;
 }
 
+vec3 tonemap(vec3 hdrFragment)
+{
+	vec3 hdr = hdrFragment * u_exposure;
+	vec3 curr = uncharted2_ToneMap(hdr);
+
+	vec3 whiteScale = 1.0 / uncharted2_ToneMap(vec3(u_white_balance));
+	vec3 ldr = curr * whiteScale;
+
+	return ldr;
+}
+
 void main()
 {
 	vec3 fragment = sampleChromaticAberration(u_texture, v_tex_coord, u_chroma_ab_amount);
@@ -52,7 +66,7 @@ void main()
 	bloom += texture(u_bloom_2, v_tex_coord) * u_bloom_weights.y;
 	fragment += bloom.rgb * u_bloom_master_weight;
 
-	vec3 ldrFragment = uncharted2_ToneMap(fragment);
+	vec3 ldrFragment = tonemap(fragment);
 
 	// Write out color value
 	o_fragment_color = vec4(ldrFragment, 1.0);
